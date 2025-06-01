@@ -1,0 +1,46 @@
+//
+//  Dependency.swift
+//  ProjectDescriptionHelpers
+//
+//  Created by 이정원 on 6/1/25.
+//
+
+import ProjectDescription
+
+extension Module {
+    private static let dependencyInfo: [Module: [Module]] = [
+        .app: [.feature(.root), .data],
+        .feature(.root): [.feature(.base)],
+        .feature(.base): [.domain, .designSystem],
+        .domain: [.util],
+        .data: [.domain, .network]
+    ]
+    
+    private static let externalDependencyInfo: [Module: [ExternalModule]] = [
+        .feature(.base): [.composableArchitecture]
+    ]
+    
+    private var path: Path {
+        switch self {
+        case .feature: .relativeToRoot("Projects/Features/\(name)")
+        default: .relativeToRoot("Projects/\(name)")
+        }
+    }
+    
+    public var dependencies: [TargetDependency] {
+        var allDependencies: [TargetDependency] = []
+        
+        if let dependencies = Module.dependencyInfo[self] {
+            allDependencies += dependencies.map { module in
+                TargetDependency.project(target: module.name, path: module.path)
+            }
+        }
+        
+        if let externalDependencies = Module.externalDependencyInfo[self] {
+            allDependencies += externalDependencies.map { module in
+                TargetDependency.external(name: module.name)
+            }
+        }
+        return allDependencies
+    }
+}
