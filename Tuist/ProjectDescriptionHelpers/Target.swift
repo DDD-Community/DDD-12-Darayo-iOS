@@ -34,7 +34,7 @@ private extension Module {
     var infoPlist: InfoPlist? {
         switch self {
         case .app: .file(path: "Support/info.plist")
-        default: nil
+        default: .default
         }
     }
     

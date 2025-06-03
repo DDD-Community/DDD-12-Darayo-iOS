@@ -33,7 +33,11 @@ private extension Module {
     
     var resourceSynthesizers: [ResourceSynthesizer] {
         switch self {
-        case .designSystem: [.assets()]
+        case .designSystem:
+            [
+                .custom(name: "Images", parser: .assets, extensions: ["xcassets"]),
+                .custom(name: "Colors", parser: .assets, extensions: ["xcassets"])
+            ]
         default: []
         }
     }
