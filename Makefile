@@ -15,3 +15,9 @@ reset:
 		rm Tuist/Package.resolved; \
 	fi
 	make clean
+
+feature:
+	@./Scripts/Module/feature_module.sh
+
+dependency:
+	@./Scripts/Module/dependency.sh
