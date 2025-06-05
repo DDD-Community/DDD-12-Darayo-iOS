@@ -23,13 +23,18 @@ public enum Module: Hashable, Sendable {
     }
     
     public var bundleID: String {
+        let organizationName = ProjectInfo.organizationName.lowercased()
+        let appName = ProjectInfo.appName.lowercased()
+        let appBundleID = "com.\(organizationName).\(appName)"
+        
         switch self {
-        case .app:
-            return "com.ddd.\(ProjectInfo.organizationName.lowercased())"
+        case .app: return appBundleID
+        case .feature(let module):
+            let moduleName = module.name.lowercased()
+            return "\(appBundleID).feature.\(moduleName)"
         default:
-            let appName = ProjectInfo.appName.lowercased()
             let moduleName = name.lowercased()
-            return "com.\(appName).\(moduleName)"
+            return "\(appBundleID).\(moduleName)"
         }
         
     }
