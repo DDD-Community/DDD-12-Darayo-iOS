@@ -1,0 +1,23 @@
+name: 🛠 Issue
+description: 버그, 기능 구현, 리팩토링 등에 사용되는 통합 이슈 템플릿입니다.
+title: "[ISSUE] "
+labels: []
+body:
+  - type: checkboxes
+    id: type
+    attributes:
+      label: 작업 유형
+      options:
+        - label: 기능 구현
+        - label: 버그 수정
+        - label: 리팩토링
+        - label: 문서 작성
+        - label: 기타
+  - type: textarea
+    id: description
+    attributes:
+      label: 설명
+      description: 어떤 작업인지 설명해주세요.
+      placeholder: 여기에 내용을 입력하세요.
+    validations:
+      required: true
