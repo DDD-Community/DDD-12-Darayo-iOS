@@ -8,7 +8,7 @@ body:
     attributes:
       label: Pull Request
       description: 관련된 PR 번호를 입력하세요.
-      placeholder: 예: #1
+      placeholder: #1
 
   - type: checkboxes
     id: type
