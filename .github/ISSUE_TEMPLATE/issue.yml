@@ -1,8 +1,11 @@
-name: 🛠 Issue
-description: 버그, 기능 구현, 리팩토링 등에 사용되는 통합 이슈 템플릿입니다.
-title: "[ISSUE] "
-labels: []
 body:
+  - type: input
+    id: linked_pr
+    attributes:
+      label: Pull Request
+      description: 관련된 PR 번호를 입력하세요.
+      placeholder: 예: #1
+
   - type: checkboxes
     id: type
     attributes:
@@ -13,6 +16,7 @@ body:
         - label: 리팩토링
         - label: 문서 작성
         - label: 기타
+
   - type: textarea
     id: description
     attributes:
