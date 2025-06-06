@@ -12,7 +12,7 @@ public extension Project {
         self = Project(
             name: module.name,
             organizationName: ProjectInfo.organizationName,
-            settings: .settings(configurations: .default),
+            settings: module.settings,
             targets: [.target(module)],
             schemes: module.schemes,
             resourceSynthesizers: module.resourceSynthesizers
@@ -21,6 +21,13 @@ public extension Project {
 }
 
 private extension Module {
+    var settings: Settings {
+        .settings(
+            base: ["ENABLE_USER_SCRIPT_SANDBOXING": "YES"],
+            configurations: .default
+        )
+    }
+    
     var schemes: [Scheme] {
         switch self {
         case .app:

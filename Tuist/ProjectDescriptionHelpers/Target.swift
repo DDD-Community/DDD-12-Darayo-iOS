@@ -17,7 +17,8 @@ public extension Target {
             infoPlist: module.infoPlist,
             sources: module.sources,
             resources: module.resources,
-            dependencies: module.dependencies
+            dependencies: module.dependencies,
+            settings: module.settings
         )
     }
 }
@@ -47,5 +48,11 @@ private extension Module {
         case .designSystem: ["Resources/**"]
         default: nil
         }
+    }
+    
+    var settings: Settings {
+        .settings(
+            base: ["SWIFT_COMPILATION_MODE[config=Release]": "wholemodule"]
+        )
     }
 }
