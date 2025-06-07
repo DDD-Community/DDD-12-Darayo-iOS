@@ -20,7 +20,7 @@ public extension Scheme {
             runAction: .runAction(configuration: .init(stringLiteral: environment.name)),
             archiveAction: .archiveAction(configuration: .release),
             profileAction: .profileAction(configuration: .release),
-            analyzeAction: .analyzeAction(configuration: .debug),
+            analyzeAction: .analyzeAction(configuration: .debug)
         )
     }
 }
