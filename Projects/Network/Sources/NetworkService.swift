@@ -7,13 +7,11 @@
 //
 
 import Foundation
-
-public protocol NetworkServiceProtocol {
-    func request(endpoint: Endpoint) async throws
-    func request<Response: Decodable>(endpoint: Endpoint) async throws -> Response
-}
+import Data
 
 public struct NetworkService: NetworkServiceProtocol {
+    public init() {}
+    
     public func request(endpoint: Endpoint) async throws {
         try await performRequest(endpoint: endpoint)
     }

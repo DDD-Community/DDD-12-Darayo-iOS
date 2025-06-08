@@ -7,12 +7,17 @@
 //
 
 import SwiftUI
+import Root
 
 @main
 struct DarayoApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("Hello World!")
+            RootView(
+                store: .init(initialState: .init()) {
+                    RootFeature()
+                }
+            )
         }
     }
 }

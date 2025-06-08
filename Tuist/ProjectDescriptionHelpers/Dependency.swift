@@ -9,15 +9,17 @@ import ProjectDescription
 
 extension Module {
     private static let dependencyInfo: [Module: [Module]] = [
-        .app: [.feature(.root), .data],
+        .app: [.feature(.root), .network],
         .feature(.root): [.feature(.base)],
         .feature(.base): [.domain, .designSystem],
         .domain: [.util],
-        .data: [.domain, .network]
+        .data: [.domain],
+        .network: [.data]
     ]
     
     private static let externalDependencyInfo: [Module: [ExternalModule]] = [
-        .feature(.base): [.composableArchitecture]
+        .feature(.base): [.composableArchitecture],
+        .util: [.dependencies]
     ]
     
     private var path: Path {
