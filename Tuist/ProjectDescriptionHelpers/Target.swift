@@ -14,6 +14,7 @@ public extension Target {
             destinations: ProjectInfo.destinations,
             product: module.product,
             bundleId: module.bundleID,
+            deploymentTargets: ProjectInfo.deploymentTargets,
             infoPlist: module.infoPlist,
             sources: module.sources,
             resources: module.resources,
