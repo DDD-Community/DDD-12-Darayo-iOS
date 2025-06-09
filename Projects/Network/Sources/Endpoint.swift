@@ -10,17 +10,6 @@ import Foundation
 import Data
 
 extension Endpoint {
-    var baseURL: String {
-        // TODO: need to implement base url later.
-        return ""
-    }
-    
-    var headers: [String: String] {
-        // TODO: need to implement header later.
-        // TODO: the token also needs to be considered later.
-        return [:]
-    }
-    
     var urlRequest: URLRequest {
         get throws {
             guard var url = URL(string: baseURL) else {

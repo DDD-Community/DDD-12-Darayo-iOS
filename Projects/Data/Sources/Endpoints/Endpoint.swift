@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol Endpoint {
-    var baseURL: URL { get }
+    var baseURL: String { get }
     var path: String { get }
     var method: HTTPMethod { get }
     var headers: [String: String] { get }
@@ -23,4 +23,16 @@ public enum HTTPMethod: String {
     case put
     case patch
     case delete
+}
+
+extension Endpoint {
+    var baseURL: String {
+        // TODO: need to implement base url later.
+        return "https://api.sampleapis.com"
+    }
+    
+    var headers: [String: String] {
+        // TODO: need to implement header later.
+        return [:]
+    }
 }

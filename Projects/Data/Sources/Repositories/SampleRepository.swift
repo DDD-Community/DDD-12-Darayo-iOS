@@ -11,10 +11,11 @@ import Dependencies
 
 public struct SampleRepository: SampleRepositoryProtocol {
     @Dependency(\.networkService) private var networkService
-    
     public init() {}
     
-    public func helloWorld() {
-        print("Hello World!")
+    public func fetchCoffeeList() async throws -> [Coffee] {
+        let endpoint = SampleEndpoint.coffee
+        let response: [CoffeeResponse] = try await networkService.request(endpoint: endpoint)
+        return response.compactMap { $0.toDomain }
     }
 }

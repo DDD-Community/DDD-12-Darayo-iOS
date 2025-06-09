@@ -34,7 +34,7 @@ public struct NetworkService: NetworkServiceProtocol {
 private extension NetworkService {
     var urlSession: URLSession {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForRequest = 20
         return .init(configuration: configuration)
     }
     

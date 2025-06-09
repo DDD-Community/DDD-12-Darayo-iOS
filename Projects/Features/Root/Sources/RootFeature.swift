@@ -13,12 +13,18 @@ import Domain
 public struct RootFeature {
     @Dependency(\.sampleUseCase) private var sampleUseCase
     
+    @ObservableState
     public struct State {
+        var isLoading: Bool = false
+        var coffeeList: [Coffee] = []
+        var errorMessage: String = ""
         public init() {}
     }
     
     public enum Action {
         case onAppear
+        case coffeeListFetched([Coffee])
+        case showError(Error)
     }
     
     public init() {}
@@ -26,9 +32,28 @@ public struct RootFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                sampleUseCase.helloWorld()
+                state.isLoading = true
+                return .run { send in await send(fetchCoffeeList()) }
+            case .coffeeListFetched(let coffeeList):
+                state.coffeeList = coffeeList
+                state.isLoading = false
+                return .none
+            case .showError(let error):
+                state.errorMessage = error.localizedDescription
+                state.isLoading = false
                 return .none
             }
+        }
+    }
+}
+
+private extension RootFeature {
+    func fetchCoffeeList() async -> Action {
+        do {
+            let coffeeList = try await sampleUseCase.fetchCoffeeList()
+            return .coffeeListFetched(coffeeList)
+        } catch {
+            return .showError(error)
         }
     }
 }

@@ -9,13 +9,11 @@
 import Dependencies
 
 public protocol SampleRepositoryProtocol {
-    func helloWorld()
+    func fetchCoffeeList() async throws -> [Coffee]
 }
 
 private struct MockSampleRepository: SampleRepositoryProtocol {
-    func helloWorld() {
-        print("Hello World! (Mock)")
-    }
+    func fetchCoffeeList() async throws -> [Coffee] { [] }
 }
 
 public enum SampleRepositoryKey: TestDependencyKey {

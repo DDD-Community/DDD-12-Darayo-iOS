@@ -11,8 +11,8 @@ import Dependencies
 public struct SampleUseCase {
     @Dependency(\.sampleRepository) private var sampleRepository
     
-    public func helloWorld() {
-        sampleRepository.helloWorld()
+    public func fetchCoffeeList() async throws -> [Coffee] {
+        return try await sampleRepository.fetchCoffeeList()
     }
 }
 
