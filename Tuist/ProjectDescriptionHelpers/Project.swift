@@ -42,6 +42,7 @@ private extension Module {
         switch self {
         case .designSystem:
             [
+                .fonts(),
                 .custom(name: "Images", parser: .assets, extensions: ["xcassets"]),
                 .custom(name: "Colors", parser: .assets, extensions: ["xcassets"])
             ]
