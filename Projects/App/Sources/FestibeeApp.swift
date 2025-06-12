@@ -18,28 +18,14 @@ struct FestibeeApp: App {
     
     var body: some Scene {
         WindowGroup {
-            VStack(alignment: .leading) {
+            VStack(spacing: 8) {
                 Text("달아요 S2 화이팅~")
-                    .pretendard(style: .body1)
+                    .pretendard(style: .title1)
+                    .foregroundStyle(Color.point1)
                 
                 Text("달아요 S2 화이팅~")
-                    .pretendard(size: 20, weight: .thin)
-                
-                HStack(alignment: .top) {
-                    VStack(spacing: 0) {
-                        Text("달아요 S2 화이팅~")
-                            .pretendard(style: .body4)
-                        Text("달아요 S2 화이팅~")
-                            .pretendard(style: .body4)
-                        Text("달아요 S2 화이팅~")
-                            .pretendard(style: .body4)
-                    }
-                    .background(Color.mint)
-                    
-                    Text("달아요 S2 화이팅~\n달아요 S2 화이팅~\n달아요 S2 화이팅~")
-                        .pretendard(style: .body4)
-                        .background(Color.mint)
-                }
+                    .pretendard(size: 24, weight: .extraLight)
+                    .foregroundStyle(Color.point2)
             }
         }
     }

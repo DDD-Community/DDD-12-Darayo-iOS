@@ -45,7 +45,7 @@ public extension View {
 }
 
 extension Pretendard {
-    public enum Weight: CaseIterable {
+    public enum Weight {
         case thin
         case extraLight
         case light
@@ -71,7 +71,7 @@ extension Pretendard {
         }
     }
     
-    public enum TextStyle: CaseIterable {
+    public enum TextStyle {
         case title1
         case title2
         case title3
