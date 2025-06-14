@@ -22,6 +22,20 @@ public extension Target {
             settings: module.settings
         )
     }
+    
+    static func demo(of module: Module) -> Target {
+        return .target(
+            name: "\(module.name)Demo",
+            destinations: ProjectInfo.destinations,
+            product: .app,
+            bundleId: "\(module.bundleID).demo",
+            deploymentTargets: ProjectInfo.deploymentTargets,
+            infoPlist: .file(path: "Support/info.plist"),
+            sources: module.demoSources,
+            dependencies: [.target(.target(module))],
+            settings: .settings(configurations: .default)
+        )
+    }
 }
 
 private extension Module {
@@ -44,6 +58,10 @@ private extension Module {
         ["Sources/**"]
     }
     
+    var demoSources: SourceFilesList {
+        ["Demo/Sources/**"]
+    }
+    
     var resources: ResourceFileElements? {
         switch self {
         case .designSystem: ["Resources/**"]
@@ -52,8 +70,14 @@ private extension Module {
     }
     
     var settings: Settings {
-        .settings(
-            base: ["SWIFT_COMPILATION_MODE[config=Release]": "wholemodule"]
-        )
+        .settings(base: base, configurations: .default)
+    }
+    
+    var base: SettingsDictionary {
+        switch self {
+        case .designSystem:
+            ["CLANG_ENABLE_MODULE_VERIFIER": "YES"]
+        default: [:]
+        }
     }
 }

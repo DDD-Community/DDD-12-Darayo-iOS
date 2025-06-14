@@ -13,7 +13,7 @@ public extension Project {
             name: module.name,
             organizationName: ProjectInfo.organizationName,
             settings: module.settings,
-            targets: [.target(module)],
+            targets: module.targets,
             schemes: module.schemes,
             resourceSynthesizers: module.resourceSynthesizers
         )
@@ -26,6 +26,13 @@ private extension Module {
             base: ["ENABLE_USER_SCRIPT_SANDBOXING": "YES"],
             configurations: .default
         )
+    }
+    
+    var targets: [Target] {
+        switch self {
+        case .designSystem: [.target(self), .demo(of: self)]
+        default: [.target(self)]
+        }
     }
     
     var schemes: [Scheme] {
