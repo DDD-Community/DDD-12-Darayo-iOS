@@ -1,5 +1,5 @@
 //
-//  DarayoApp.swift
+//  FestibeeApp.swift
 //  Darayo
 //
 //  Created by 이정원 on 6/1/25.
@@ -8,9 +8,14 @@
 
 import SwiftUI
 import Root
+import DesignSystem
 
 @main
-struct DarayoApp: App {
+struct FestibeeApp: App {
+    init() {
+        DesignSystemFontFamily.registerAllCustomFonts()
+    }
+    
     var body: some Scene {
         WindowGroup {
             RootView(

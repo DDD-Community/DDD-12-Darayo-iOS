@@ -19,7 +19,21 @@ public extension Target {
             sources: module.sources,
             resources: module.resources,
             dependencies: module.dependencies,
-            settings: module.settings
+            settings: .settings(configurations: .default)
+        )
+    }
+    
+    static func demo(of module: Module) -> Target {
+        return .target(
+            name: "\(module.name)Demo",
+            destinations: ProjectInfo.destinations,
+            product: .app,
+            bundleId: "\(module.bundleID).demo",
+            deploymentTargets: ProjectInfo.deploymentTargets,
+            infoPlist: .file(path: "Demo/Support/info.plist"),
+            sources: module.demoSources,
+            dependencies: [.target(.target(module))],
+            settings: .settings(configurations: .default)
         )
     }
 }
@@ -44,16 +58,14 @@ private extension Module {
         ["Sources/**"]
     }
     
+    var demoSources: SourceFilesList {
+        ["Demo/Sources/**"]
+    }
+    
     var resources: ResourceFileElements? {
         switch self {
         case .designSystem: ["Resources/**"]
         default: nil
         }
-    }
-    
-    var settings: Settings {
-        .settings(
-            base: ["SWIFT_COMPILATION_MODE[config=Release]": "wholemodule"]
-        )
     }
 }

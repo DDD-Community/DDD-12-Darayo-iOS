@@ -12,8 +12,8 @@ public extension Project {
         self = Project(
             name: module.name,
             organizationName: ProjectInfo.organizationName,
-            settings: module.settings,
-            targets: [.target(module)],
+            settings: .settings(configurations: .default),
+            targets: module.targets,
             schemes: module.schemes,
             resourceSynthesizers: module.resourceSynthesizers
         )
@@ -21,11 +21,11 @@ public extension Project {
 }
 
 private extension Module {
-    var settings: Settings {
-        .settings(
-            base: ["ENABLE_USER_SCRIPT_SANDBOXING": "YES"],
-            configurations: .default
-        )
+    var targets: [Target] {
+        switch self {
+        case .designSystem: [.target(self), .demo(of: self)]
+        default: [.target(self)]
+        }
     }
     
     var schemes: [Scheme] {
@@ -42,6 +42,7 @@ private extension Module {
         switch self {
         case .designSystem:
             [
+                .fonts(),
                 .custom(name: "Images", parser: .assets, extensions: ["xcassets"]),
                 .custom(name: "Colors", parser: .assets, extensions: ["xcassets"])
             ]

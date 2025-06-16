@@ -29,7 +29,7 @@ extension Module {
         }
     }
     
-    public var dependencies: [TargetDependency] {
+    var dependencies: [TargetDependency] {
         var allDependencies: [TargetDependency] = []
         
         if let dependencies = Module.dependencyInfo[self] {

@@ -18,7 +18,7 @@ public extension Array where Element == Configuration {
         .debug(name: .dev, xcconfig: .path(.dev)),
         .debug(name: .stage, xcconfig: .path(.stage)),
         .debug(name: .prod, xcconfig: .path(.prod)),
-        .debug(name: .release, xcconfig: .path(.release))
+        .release(name: .release, xcconfig: .path(.release))
     ]
 }
 

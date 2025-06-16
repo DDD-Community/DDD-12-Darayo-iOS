@@ -66,6 +66,12 @@ DerivedData/
 graph.dot
 Derived/
 
+!Projects/
+!Projects/DesignSystem/
+!Projects/DesignSystem/Derived/
+Projects/DesignSystem/Derived/*
+!Projects/DesignSystem/Derived/Sources/
+
 ### Tuist managed dependencies ###
 Tuist/.build
 
