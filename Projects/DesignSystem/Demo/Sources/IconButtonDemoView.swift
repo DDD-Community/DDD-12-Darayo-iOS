@@ -12,7 +12,9 @@ import DesignSystem
 struct IconButtonDemoView: View {
     var body: some View {
         VStack(spacing: 20) {
-            
+            IconButton(icon: .init(systemName: "person")) {
+                
+            }
         }
     }
 }

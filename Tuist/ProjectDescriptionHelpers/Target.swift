@@ -19,7 +19,7 @@ public extension Target {
             sources: module.sources,
             resources: module.resources,
             dependencies: module.dependencies,
-            settings: module.settings
+            settings: .settings(configurations: .default)
         )
     }
     
@@ -30,7 +30,7 @@ public extension Target {
             product: .app,
             bundleId: "\(module.bundleID).demo",
             deploymentTargets: ProjectInfo.deploymentTargets,
-            infoPlist: .file(path: "Support/info.plist"),
+            infoPlist: .file(path: "Demo/Support/info.plist"),
             sources: module.demoSources,
             dependencies: [.target(.target(module))],
             settings: .settings(configurations: .default)
@@ -66,18 +66,6 @@ private extension Module {
         switch self {
         case .designSystem: ["Resources/**"]
         default: nil
-        }
-    }
-    
-    var settings: Settings {
-        .settings(base: base, configurations: .default)
-    }
-    
-    var base: SettingsDictionary {
-        switch self {
-        case .designSystem:
-            ["CLANG_ENABLE_MODULE_VERIFIER": "YES"]
-        default: [:]
         }
     }
 }
