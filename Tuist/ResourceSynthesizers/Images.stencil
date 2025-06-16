@@ -1,0 +1,19 @@
+import SwiftUI
+
+{% if catalogs %}
+public extension Image {
+    private init(_ name: String) {
+        self.init(name, bundle: Bundle.module)
+    }
+    
+    {% for catalog in catalogs %}
+    {% if catalog.name != "Images" %}
+    {% endif %}
+    {% for asset in catalog.assets %}
+    {% if asset.type == "image" %}
+    static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = Self("{{asset.value}}")
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+}
+{% endif %}
