@@ -7,13 +7,11 @@
 //
 
 import Foundation
-
-public protocol NetworkServiceProtocol {
-    func request(endpoint: Endpoint) async throws
-    func request<Response: Decodable>(endpoint: Endpoint) async throws -> Response
-}
+import Data
 
 public struct NetworkService: NetworkServiceProtocol {
+    public init() {}
+    
     public func request(endpoint: Endpoint) async throws {
         try await performRequest(endpoint: endpoint)
     }
@@ -36,7 +34,7 @@ public struct NetworkService: NetworkServiceProtocol {
 private extension NetworkService {
     var urlSession: URLSession {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 10
+        configuration.timeoutIntervalForRequest = 20
         return .init(configuration: configuration)
     }
     

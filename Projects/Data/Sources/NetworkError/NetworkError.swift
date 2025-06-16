@@ -1,12 +1,10 @@
 //
 //  NetworkError.swift
-//  Network
+//  Data
 //
 //  Created by 이정원 on 6/6/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
-
-import Foundation
 
 public struct NetworkError: Error {
     public let type: ErrorType
