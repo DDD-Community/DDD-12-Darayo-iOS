@@ -36,17 +36,3 @@ public struct IconButton: View {
         }
     }
 }
-
-public struct ShrinkButtonStyle: ButtonStyle {
-    private let scaleAmount: CGFloat = 0.9
-    private let animation: Animation = .easeInOut(duration: 0.2)
-
-    public init() {}
-    
-    public func makeBody(configuration: Configuration) -> some View {
-        let isPressed = configuration.isPressed
-        return configuration.label
-            .scaleEffect(isPressed ? scaleAmount : 1.0)
-            .animation(animation, value: isPressed)
-    }
-}
