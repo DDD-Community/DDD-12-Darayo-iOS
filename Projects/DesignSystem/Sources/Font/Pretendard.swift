@@ -76,6 +76,7 @@ extension Pretendard {
         case title2
         case title3
         case title4
+        case body0
         case body1
         case body2
         case body3
@@ -89,6 +90,7 @@ extension Pretendard {
             case .title2: 18
             case .title3: 16
             case .title4: 16
+            case .body0: 15
             case .body1: 16
             case .body2: 14
             case .body3: 14
@@ -104,6 +106,7 @@ extension Pretendard {
             case .title2: .semiBold
             case .title3: .semiBold
             case .title4: .medium
+            case .body0: .regular
             case .body1: .regular
             case .body2: .semiBold
             case .body3: .medium
