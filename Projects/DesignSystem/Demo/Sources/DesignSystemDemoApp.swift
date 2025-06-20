@@ -30,6 +30,10 @@ private extension DesignSystemDemoApp {
             NavigationLink("Icon Button") {
                 IconButtonDemoView()
             }
+            
+            NavigationLink("Timetable") {
+                TimetableDemoView()
+            }
         }
         .navigationTitle("Design System")
     }
