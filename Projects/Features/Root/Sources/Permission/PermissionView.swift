@@ -34,7 +34,6 @@ private extension PermissionView {
     var titleView: some View {
         Text("앱 사용을 위해\n접근 권한을 허용해주세요")
             .pretendard(style: .title1)
-            .multilineTextAlignment(.leading)
             .foregroundStyle(Color.white)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, 5)
