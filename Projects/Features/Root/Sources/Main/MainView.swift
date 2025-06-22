@@ -18,8 +18,6 @@ public struct MainView: View {
     }
     
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            TabView(selection: <#T##Binding<Hashable>#>, content: <#T##() -> TabContent#>)
-        }
+        Text("MainView")
     }
 }
