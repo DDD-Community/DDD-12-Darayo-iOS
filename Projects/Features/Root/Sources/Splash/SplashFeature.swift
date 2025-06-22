@@ -11,7 +11,7 @@ import ComposableArchitecture
 @Reducer
 public struct SplashFeature {
     public struct State {
-        public init() {}
+        
     }
     
     public enum Action {

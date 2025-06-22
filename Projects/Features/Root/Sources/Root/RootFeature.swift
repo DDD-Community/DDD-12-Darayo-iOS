@@ -31,6 +31,9 @@ public struct RootFeature {
             case .path(.splash(.timeElapsed)):
                 state.path = .permission(.init())
                 return .none
+            case .path(.permission(.timeElapsed)):
+                state.path = .main(.init())
+                return .none
             default: return .none
             }
         }
@@ -44,11 +47,13 @@ extension RootFeature {
         public enum State {
             case splash(SplashFeature.State)
             case permission(PermissionFeature.State)
+            case main(MainFeature.State)
         }
         
         public enum Action {
             case splash(SplashFeature.Action)
             case permission(PermissionFeature.Action)
+            case main(MainFeature.Action)
         }
         
         public var body: some ReducerOf<Self> {
@@ -58,6 +63,10 @@ extension RootFeature {
             
             Scope(state: \.permission, action: \.permission) {
                 PermissionFeature()
+            }
+            
+            Scope(state: \.main, action: \.main) {
+                MainFeature()
             }
         }
     }

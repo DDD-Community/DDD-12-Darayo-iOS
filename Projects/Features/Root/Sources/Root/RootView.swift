@@ -28,6 +28,10 @@ public struct RootView: View {
             if let store = store.scope(state: \.permission, action: \.permission) {
                 PermissionView(store: store)
             }
+        case .main:
+            if let store = store.scope(state: \.main, action: \.main) {
+                MainView(store: store)
+            }
         }
     }
 }

@@ -27,6 +27,7 @@ public struct PermissionView: View {
         .padding(.horizontal, 16)
         .padding(.bottom, 22)
         .background(Color.background1)
+        .onAppear { store.send(.onAppear) }
     }
 }
 
