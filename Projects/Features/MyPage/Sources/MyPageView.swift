@@ -151,8 +151,9 @@ private extension MyPageView {
             Text(title(of: menu))
                 .pretendard(style: .body1)
                 .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .layoutPriority(1)
             
-            Spacer()
             Toggle("", isOn: isOn)
                 .tint(Color.point1)
         }
