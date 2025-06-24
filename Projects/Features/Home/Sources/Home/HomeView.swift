@@ -22,9 +22,11 @@ public struct HomeView: View {
             navigationBar
             ScrollView {
                 VStack {
-                    Text("홈")
-                        .pretendard(style: .title1)
-                        .foregroundStyle(Color.white)
+                    FestivalGridView(festivals: store.festivals) { festival in
+                        store.send(.festivalTapped(festival))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 100)
                 }
                 .padding(.bottom, 24)
             }
@@ -85,7 +87,6 @@ private extension HomeView {
                 .frame(width: 24, height: 24)
                 .foregroundStyle(color)
         }
-        .buttonStyle(.plain)
     }
     
     func favoritesButton(isFiltered: Binding<Bool>) -> some View {
