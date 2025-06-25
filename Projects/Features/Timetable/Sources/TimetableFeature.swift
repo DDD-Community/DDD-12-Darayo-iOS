@@ -10,7 +10,10 @@ import ComposableArchitecture
 
 @Reducer
 public struct TimetableFeature {
+    @ObservableState
     public struct State {
+        var festivalName: String = "서울 재즈 페스티벌"
+        var dateString: String = "25.08.08 (금)"
         public init() {}
     }
     
