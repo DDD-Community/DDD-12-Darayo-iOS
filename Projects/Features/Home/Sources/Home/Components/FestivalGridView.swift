@@ -91,11 +91,16 @@ private extension FestivalGridView {
                 .frame(height: 110)
                 .clipped()
             
-//            LinearGradient(
-//                gradient: .init(colors: [.black, .black.opacity(0)]),
-//                startPoint: .top,
-//                endPoint: .bottom
-//            )
+            LinearGradient(
+                gradient: .init(
+                    colors: [
+                        .black.opacity(0.5),
+                        .black.opacity(0)
+                    ]
+                ),
+                startPoint: .top,
+                endPoint: .bottom
+            )
         }
     }
     
