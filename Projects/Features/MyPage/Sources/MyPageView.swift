@@ -56,13 +56,9 @@ private extension MyPageView {
     var versionInfoView: some View {
         HStack(spacing: 0) {
             profileImageView
-            versionTitleText
             versionText
             Spacer()
-            VStack {
-                Spacer()
-                updateInfoView
-            }
+            updateInfoView
         }
         .padding(16)
     }
@@ -73,20 +69,24 @@ private extension MyPageView {
             .frame(width: 65, height: 65)
     }
     
-    var versionTitleText: some View {
-        Text("현재 버전\n최신 버전")
-            .pretendard(style: .body2)
-            .multilineTextAlignment(.leading)
-            .foregroundStyle(Color.point1)
-            .padding(.leading, 21)
+    var versionText: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            versionTextView(title: "현재 버전", version: "NN.NN.N")
+            versionTextView(title: "최신 버전", version: "NN.NN.N")
+        }
+        .padding(.leading, 20)
     }
     
-    var versionText: some View {
-        Text("NN.NN.N\nNN.NN.N")
-            .pretendard(style: .body4)
-            .multilineTextAlignment(.leading)
-            .foregroundStyle(Color.white)
-            .padding(.leading, 11)
+    func versionTextView(title: String, version: String) -> some View {
+        HStack(spacing: 10) {
+            Text(title)
+                .pretendard(style: .body2)
+                .foregroundStyle(Color.point1)
+            
+            Text(version)
+                .pretendard(style: .body4)
+                .foregroundStyle(Color.white)
+        }
     }
     
     var updateInfoView: some View {
@@ -105,7 +105,6 @@ private extension MyPageView {
                 }
             }
         }
-        .padding(.bottom, 14)
     }
     
     var notificationSection: some View {
@@ -141,7 +140,7 @@ private extension MyPageView {
             .pretendard(style: .title2)
             .foregroundStyle(Color.point1)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 17)
+            .padding(.horizontal, 16)
             .frame(height: 40)
             .background(Color.grey6)
     }
@@ -157,8 +156,7 @@ private extension MyPageView {
             Toggle("", isOn: isOn)
                 .tint(Color.point1)
         }
-        .padding(.horizontal, 17)
-        .frame(height: 66)
+        .padding(16)
     }
     
     func menuButton(menu: MyPageFeature.Menu) -> some View {
@@ -177,7 +175,7 @@ private extension MyPageView {
                     .frame(width: 24, height: 24)
                     .foregroundStyle(Color.white)
             }
-            .padding(17)
+            .padding(16)
         }
     }
 }
