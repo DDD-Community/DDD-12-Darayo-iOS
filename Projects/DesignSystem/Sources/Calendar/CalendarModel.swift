@@ -23,7 +23,7 @@ extension CalendarModel {
         public let location: String
         public let date: Date
         public let time: String
-        public let category: String
+        public let category: EventCategory
         
         public init(
             id: String = UUID().uuidString,
@@ -31,7 +31,7 @@ extension CalendarModel {
             location: String,
             date: Date,
             time: String,
-            category: String
+            category: EventCategory
         ) {
             self.id = id
             self.title = title
