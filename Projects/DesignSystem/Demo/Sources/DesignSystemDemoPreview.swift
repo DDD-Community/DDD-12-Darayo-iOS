@@ -20,6 +20,10 @@ struct DesignSystemDemoPreview: View {
                 NavigationLink("Timetable") {
                     TimetableDemoView()
                 }
+                
+                NavigationLink("Calendar") {
+                    CalendarDemoView()
+                }
             }
             .navigationTitle("Design System")
         }
