@@ -16,60 +16,68 @@ public struct EventCard: View {
     }
     
     public var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 10) {
             
-            // 이벤트 이미지 플레이스홀더
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color.blue.opacity(0.3))
-                .frame(width: 60, height: 60)
-                .overlay(
-                    Image(systemName: "music.note")
-                        .foregroundColor(.white)
-                        .font(.title2)
-                )
+            Image.sampleFestival
+                .resizable()
+                .scaledToFill()
+                .frame(width: 108, height: 108)
+                .clipped()
+                .cornerRadius(8)
             
-            VStack(alignment: .leading, spacing: 4) {
-                HStack {
-                    Text(event.category.label)
-                        .pretendard(style: .caption2)
-                        .foregroundColor(event.category.textColor)
-                        .padding(.horizontal, 8)
-                        .frame(width: 47, height: 16)
-                        .background(event.category.backgroundColor)
-                        .cornerRadius(16)
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack {
+                        Text(event.category.label)
+                            .pretendard(style: .caption2)
+                            .foregroundColor(event.category.textColor)
+                            .padding(.horizontal, 8)
+                            .frame(width: 47, height: 16)
+                            .background(event.category.backgroundColor)
+                            .cornerRadius(16)
+                        
+                        Spacer()
+                    }
+                    .padding(.bottom, 4)
                     
-                    Spacer()
-                }
-                
-                Text(event.title)
-                    .pretendard(style: .title3)
-                    .foregroundColor(.white)
-                    .lineLimit(1)
-                
-                HStack {
-                    Text("예매처")
-                        .pretendard(style: .body3)
-                        .foregroundColor(.grey4)
-                    Text("\(event.location)")
-                        .pretendard(style: .body3)
-                        .foregroundColor(.grey3)
+                    Text(event.title)
+                        .pretendard(style: .title4)
+                        .foregroundColor(.white)
                         .lineLimit(1)
+                        .padding(.bottom, 8)
                 }
+                .frame(width: 211, height: 41)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
                 
-                HStack {
-                    Text("예매일시")
-                        .pretendard(style: .body3)
-                        .foregroundColor(.grey4)
-                    Text("\(event.time)")
-                        .pretendard(style: .body3)
-                        .foregroundColor(.gray)
+                VStack(alignment: .leading, spacing: 1) {
+                    HStack(spacing: 6) {
+                        Text("예매처")
+                            .pretendard(style: .body4)
+                            .foregroundColor(.grey4)
+                        Text("\(event.location)")
+                            .pretendard(style: .body4)
+                            .foregroundColor(.grey3)
+                            .lineLimit(1)
+                    }
+                    
+                    HStack(spacing: 6) {
+                        Text("예매일시")
+                            .pretendard(style: .body4)
+                            .foregroundColor(.grey4)
+                        Text("\(event.time)")
+                            .pretendard(style: .body4)
+                            .foregroundColor(.gray)
+                    }
                 }
+                .padding(.bottom, 8)
             }
+            .frame(width: 220, height: 108)
             Spacer()
         }
-        .padding(12)
-        .background(Color.gray.opacity(0.1))
-        .cornerRadius(12)
+        .frame(width: 400, height: 108)
+        .background(Color.background2)
+        .cornerRadius(8)
     }
 }
     

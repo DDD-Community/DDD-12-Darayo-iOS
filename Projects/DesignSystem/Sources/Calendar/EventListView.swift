@@ -11,7 +11,8 @@ import SwiftUI
 public struct EventListView: View {
     let events: [CalendarModel.Event]
     let title: String
-    let icon: String
+    
+    @State private var isSelected: Bool = false
     
     public init(
         events: [CalendarModel.Event],
@@ -20,7 +21,6 @@ public struct EventListView: View {
     ) {
         self.events = events
         self.title = title
-        self.icon = icon
     }
     
     public var body: some View {
@@ -37,23 +37,30 @@ public struct EventListView: View {
 
 private extension EventListView {
     var header: some View {
-        HStack {
-            Image(systemName: icon)
-                .foregroundColor(.white)
-            
-            Text(title)
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-            
-            Spacer()
+        Button(action: {
+            isSelected.toggle()
+        }) {
+            HStack(spacing: 5) {
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .resizable()
+                    .frame(width: 18, height: 18)
+                    .foregroundColor(isSelected ? .white : .grey3)
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+                
+                Text(title)
+                    .pretendard(style: .body4)
+                    .foregroundColor(.grey3)
+                
+                Spacer()
+            }
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 16)
+        .padding(.vertical, 12)
+        .contentShape(Rectangle())
     }
     
     var eventList: some View {
         ScrollView {
-            LazyVStack(spacing: 12) {
+            LazyVStack(spacing: 14) {
                 ForEach(events, id: \.id) { event in
                     EventCard(event: event)
                 }
@@ -61,4 +68,28 @@ private extension EventListView {
             .padding(.horizontal, 20)
         }
     }
+}
+
+#Preview {
+    EventListView(
+        events: [
+            CalendarModel.Event(
+                id: UUID().uuidString,
+                title: "인천 펜타포트 락 페스티벌",
+                location: "인터파크",
+                date: Date(),
+                time: "25.06.12 18:00",
+                category: .reservationDay
+            ),
+            CalendarModel.Event(
+                id: UUID().uuidString,
+                title: "서울 재즈 페스티벌",
+                location: "예스24",
+                date: Date(),
+                time: "25.07.20 19:30",
+                category: .festivalDay
+            )
+        ],
+        title: "좋아요한 페스티벌"
+    )
 }
