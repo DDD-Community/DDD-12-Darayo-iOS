@@ -9,9 +9,10 @@ import ProjectDescription
 
 public extension Scheme {
     static func scheme(name: String, environment: Environment) -> Scheme {
+        let appName = ProjectInfo.appName
         let schemeName = switch environment {
-        case .prod: name
-        case .dev, .stage: "\(name)+\(environment.name.uppercased())"
+        case .prod: appName.uppercased()
+        case .dev, .stage: "\(appName)+\(environment.name)".uppercased()
         }
 
         return .scheme(

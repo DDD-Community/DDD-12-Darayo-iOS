@@ -12,6 +12,7 @@ public extension Project {
         self = Project(
             name: module.name,
             organizationName: ProjectInfo.organizationName,
+            options: module.options,
             settings: .settings(configurations: .default),
             targets: module.targets,
             schemes: module.schemes,
@@ -47,6 +48,13 @@ private extension Module {
                 .custom(name: "Colors", parser: .assets, extensions: ["xcassets"])
             ]
         default: []
+        }
+    }
+    
+    var options: Project.Options {
+        switch self {
+        case .app: .options(automaticSchemesOptions: .disabled)
+        default: .options()
         }
     }
 }
