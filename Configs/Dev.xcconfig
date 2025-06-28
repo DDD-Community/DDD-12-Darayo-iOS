@@ -1,5 +1,5 @@
 #include "./Shared.xcconfig"
 
-BUNDLE_IDENTIFIER = com.darayo.festibee-dev
+BUNDLE_IDENTIFIER = com.darayo.festibee.dev
 BUNDLE_DISPLAY_NAME = 페스티비DEV
 ENV = DEV
