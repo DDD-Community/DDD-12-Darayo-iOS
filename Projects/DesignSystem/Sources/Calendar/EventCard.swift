@@ -41,7 +41,7 @@ public struct EventCard: View {
                     .padding(.bottom, 4)
                     
                     Text(event.title)
-                        .pretendard(style: .title4)
+                        .pretendard(style: .title3)
                         .foregroundColor(.white)
                         .lineLimit(1)
                         .padding(.bottom, 8)

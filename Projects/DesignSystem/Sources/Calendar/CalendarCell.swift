@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 public struct CalendarCell: View {
     let index: Int
@@ -76,7 +77,7 @@ public struct CalendarCell: View {
                     }
                     
                     Text("\(dayNumber)")
-                        .font(.system(size: 16, weight: .medium))
+                        .pretendard(style: .body3)
                         .foregroundStyle(
                             selectedDate != nil && Foundation.Calendar.current.isDate(cellDate, inSameDayAs: selectedDate!)
                             ? .black
@@ -99,3 +100,37 @@ public struct CalendarCell: View {
         .disabled(!isCurrentMonth)
     }
 }
+#Preview {
+    CalendarCellPreview()
+        .padding()
+        .background(Color.black)
+}
+
+private struct CalendarCellPreview: View {
+    @State private var selectedDate: Date? = Date()
+
+    var body: some View {
+        CalendarCell(
+            index: 10,
+            adjustedFirstWeekday: 2,
+            daysInMonth: 30,
+            daysInPreviousMonth: 31,
+            currentMonth: Date(),
+            selectedDate: selectedDate,
+            events: [
+                CalendarModel.Event(
+                    id: UUID().uuidString,
+                    title: "테스트 이벤트",
+                    location: "예스24",
+                    date: Date(),
+                    time: "25.07.20 19:30",
+                    category: .festivalDay
+                )
+            ],
+            onDateSelected: { date in
+                selectedDate = date
+            }
+        )
+    }
+}
+

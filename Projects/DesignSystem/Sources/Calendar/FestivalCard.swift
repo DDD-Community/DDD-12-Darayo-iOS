@@ -9,9 +9,9 @@
 import SwiftUI
 
 public struct EventCard: View {
-    let event: Calendar.Event
+    let event: CalendarModel.Event
     
-    public init(event: Calendar.Event) {
+    public init(event: CalendarModel.Event) {
         self.event = event
     }
     

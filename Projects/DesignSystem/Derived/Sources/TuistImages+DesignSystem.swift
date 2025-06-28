@@ -8,7 +8,6 @@ public extension Image {
     static let iconBell = Self("icon_bell")
     static let iconCalendar = Self("icon_calendar")
     static let iconCalendarToday = Self("icon_calendarToday")
-    static let iconCalendarToggle = Self("icon_calendarToggle")
     static let iconCalendarMode = Self("icon_calendar_mode")
     static let iconChecked = Self("icon_checked")
     static let iconGridMode = Self("icon_grid_mode")

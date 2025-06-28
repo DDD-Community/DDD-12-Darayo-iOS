@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+//import DesignSystem
 
 public struct CalendarView: View {
     @State private var currentMonth: Date = Date()
@@ -44,54 +45,70 @@ public struct CalendarView: View {
 private extension CalendarView {
     var header: some View {
         HStack {
+            // 왼쪽 화살표
             Button(action: {
                 currentMonth = Foundation.Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) ?? currentMonth
                 onMonthChanged(currentMonth)
             }) {
-                Image(systemName: "chevron.left")
-                    .foregroundStyle(.white)
-                    .font(.title2)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.background2)
+                        .frame(width: 24, height: 24)
+                    
+                    Image(systemName: "chevron.left")
+                        .resizable()
+                        .frame(width: 7.43, height: 13)
+                        .foregroundColor(.white)
+                }
             }
 
             Spacer()
 
+            // 년 & 월
             Text(koreanMonthYear(from: currentMonth))
-                .font(.title2)
-                .fontWeight(.medium)
+                .pretendard(style: .title4)
                 .foregroundStyle(.white)
 
             Spacer()
 
+            // 오른쪽 화살표
             Button(action: {
                 currentMonth = Foundation.Calendar.current.date(byAdding: .month, value: 1, to: currentMonth) ?? currentMonth
                 onMonthChanged(currentMonth)
             }) {
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(.white)
-                    .font(.title2)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color.background2)
+                        .frame(width: 24, height: 24)
+                    
+                    Image(systemName: "chevron.right")
+                        .resizable()
+                        .frame(width: 7.43, height: 13)
+                        .foregroundColor(.white)
+                }
             }
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 15)
         .padding(.vertical, 16)
     }
 
     var calendarContent: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             weekdayHeader
             calendarGrid
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, 10)
     }
 
     var weekdayHeader: some View {
         let koreanWeekdays = ["월", "화", "수", "목", "금", "토", "일"]
 
-        return HStack(spacing: 0) {
+        return HStack(spacing: 23) {
             ForEach(koreanWeekdays.indices, id: \.self) { i in
                 Text(koreanWeekdays[i])
-                    .font(.system(size: 14, weight: .medium))
+                    .pretendard(style: .caption2)
                     .foregroundColor(.gray)
-                    .frame(maxWidth: .infinity)
+                    .frame(width: 36, height: 36)
             }
         }
     }
@@ -105,7 +122,7 @@ private extension CalendarView {
         let previousMonth = Foundation.Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) ?? currentMonth
         let daysInPreviousMonth = CalendarHelper.numberOfDays(in: previousMonth)
         
-        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 4), count: 7), spacing: 8) {
+        return LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 30), count: 7), spacing: 8) {
             ForEach(0..<totalCells, id: \.self) { index in
                 CalendarCell(
                     index: index,
@@ -121,7 +138,6 @@ private extension CalendarView {
                 }
             }
         }
-        .padding(.top, 8)
     }
     
     func koreanMonthYear(from date: Date) -> String {
@@ -130,3 +146,30 @@ private extension CalendarView {
         return "\(year). \(String(format: "%02d", month))"
     }
 }
+
+#Preview {
+    CalendarView(
+        calendar: CalendarModel(
+            events: [
+                CalendarModel.Event(
+                    id: UUID().uuidString,
+                    title: "서울 재즈 페스티벌",
+                    location: "예스24",
+                    date: Date(),
+                    time: "25.07.20 19:30",
+                    category: .festivalDay
+                ),
+                CalendarModel.Event(
+                    id: UUID().uuidString,
+                    title: "인천 펜타포트 락 페스티벌",
+                    location: "인터파크",
+                    date: Date(),
+                    time: "25.06.12 18:00",
+                    category: .reservationDay
+                )
+            ]
+        )
+    )
+    .background(Color.black)
+}
+

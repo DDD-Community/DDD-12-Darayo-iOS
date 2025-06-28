@@ -18,18 +18,17 @@ struct CalendarDemoView: View {
         NavigationView {
             VStack(spacing: 0) {
                 calendarSection
+                Spacer()
+                    .frame(height: 20)
                 
-                if !eventsForSelectedDate.isEmpty {
-                    EventListView(events: eventsForSelectedDate)
-                } else {
-                    Spacer()
-                }
+                eventListSection
+                Spacer()
             }
             .background(Color.black)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 16) {
+                    HStack(spacing: 10) {
                         Button(action: {
                             // 왼쪽 버튼 액션 (빈 상태)
                         }) {
@@ -41,6 +40,7 @@ struct CalendarDemoView: View {
                         Button(action: {
                             showCalendarView.toggle()
                         }) {
+                            // 수정필요
                             Image(systemName: "list.bullet")
                                 .foregroundColor(.white)
                                 .font(.title3)
@@ -63,6 +63,36 @@ struct CalendarDemoView: View {
         )
     }
     
+    private var eventListSection: some View {
+        VStack(spacing: 0) {
+            if !eventsForSelectedDate.isEmpty {
+                EventListView(
+                    events: eventsForSelectedDate,
+                    title: "좋아요한 페스티벌"
+                )
+//                .padding(.horizontal, )
+            } else {
+                emptyStateView
+            }
+        }
+    }
+    
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "calendar.circle")
+                .font(.system(size: 48))
+                .foregroundColor(.grey4)
+            
+            Text("선택한 날짜에 등록된 이벤트가 없습니다")
+                .pretendard(style: .body3)
+                .foregroundColor(.grey3)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 40)
+        .padding(.vertical, 40)
+    }
+    
     private var eventsForSelectedDate: [CalendarModel.Event] {
         guard let selectedDate = selectedDate else { return [] }
         return calendar.events.filter { event in
@@ -70,3 +100,8 @@ struct CalendarDemoView: View {
         }
     }
 }
+
+#Preview {
+    CalendarDemoView()
+}
+
