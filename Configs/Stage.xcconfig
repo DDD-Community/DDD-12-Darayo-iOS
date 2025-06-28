@@ -2,3 +2,4 @@
 
 BUNDLE_IDENTIFIER = com.darayo.festibee-stage
 BUNDLE_DISPLAY_NAME = 페스티비STAGE
+ENV = STAGE
