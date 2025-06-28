@@ -64,14 +64,10 @@ struct CalendarDemoView: View {
     
     private var eventListSection: some View {
         VStack(spacing: 0) {
-            if !eventsForSelectedDate.isEmpty {
                 EventListView(
                     events: eventsForSelectedDate,
                     title: "좋아요한 페스티벌"
                 )
-            } else {
-                emptyStateView
-            }
         }
     }
     
