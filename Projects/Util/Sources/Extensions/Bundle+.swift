@@ -10,6 +10,7 @@ import Foundation
 
 public extension Bundle {
     static let environment: String? = value(of: "Environment")
+    static let appVersion = value(of: "CFBundleShortVersionString") ?? ""
     
     private static func value(of key: String) -> String? {
         return Bundle.main.object(forInfoDictionaryKey: key) as? String

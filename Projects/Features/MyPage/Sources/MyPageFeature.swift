@@ -6,7 +6,9 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import ComposableArchitecture
+import Util
 
 @Reducer
 public struct MyPageFeature {
@@ -14,7 +16,14 @@ public struct MyPageFeature {
     public struct State {
         var isNotificationOn: Bool = true
         var isLatestVersion: Bool = true
-        public init() {}
+        var currentVersion: String
+        var latestVersion: String
+        
+        public init() {
+            let appVersion = Bundle.appVersion
+            self.currentVersion = appVersion
+            self.latestVersion = appVersion
+        }
     }
     
     public enum Action: BindableAction {
