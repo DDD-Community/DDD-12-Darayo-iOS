@@ -16,18 +16,18 @@ public struct EventCard: View {
     }
     
     public var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: 0) {
             
             Image.sampleFestival
                 .resizable()
                 .scaledToFill()
                 .frame(width: 108, height: 108)
                 .clipped()
-                .cornerRadius(8)
+                .cornerRadius(4)
             
-            VStack(alignment: .leading, spacing: 0) {
-                VStack(alignment: .leading, spacing: 1) {
-                    HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(alignment: .center) {
                         Text(event.category.label)
                             .pretendard(style: .caption2)
                             .foregroundColor(event.category.textColor)
@@ -38,19 +38,15 @@ public struct EventCard: View {
                         
                         Spacer()
                     }
-                    .padding(.bottom, 4)
                     
                     Text(event.title)
                         .pretendard(style: .title3)
                         .foregroundColor(.white)
                         .lineLimit(1)
-                        .padding(.bottom, 8)
                 }
-                .frame(width: 211, height: 41)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
+                .frame(maxWidth: .infinity, alignment: .topLeading)
                 
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 0) {
                     HStack(spacing: 6) {
                         Text("예매처")
                             .pretendard(style: .body4)
@@ -70,14 +66,15 @@ public struct EventCard: View {
                             .foregroundColor(.gray)
                     }
                 }
-                .padding(.bottom, 8)
             }
-            .frame(width: 220, height: 108)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
             Spacer()
         }
-        .frame(width: 400, height: 108)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.background2)
-        .cornerRadius(8)
+        .cornerRadius(4)
     }
 }
     

@@ -55,6 +55,7 @@ private extension EventListView {
             }
         }
         .padding(.vertical, 12)
+        .padding(.horizontal, 16)
         .contentShape(Rectangle())
     }
     
@@ -65,7 +66,7 @@ private extension EventListView {
                     EventCard(event: event)
                 }
             }
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 16)
         }
     }
 }

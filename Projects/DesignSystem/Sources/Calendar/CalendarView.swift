@@ -49,7 +49,7 @@ public struct CalendarView: View {
                 }
             )
         }
-        .padding(.vertical, 20)
+//        .padding(.vertical, 20)
     }
     
     private func previousMonth() {
@@ -73,10 +73,10 @@ private struct CalendarViewPreviewWrapper: View {
         CalendarView(
             calendar: CalendarModel(events: dummyEvents),
             onDateSelected: { date in
-                print("Selected date:", date)
+//                print("Selected date:", date)
             },
             onMonthChanged: { newMonth in
-                print("Changed month:", newMonth)
+//                print("Changed month:", newMonth)
             }
         )
     }

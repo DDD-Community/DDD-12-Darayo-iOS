@@ -22,7 +22,6 @@ struct CalendarDemoView: View {
                     .frame(height: 20)
                 
                 eventListSection
-                Spacer()
             }
             .background(Color.black)
             .navigationBarTitleDisplayMode(.inline)
@@ -34,7 +33,7 @@ struct CalendarDemoView: View {
                         }) {
                             Image(systemName: "square.grid.2x2.fill")
                                 .foregroundColor(.white)
-                                .font(.title3)
+                                .pretendard(style: .title3)
                         }
                         
                         Button(action: {
@@ -43,7 +42,7 @@ struct CalendarDemoView: View {
                             // 수정필요
                             Image(systemName: "list.bullet")
                                 .foregroundColor(.white)
-                                .font(.title3)
+                                .pretendard(style: .title3)
                         }
                     }
                 }
@@ -70,7 +69,6 @@ struct CalendarDemoView: View {
                     events: eventsForSelectedDate,
                     title: "좋아요한 페스티벌"
                 )
-//                .padding(.horizontal, )
             } else {
                 emptyStateView
             }
