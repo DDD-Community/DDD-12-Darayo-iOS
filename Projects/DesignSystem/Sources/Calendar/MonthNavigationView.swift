@@ -56,7 +56,8 @@ struct MonthNavigationView: View {
                 }
             }
         }
-        .padding(.horizontal, 15)
+        .frame(maxWidth: .infinity, alignment: .center)
+//        .padding(.horizontal, 15)
     }
 }
 

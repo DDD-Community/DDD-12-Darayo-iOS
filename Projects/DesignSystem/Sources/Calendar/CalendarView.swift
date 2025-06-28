@@ -49,7 +49,8 @@ public struct CalendarView: View {
                 }
             )
         }
-//        .padding(.vertical, 20)
+        .padding(.horizontal, 16)
+        .frame(maxWidth: .infinity, alignment: .topLeading)
     }
     
     private func previousMonth() {

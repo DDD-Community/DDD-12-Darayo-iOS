@@ -78,8 +78,10 @@ struct CalendarDemoView: View {
     private var emptyStateView: some View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.circle")
-                .font(.system(size: 48))
+                .font(.system(size: 18))
                 .foregroundColor(.grey4)
+                .padding(2)
+                .frame(width: 24, height: 24, alignment: .center)
             
             Text("선택한 날짜에 등록된 이벤트가 없습니다")
                 .pretendard(style: .body3)

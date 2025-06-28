@@ -44,7 +44,7 @@ struct CalendarDayCell: View {
                     Color.clear
                 }
             }
-            .frame(width: 32, height: 32)
+            .frame(width: 36, height: 36)
             
             VStack(spacing: 1) {
                 // 날짜 숫자
