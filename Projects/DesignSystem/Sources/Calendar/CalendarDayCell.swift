@@ -34,41 +34,41 @@ struct CalendarDayCell: View {
     
     var body: some View {
         ZStack {
-            // 오늘 날짜 배경
-            if isToday {
-                Image.iconCalendarToday
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 32, height: 32)
-            }
-            
             // 선택된 날짜 배경
-            if isSelected && !isToday {
-                Circle()
-                    .fill(Color.point1)
-                    .frame(width: 32, height: 32)
+            Group {
+                if isSelected {
+                    Image.iconSelectedDay
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                } else {
+                    Color.clear
+                }
             }
+            .frame(width: 32, height: 32)
             
-            VStack(spacing: 2) {
+            VStack(spacing: 1) {
                 // 날짜 숫자
                 Text("\(dayNumber)")
                     .pretendard(style: .body3)
                     .foregroundColor(textColor)
+                    .frame(maxWidth: .infinity, alignment: .top)
                 
                 // 이벤트 dot
                 if hasEvent && isCurrentMonth {
                     Circle()
-                        .fill(Color.point1)
+                        .fill(isSelected ? .black : Color.point1)
                         .frame(width: 4, height: 4)
+                        .offset(y: -2)
                 } else {
                     // 공간 유지를 위한 투명한 dot
                     Circle()
                         .fill(Color.clear)
                         .frame(width: 4, height: 4)
+                        .offset(y: -2)
                 }
             }
         }
-        .frame(height: 30)
+        .frame(width: 36, height: 36 , alignment: .top)
         .contentShape(Rectangle())
         .onTapGesture {
             if isCurrentMonth {
@@ -80,12 +80,24 @@ struct CalendarDayCell: View {
     private var textColor: Color {
         if !isCurrentMonth {
             return .grey5
-        } else if isToday {
-            return .black
         } else if isSelected {
             return .black
         } else {
             return .white
         }
     }
+}
+
+#Preview {
+    CalendarDayCell(
+        date: Date(), // 오늘 날짜
+        currentMonth: Date(), // 현재 월
+        selectedDate: Date(), // 선택된 날짜도 오늘
+        hasEvent: true, // 이벤트 있음
+        onDateSelected: { date in
+            print("Selected: \(date)")
+        }
+    )
+    .padding()
+    .background(Color.black) // 배경 확인용
 }
