@@ -20,16 +20,7 @@ public struct HomeView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            ScrollView {
-                VStack {
-                    FestivalGridView(festivals: store.festivals) { festival in
-                        store.send(.festivalTapped(festival))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 100)
-                }
-                .padding(.bottom, 24)
-            }
+            HomeGridView(store: store)
         }
         .background(Color.background1)
     }
@@ -37,18 +28,13 @@ public struct HomeView: View {
 
 private extension HomeView {
     var navigationBar: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack {
-                logo
-                Spacer()
-                displayModeView(mode: $store.displayMode)
-            }
-            .padding(.vertical, 10)
-            
-            favoritesButton(isFiltered: $store.isFiltered)
+        HStack {
+            logo
+            Spacer()
+            displayModeView(mode: $store.displayMode)
         }
+        .padding(.vertical, 10)
         .padding(.horizontal, 16)
-        .padding(.bottom, 10)
     }
     
     var logo: some View {
@@ -86,27 +72,6 @@ private extension HomeView {
                 .resizable()
                 .frame(width: 24, height: 24)
                 .foregroundStyle(color)
-        }
-    }
-    
-    func favoritesButton(isFiltered: Binding<Bool>) -> some View {
-        let icon: Image = switch isFiltered.wrappedValue {
-        case true: Image.iconChecked
-        case false: Image.iconUnchecked
-        }
-        
-        return Button {
-            isFiltered.wrappedValue.toggle()
-        } label: {
-            HStack(spacing: 2) {
-                icon
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                
-                Text("좋아요한 페스티벌")
-                    .pretendard(style: .body4)
-                    .foregroundStyle(Color.grey3)
-            }
         }
         .buttonStyle(.plain)
     }
