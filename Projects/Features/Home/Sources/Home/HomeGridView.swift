@@ -30,6 +30,7 @@ struct HomeGridView: View {
                 .padding(.bottom, 24)
             }
         }
+        .background(Color.background1)
     }
 }
 

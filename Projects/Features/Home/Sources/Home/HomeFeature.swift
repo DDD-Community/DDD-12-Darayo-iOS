@@ -6,6 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import ComposableArchitecture
 import Domain
 
@@ -48,11 +49,14 @@ public struct HomeFeature {
             ),
         ]
         
+        var selectedDate: Date?
+        
         public init() {}
     }
     
     public enum Action: BindableAction {
         case festivalTapped(Festival)
+        case dateSelected(Date)
         case binding(BindingAction<State>)
     }
     
@@ -63,6 +67,9 @@ public struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .festivalTapped: return .none
+            case .dateSelected(let date):
+                state.selectedDate = date
+                return .none
             case .binding: return .none
             }
         }

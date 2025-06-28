@@ -47,23 +47,19 @@ private extension MainView {
 
 private extension MainView {
     func tabView(bottomPadding: CGFloat) -> some View {
-        TabView {
-            Group {
-                switch store.currentTab {
-                case .home:
-                    let store = store.scope(state: \.home, action: \.home)
-                    HomeView(store: store)
-                case .timetable:
-                    let store = store.scope(state: \.timetable, action: \.timetable)
-                    TimetableView(store: store)
-                case .myPage:
-                    let store = store.scope(state: \.myPage, action: \.myPage)
-                    MyPageView(store: store)
-                }
-            }
-            .padding(.bottom, bottomPadding)
-            .ignoresSafeArea(edges: .bottom)
+        TabView(selection: $store.currentTab) {
+            HomeView(store: store.scope(state: \.home, action: \.home))
+                .tag(MainFeature.Tab.home)
+            
+            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
+                .tag(MainFeature.Tab.timetable)
+            
+            MyPageView(store: store.scope(state: \.myPage, action: \.myPage))
+                .tag(MainFeature.Tab.myPage)
         }
+        .padding(.bottom, bottomPadding)
+        .ignoresSafeArea(edges: .bottom)
+        
     }
     
     func tabBar(height: CGFloat) -> some View {

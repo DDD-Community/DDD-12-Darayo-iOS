@@ -20,13 +20,23 @@ public struct HomeView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            HomeGridView(store: store)
+            ZStack {
+                HomeGridView(store: store)
+                    .opacity(opacity(.grid))
+                
+                HomeCalendarView(store: store)
+                    .opacity(opacity(.calendar))
+            }
         }
         .background(Color.background1)
     }
 }
 
 private extension HomeView {
+    func opacity(_ mode: HomeFeature.DisplayMode) -> CGFloat {
+        mode == store.displayMode ? 1 : 0
+    }
+    
     var navigationBar: some View {
         HStack {
             logo
