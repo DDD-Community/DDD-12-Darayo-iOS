@@ -56,6 +56,7 @@ struct MonthNavigationView: View {
                 }
             }
         }
+        .padding(.horizontal, 15)
     }
 }
 

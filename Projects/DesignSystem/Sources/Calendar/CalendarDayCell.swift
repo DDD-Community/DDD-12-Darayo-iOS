@@ -39,7 +39,7 @@ struct CalendarDayCell: View {
                 Image.iconCalendarToday
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 40, height: 40)
+                    .frame(width: 32, height: 32)
             }
             
             // 선택된 날짜 배경
@@ -68,7 +68,7 @@ struct CalendarDayCell: View {
                 }
             }
         }
-        .frame(height: 44)
+        .frame(height: 30)
         .contentShape(Rectangle())
         .onTapGesture {
             if isCurrentMonth {
