@@ -19,6 +19,7 @@ public struct MainFeature {
         var home: HomeFeature.State = .init()
         var timetable: TimetableFeature.State = .init()
         var myPage: MyPageFeature.State = .init()
+        var path: StackState<Path.State> = .init()
     }
     
     public enum Action: BindableAction {
@@ -26,6 +27,7 @@ public struct MainFeature {
         case timetable(TimetableFeature.Action)
         case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
+        case path(StackActionOf<Path>)
     }
     
     public init() {}
@@ -46,12 +48,17 @@ public struct MainFeature {
         
         Reduce { state, action in
             switch action {
+            case .home(.festivalTapped(let festival)):
+                state.path.append(.festival(.init(festival: festival)))
+                return .none
             case .home: return .none
             case .timetable: return .none
             case .myPage: return .none
             case .binding: return .none
+            case .path: return .none
             }
         }
+        .forEach(\.path, action: \.path)
     }
 }
 
@@ -68,5 +75,10 @@ extension MainFeature {
             case .myPage: "MY"
             }
         }
+    }
+    
+    @Reducer
+    public enum Path {
+        case festival(FestivalFeature)
     }
 }
