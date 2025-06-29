@@ -11,8 +11,10 @@ import Domain
 
 @Reducer
 public struct FestivalFeature {
+    @ObservableState
     public struct State {
         let festival: Festival
+        var isFavorite: Bool = false
         
         public init(festival: Festival) {
             self.festival = festival
