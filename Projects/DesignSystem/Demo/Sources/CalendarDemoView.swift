@@ -16,37 +16,40 @@ struct CalendarDemoView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                calendarSection
-                Spacer()
-                    .frame(height: 20)
-                
-                eventListSection
-            }
-            .background(Color.black)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    HStack(spacing: 10) {
-                        Button(action: {
-                            // 왼쪽 버튼 액션 (빈 상태)
-                        }) {
-                            Image(systemName: "square.grid.2x2.fill")
-                                .foregroundColor(.white)
-                                .pretendard(style: .title3)
-                        }
-                        
-                        Button(action: {
-                            showCalendarView.toggle()
-                        }) {
-                            // 수정필요
-                            Image(systemName: "list.bullet")
-                                .foregroundColor(.white)
-                                .pretendard(style: .title3)
+            ScrollView {
+                VStack(spacing: 0) {
+                    calendarSection
+                    Spacer()
+                        .frame(height: 20)
+                    
+                    eventListSection
+                }
+                .background(Color.black)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        HStack(spacing: 10) {
+                            Button(action: {
+                                // 왼쪽 버튼 액션 (빈 상태)
+                            }) {
+                                Image(systemName: "square.grid.2x2.fill")
+                                    .foregroundColor(.white)
+                                    .pretendard(style: .title3)
+                            }
+                            
+                            Button(action: {
+                                showCalendarView.toggle()
+                            }) {
+                                // 수정필요
+                                Image(systemName: "list.bullet")
+                                    .foregroundColor(.white)
+                                    .pretendard(style: .title3)
+                            }
                         }
                     }
                 }
             }
+            .background(Color.black)
         }
     }
     
