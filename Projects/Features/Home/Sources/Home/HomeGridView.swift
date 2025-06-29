@@ -18,23 +18,37 @@ struct HomeGridView: View {
     }
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 0) {
             favoritesButton(isFiltered: $store.isFiltered)
+                .padding(.bottom, 10)
             
-            ScrollView {
-                FestivalGridView(festivals: store.festivals) { festival in
-                    store.send(.festivalTapped(festival))
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 100)
-                .padding(.bottom, 24)
-            }
+            festivalGridView
+                .renderedIf(!store.festivals.isEmpty)
+            
+            emptyView
+                .renderedIf(store.festivals.isEmpty)
         }
         .background(Color.background1)
     }
 }
 
 private extension HomeGridView {
+    var festivalGridView: some View {
+        ScrollView {
+            FestivalGridView(
+                festivals: store.festivals,
+                isFavorite: store.isFavorite
+            ) { festival in
+                store.send(.festivalTapped(festival))
+            } heartButtonTapped: { festival in
+                store.send(.heartButtonTapped(festival))
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 100)
+            .padding(.bottom, 24)
+        }
+    }
+    
     func favoritesButton(isFiltered: Binding<Bool>) -> some View {
         let icon: Image = switch isFiltered.wrappedValue {
         case true: Image.iconChecked
@@ -57,5 +71,27 @@ private extension HomeGridView {
         .buttonStyle(.plain)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, 16)
+    }
+    
+    var emptyView: some View {
+        VStack(spacing: 0) {
+            Image.iconPetalBackground
+                .resizable()
+                .frame(width: 109, height: 120)
+            
+            Text("아직 좋아요한 페스티벌이 없어요!")
+                .pretendard(style: .title2)
+                .foregroundStyle(Color.white)
+                .padding(.top, 22)
+            
+            Text("관심있는 페스티벌을\n좋아요하고, 소식을 받아보세요 :)")
+                .pretendard(style: .body4)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(Color.grey4)
+                .padding(.top, 10)
+        }
+        .padding(.bottom, 10)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, 24)
     }
 }

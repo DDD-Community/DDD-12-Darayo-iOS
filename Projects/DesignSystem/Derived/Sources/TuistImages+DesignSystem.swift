@@ -20,6 +20,7 @@ public extension Image {
     static let iconHome = Self("icon_home")
     static let iconList = Self("icon_list")
     static let iconMyPage = Self("icon_my_page")
+    static let iconPetalBackground = Self("icon_petal_background")
     static let iconPicture = Self("icon_picture")
     static let iconPlus = Self("icon_plus")
     static let iconSelectedDay = Self("icon_selectedDay")
