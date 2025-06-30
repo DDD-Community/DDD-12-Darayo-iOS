@@ -20,7 +20,15 @@ public struct FestivalView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            Spacer()
+            ScrollView {
+                VStack(spacing: 12) {
+                    festivalInfoView
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+            }
+            timetableButton
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
@@ -85,5 +93,22 @@ private extension FestivalView {
                 .foregroundStyle(Color.white)
                 .padding(.vertical, 16)
         }
+    }
+    
+    var festivalInfoView: some View {
+        FestivalInfoView(
+            title: "인천펜타포트 락 페스티벌",
+            place: "송도 달빛축제공원",
+            dateString: "2025. 08. 01 (금) - 08. 03 (일)"
+        )
+    }
+    
+    var timetableButton: some View {
+        Button("타임테이블") {
+            
+        }
+        .buttonStyle(.festibee)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 8)
     }
 }
