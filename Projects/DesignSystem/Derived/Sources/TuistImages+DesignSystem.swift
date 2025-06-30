@@ -22,6 +22,7 @@ public extension Image {
     static let iconList = Self("icon_list")
     static let iconMyPage = Self("icon_my_page")
     static let iconNotification = Self("icon_notification")
+    static let iconNotificationFill = Self("icon_notification_fill")
     static let iconPetalBackground = Self("icon_petal_background")
     static let iconPicture = Self("icon_picture")
     static let iconPlus = Self("icon_plus")

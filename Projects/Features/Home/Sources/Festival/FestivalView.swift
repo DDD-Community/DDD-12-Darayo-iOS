@@ -53,9 +53,14 @@ private extension FestivalView {
     
     var notificationButton: some View {
         Button {
-            
+            store.send(.notificationButtonTapped)
         } label: {
-            Image.iconNotification
+            let image: Image = switch store.isNotificationOn {
+            case true: .iconNotificationFill
+            case false: .iconNotification
+            }
+            
+            image
                 .renderingMode(.template)
                 .resizable()
                 .frame(width: 24, height: 24)
@@ -66,7 +71,7 @@ private extension FestivalView {
     
     var heartButton: some View {
         Button {
-            
+            store.send(.heartButtonTapped)
         } label: {
             let image: Image = switch store.isFavorite {
             case true: .iconHeartFill

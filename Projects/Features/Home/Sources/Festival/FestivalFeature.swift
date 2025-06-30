@@ -14,6 +14,7 @@ public struct FestivalFeature {
     @ObservableState
     public struct State {
         let festival: Festival
+        var isNotificationOn: Bool = false
         var isFavorite: Bool = false
         
         public init(festival: Festival) {
@@ -22,13 +23,21 @@ public struct FestivalFeature {
     }
     
     public enum Action {
-        
+        case notificationButtonTapped
+        case heartButtonTapped
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
-            return .none
+            switch action {
+            case .notificationButtonTapped:
+                state.isNotificationOn.toggle()
+                return .none
+            case .heartButtonTapped:
+                state.isFavorite.toggle()
+                return .none
+            }
         }
     }
 }
