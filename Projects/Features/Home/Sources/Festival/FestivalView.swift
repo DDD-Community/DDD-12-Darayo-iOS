@@ -9,6 +9,7 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Domain
 
 public struct FestivalView: View {
     private let store: StoreOf<FestivalFeature>
@@ -23,6 +24,7 @@ public struct FestivalView: View {
             ScrollView {
                 VStack(spacing: 12) {
                     festivalInfoView
+                    ticketInfoView
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -100,6 +102,18 @@ private extension FestivalView {
             title: "인천펜타포트 락 페스티벌",
             place: "송도 달빛축제공원",
             dateString: "2025. 08. 01 (금) - 08. 03 (일)"
+        )
+    }
+    
+    var ticketInfoView: some View {
+        TicketInfoView(
+            vendors: [.yes24, .melon],
+            purchaseDates: [
+                "2025. 8. 1 (금) - 2025. 8. 3 (일)",
+                "2025. 8. 1 (금) - 2025. 8. 3 (일)",
+                "2025. 8. 1 (금) - 2025. 8. 3 (일)"
+            ],
+            platforms: [.instagram, .website]
         )
     }
     

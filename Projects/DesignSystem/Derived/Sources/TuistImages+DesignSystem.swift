@@ -19,6 +19,8 @@ public extension Image {
     static let iconHeart = Self("icon_heart")
     static let iconHeartFill = Self("icon_heart_fill")
     static let iconHome = Self("icon_home")
+    static let iconInstagram = Self("icon_instagram")
+    static let iconLink = Self("icon_link")
     static let iconList = Self("icon_list")
     static let iconMyPage = Self("icon_my_page")
     static let iconNotification = Self("icon_notification")
@@ -29,5 +31,6 @@ public extension Image {
     static let iconSelectedDay = Self("icon_selectedDay")
     static let iconTimetable = Self("icon_timetable")
     static let iconUnchecked = Self("icon_unchecked")
+    static let iconWebsite = Self("icon_website")
     static let sampleFestival = Self("sample_festival")
 }
