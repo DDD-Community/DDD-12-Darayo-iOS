@@ -11,6 +11,8 @@ import Domain
 
 @Reducer
 public struct FestivalFeature {
+    @Dependency(\.dismiss) private var dismiss
+    
     @ObservableState
     public struct State {
         let festival: Festival
@@ -23,6 +25,7 @@ public struct FestivalFeature {
     }
     
     public enum Action {
+        case backButtonTapped
         case notificationButtonTapped
         case heartButtonTapped
     }
@@ -31,6 +34,8 @@ public struct FestivalFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .backButtonTapped:
+                return .run { _ in await dismiss() }
             case .notificationButtonTapped:
                 state.isNotificationOn.toggle()
                 return .none

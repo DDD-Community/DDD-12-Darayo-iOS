@@ -50,7 +50,7 @@ private extension FestivalView {
     
     var backButton: some View {
         Button {
-            
+            store.send(.backButtonTapped)
         } label: {
             Image.iconArrowLeft
                 .renderingMode(.template)
