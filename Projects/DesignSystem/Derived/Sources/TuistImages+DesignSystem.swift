@@ -33,6 +33,7 @@ public extension Image {
     static let iconSelectedDay = Self("icon_selectedDay")
     static let iconSubway = Self("icon_subway")
     static let iconTimetable = Self("icon_timetable")
+    static let iconTriangle = Self("icon_triangle")
     static let iconUnchecked = Self("icon_unchecked")
     static let iconWebsite = Self("icon_website")
     static let sampleFestival = Self("sample_festival")

@@ -18,20 +18,24 @@ public struct FestivalFeature {
         let festival: Festival
         var isNotificationOn: Bool = false
         var isFavorite: Bool = false
+        var isExpanded: Bool = true
         
         public init(festival: Festival) {
             self.festival = festival
         }
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
         case backButtonTapped
         case notificationButtonTapped
         case heartButtonTapped
+        case binding(BindingAction<State>)
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
             case .backButtonTapped:
@@ -42,6 +46,7 @@ public struct FestivalFeature {
             case .heartButtonTapped:
                 state.isFavorite.toggle()
                 return .none
+            case .binding: return .none
             }
         }
     }
