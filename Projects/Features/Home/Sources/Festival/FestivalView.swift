@@ -25,6 +25,7 @@ public struct FestivalView: View {
                 VStack(spacing: 12) {
                     festivalInfoView
                     ticketInfoView
+                    artistInfoView
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -115,6 +116,17 @@ private extension FestivalView {
             ],
             platforms: [.instagram, .website]
         )
+    }
+    
+    var artistInfoView: some View {
+        ArtistInfoView(
+            artists: .init(
+                repeating: .init(name: "아티스트명", imageURLString: ""),
+                count: 10
+            )
+        ) {
+            
+        }
     }
     
     var timetableButton: some View {
