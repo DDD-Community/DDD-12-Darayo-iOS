@@ -26,6 +26,7 @@ public struct FestivalView: View {
                     festivalInfoView
                     ticketInfoView
                     artistInfoView
+                    transportationInfoView
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
@@ -127,6 +128,25 @@ private extension FestivalView {
         ) {
             
         }
+    }
+    
+    var transportationInfoView: some View {
+        TransportationInfoView(
+            transportationList: [
+                .init(
+                    type: .subway,
+                    description: "인천지하철 1호선 송도달빛축제공원역\n4번출구에서 도보 이동"
+                ),
+                .init(
+                    type: .bus,
+                    description: "송도달빛축제공원 정류장 (순환42)"
+                ),
+                .init(
+                    type: .bus,
+                    description: "펜타포트 공식 셔틀버스 (추후 공지)"
+                ),
+            ]
+        )
     }
     
     var timetableButton: some View {
