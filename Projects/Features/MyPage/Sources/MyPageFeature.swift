@@ -10,18 +10,36 @@ import ComposableArchitecture
 
 @Reducer
 public struct MyPageFeature {
+    @ObservableState
     public struct State {
+        var isNotificationOn: Bool = true
+        var isLatestVersion: Bool = true
         public init() {}
     }
     
-    public enum Action {
-        
+    public enum Action: BindableAction {
+        case menuTapped(Menu)
+        case binding(BindingAction<State>)
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
-            return .none
+            switch action {
+            case .menuTapped: return .none
+            case .binding: return .none
+            }
         }
+    }
+}
+
+extension MyPageFeature {
+    public enum Menu {
+        case favoritesNotification
+        case notificationSetting
+        case inquiry
+        case termsOfService
     }
 }
