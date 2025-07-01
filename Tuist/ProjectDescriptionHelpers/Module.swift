@@ -43,6 +43,9 @@ public enum Module: Hashable, Sendable {
 public enum FeatureModule: Sendable {
     case root
     case base
+    case home
+    case timetable
+    case myPage
     
     public var name: String {
         "\(self)".capitalized

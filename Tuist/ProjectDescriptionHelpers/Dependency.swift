@@ -10,7 +10,10 @@ import ProjectDescription
 extension Module {
     private static let dependencyInfo: [Module: [Module]] = [
         .app: [.feature(.root), .network],
-        .feature(.root): [.feature(.base)],
+        .feature(.root): [.feature(.home), .feature(.timetable), .feature(.myPage)],
+        .feature(.home): [.feature(.base)],
+        .feature(.timetable): [.feature(.base)],
+        .feature(.myPage): [.feature(.base)],
         .feature(.base): [.domain, .designSystem],
         .domain: [.util],
         .data: [.domain],
