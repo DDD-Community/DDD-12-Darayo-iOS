@@ -206,12 +206,12 @@ private extension TimetableView {
             gridContent.topAnchor.constraint(equalTo: grid.contentLayoutGuide.topAnchor),
             gridContent.leadingAnchor.constraint(equalTo: grid.contentLayoutGuide.leadingAnchor),
             gridContent.trailingAnchor.constraint(equalTo: grid.contentLayoutGuide.trailingAnchor),
-            gridContent.bottomAnchor.constraint(equalTo: grid.contentLayoutGuide.bottomAnchor),
+            gridContent.bottomAnchor.constraint(equalTo: grid.contentLayoutGuide.bottomAnchor, constant: -24),
             
             rowHeaderContent.topAnchor.constraint(equalTo: rowHeader.contentLayoutGuide.topAnchor),
             rowHeaderContent.leadingAnchor.constraint(equalTo: rowHeader.contentLayoutGuide.leadingAnchor),
             rowHeaderContent.trailingAnchor.constraint(equalTo: rowHeader.contentLayoutGuide.trailingAnchor),
-            rowHeaderContent.bottomAnchor.constraint(equalTo: rowHeader.contentLayoutGuide.bottomAnchor),
+            rowHeaderContent.bottomAnchor.constraint(equalTo: rowHeader.contentLayoutGuide.bottomAnchor, constant: -24),
             rowHeaderContent.widthAnchor.constraint(equalTo: rowHeader.frameLayoutGuide.widthAnchor),
             
             columnHeaderContent.topAnchor.constraint(equalTo: columnHeader.contentLayoutGuide.topAnchor),
