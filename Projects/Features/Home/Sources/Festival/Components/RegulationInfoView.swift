@@ -65,11 +65,9 @@ private extension RegulationInfoView {
         LazyVStack(spacing: 0) {
             ForEach(0..<regulations.count, id: \.self) { index in
                 HStack(alignment: .top, spacing: 0) {
-                    Circle()
-                        .frame(width: 3, height: 3)
+                    Text("  •  ")
+                        .pretendard(style: .body0)
                         .foregroundStyle(Color.white)
-                        .padding(.horizontal, 10)
-                        .padding(.top, 9)
                     
                     Text(regulations[index])
                         .pretendard(style: .body0)
