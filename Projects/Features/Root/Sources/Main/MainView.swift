@@ -29,6 +29,7 @@ public struct MainView: View {
         } destination: { store in
             switch store.case {
             case .festival(let store): FestivalView(store: store)
+            case .artistList(let store): ArtistListView(store: store)
             }
         }
     }

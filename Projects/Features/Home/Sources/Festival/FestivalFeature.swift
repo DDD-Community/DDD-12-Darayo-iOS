@@ -29,6 +29,7 @@ public struct FestivalFeature {
         case backButtonTapped
         case notificationButtonTapped
         case heartButtonTapped
+        case seeAllButtonTapped
         case binding(BindingAction<State>)
     }
     
@@ -46,6 +47,7 @@ public struct FestivalFeature {
             case .heartButtonTapped:
                 state.isFavorite.toggle()
                 return .none
+            case .seeAllButtonTapped: return .none
             case .binding: return .none
             }
         }
