@@ -34,7 +34,6 @@ struct RegulationInfoView: View {
         }
         .background(Color.grey6)
         .clipShape(RoundedRectangle(cornerRadius: 10))
-        .animation(.easeInOut(duration: 0.25), value: isExpanded)
     }
 }
 
