@@ -21,7 +21,7 @@ public struct ArtistListView: View {
         VStack(spacing: 0) {
             navigationBar
             dayListView
-            Spacer()
+            artistGridListView
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
@@ -50,9 +50,16 @@ private extension ArtistListView {
     var dayListView: some View {
         DayListView(
             totalDays: store.totalDays,
-            selectedDay: store.selectedDay
+            selectedIndex: store.selectedIndex
         ) { day in
             store.send(.dayButtonTapped(day))
         }
+    }
+    
+    var artistGridListView: some View {
+        ArtistGridListView(
+            artists: store.artists,
+            selectedIndex: store.selectedIndex
+        )
     }
 }

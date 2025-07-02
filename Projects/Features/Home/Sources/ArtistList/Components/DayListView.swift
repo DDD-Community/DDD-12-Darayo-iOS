@@ -11,18 +11,19 @@ import DesignSystem
 
 struct DayListView: View {
     private let totalDays: Int
-    private let selectedDay: Int
+    private let selectedIndex: Int
     private let action: (Int) -> Void
     
     @State private var width: CGFloat = .infinity
+    private let height: CGFloat = 20.8
 
     init(
         totalDays: Int,
-        selectedDay: Int,
+        selectedIndex: Int,
         action: @escaping (Int) -> Void
     ) {
         self.totalDays = totalDays
-        self.selectedDay = selectedDay
+        self.selectedIndex = selectedIndex
         self.action = action
     }
     
@@ -36,9 +37,9 @@ struct DayListView: View {
                         dayListView(canScroll: canScroll)
                     }
                     .scrollIndicators(.hidden)
-                    .onChange(of: selectedDay) { _, day in
+                    .onChange(of: selectedIndex) { _, index in
                         withAnimation {
-                            proxy.scrollTo(day, anchor: .center)
+                            proxy.scrollTo(index, anchor: .center)
                         }
                     }
                 }
@@ -46,6 +47,7 @@ struct DayListView: View {
                 dayListView(canScroll: canScroll)
             }
         }
+        .frame(height: height + 32)
     }
 }
 
@@ -59,30 +61,30 @@ private extension DayListView {
 private extension DayListView {
     func dayListView(canScroll: Bool) -> some View {
         HStack(spacing: canScroll ? 12 : 0) {
-            ForEach(1...totalDays, id: \.self) { day in
+            ForEach(0..<totalDays, id: \.self) { index in
                 Button {
-                    action(day)
+                    action(index)
                 } label: {
                     switch canScroll {
                     case true:
-                        textView(day)
+                        textView(index)
                     case false:
-                        textView(day)
+                        textView(index)
                             .frame(maxWidth: .infinity)
                     }
                 }
-                .id(day)
+                .id(index)
             }
         }
-        .frame(height: 20.8)
+        .frame(height: height)
         .padding(.vertical, 16)
         .background(backgroundView)
     }
     
-    func textView(_ day: Int) -> some View {
-        let isSelected = day == selectedDay
+    func textView(_ index: Int) -> some View {
+        let isSelected = index == selectedIndex
         
-        return Text("DAY\(day)")
+        return Text("DAY\(index + 1)")
             .pretendard(style: .title3)
             .foregroundStyle(isSelected ? Color.point1 : Color.grey4)
             .padding(.horizontal, 16)

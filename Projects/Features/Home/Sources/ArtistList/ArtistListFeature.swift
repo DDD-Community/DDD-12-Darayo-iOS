@@ -7,6 +7,7 @@
 //
 
 import ComposableArchitecture
+import Domain
 
 @Reducer
 public struct ArtistListFeature {
@@ -14,8 +15,36 @@ public struct ArtistListFeature {
     
     @ObservableState
     public struct State {
-        var totalDays: Int = 3
-        var selectedDay: Int = 1
+        var totalDays: Int = 6
+        var selectedIndex: Int = 0
+        
+        var artists: [[Artist]] = [
+            .init(
+                repeating: .init(name: "아티스트명아티스트명아티스트명아티스트명", imageURLString: ""),
+                count: 11
+            ),
+            .init(
+                repeating: .init(name: "아티스트명", imageURLString: ""),
+                count: 9
+            ),
+            .init(
+                repeating: .init(name: "아티스트명", imageURLString: ""),
+                count: 7
+            ),
+            .init(
+                repeating: .init(name: "아티스트명아티스트명아티스트명아티스트명", imageURLString: ""),
+                count: 5
+            ),
+            .init(
+                repeating: .init(name: "아티스트명", imageURLString: ""),
+                count: 3
+            ),
+            .init(
+                repeating: .init(name: "아티스트명", imageURLString: ""),
+                count: 1
+            )
+        ]
+        
         public init() {}
     }
     
@@ -30,8 +59,8 @@ public struct ArtistListFeature {
             switch action {
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
-            case .dayButtonTapped(let day):
-                state.selectedDay = day
+            case .dayButtonTapped(let index):
+                state.selectedIndex = index
                 return .none
             }
         }
