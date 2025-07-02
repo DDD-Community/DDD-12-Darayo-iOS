@@ -27,19 +27,17 @@ public struct EventListView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             
-            ScrollView {
-                LazyVStack(spacing: 14) {
-                    if isSelected || events.isEmpty {
-                        emptyStateView
-                            .transition(.opacity)
-                    } else {
-                        ForEach(events, id: \.id) { event in
-                            EventCard(event: event)
-                        }
+            LazyVStack(spacing: 14) {
+                if isSelected || events.isEmpty {
+                    emptyStateView
+                        .transition(.opacity)
+                } else {
+                    ForEach(events, id: \.id) { event in
+                        EventCard(event: event)
                     }
                 }
-                .padding(.horizontal, 16)
             }
+            .padding(.horizontal, 16)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .background(Color.black)
