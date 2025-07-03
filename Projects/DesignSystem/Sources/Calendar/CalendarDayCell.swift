@@ -35,36 +35,27 @@ struct CalendarDayCell: View {
     var body: some View {
         ZStack {
             // 선택된 날짜 배경
-            Group {
-                if isSelected {
-                    Image.iconSelectedDay
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                } else {
-                    Color.clear
-                }
+            if isSelected {
+                Image.iconSelectedDay
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 36, height: 36)
             }
-            .frame(width: 36, height: 36)
             
-            VStack(spacing: 1) {
+            ZStack {
                 // 날짜 숫자
                 Text("\(dayNumber)")
                     .pretendard(style: .body3)
                     .foregroundColor(textColor)
                     .frame(maxWidth: .infinity, alignment: .top)
+                    .offset(y: -2)
                 
                 // 이벤트 dot
                 if hasEvent && isCurrentMonth {
                     Circle()
                         .fill(isSelected ? .black : Color.point1)
                         .frame(width: 4, height: 4)
-                        .offset(y: -2)
-                } else {
-                    // 공간 유지를 위한 투명한 dot
-                    Circle()
-                        .fill(Color.clear)
-                        .frame(width: 4, height: 4)
-                        .offset(y: -2)
+                        .offset(y: 7)
                 }
             }
         }
