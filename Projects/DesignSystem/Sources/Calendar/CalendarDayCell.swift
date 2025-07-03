@@ -16,20 +16,20 @@ struct CalendarDayCell: View {
     let onDateSelected: (Date) -> Void
     
     private var dayNumber: Int {
-        Foundation.Calendar.current.component(.day, from: date)
+        Calendar.current.component(.day, from: date)
     }
     
     private var isToday: Bool {
-        Foundation.Calendar.current.isDateInToday(date)
+        Calendar.current.isDateInToday(date)
     }
     
     private var isSelected: Bool {
         guard let selectedDate = selectedDate else { return false }
-        return Foundation.Calendar.current.isDate(date, inSameDayAs: selectedDate)
+        return Calendar.current.isDate(date, inSameDayAs: selectedDate)
     }
     
     private var isCurrentMonth: Bool {
-        Foundation.Calendar.current.isDate(date, equalTo: currentMonth, toGranularity: .month)
+        Calendar.current.isDate(date, equalTo: currentMonth, toGranularity: .month)
     }
     
     var body: some View {
