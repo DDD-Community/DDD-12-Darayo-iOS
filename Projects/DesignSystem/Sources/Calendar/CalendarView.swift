@@ -43,6 +43,7 @@ public struct CalendarView: View {
                 currentMonth: currentMonth,
                 selectedDate: selectedDate,
                 calendar: calendar,
+                dates: calendarDates,
                 onDateSelected: { date in
                     selectedDate = date
                     onDateSelected(date)
@@ -51,6 +52,10 @@ public struct CalendarView: View {
         }
         .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+    
+    private var calendarDates: [Date] {
+        CalendarGridDataProvider.makeCalendarDates(for: currentMonth)
     }
     
     private func previousMonth() {
