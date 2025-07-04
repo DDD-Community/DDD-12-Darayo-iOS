@@ -26,6 +26,8 @@ public struct SelectFestivalView: View {
         .padding(.horizontal, 16)
         .padding(.top, 24)
         .padding(.bottom, 16)
+        .background(Color.background2)
+        .presentationDetents([.medium])
     }
 }
 
@@ -51,7 +53,6 @@ private extension SelectFestivalView {
             ForEach(store.festivals, id: \.self) { festival in
                 Text(festival)
                     .pretendard(style: .title2)
-                    .padding(.vertical, 200)
             }
         }
         .pickerStyle(.wheel)

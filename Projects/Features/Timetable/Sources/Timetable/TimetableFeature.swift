@@ -7,6 +7,7 @@
 //
 
 import ComposableArchitecture
+import Domain
 
 @Reducer
 public struct TimetableFeature {
@@ -14,13 +15,20 @@ public struct TimetableFeature {
     public struct State {
         var festivalName: String = "서울 재즈 페스티벌"
         var dateString: String = "25.08.08 (금)"
-        @Presents var selectFestival: SelectFestivalFeature.State?
+        
+        var artists: [Artist] = (0..<15).map { _ in
+            .init(name: "아티스트명", imageURLString: "")
+        }
+        var selectedArtists: Set<Artist> = .init()
+        
+        @Presents var path: Path.State?
         public init() {}
     }
     
     public enum Action {
         case festivalButtonTapped
-        case selectFestival(PresentationAction<SelectFestivalFeature.Action>)
+        case filterButtonTapped
+        case path(PresentationAction<Path.Action>)
     }
     
     public init() {}
@@ -28,18 +36,35 @@ public struct TimetableFeature {
         Reduce { state, action in
             switch action {
             case .festivalButtonTapped:
-                state.selectFestival = .init(selectedFestival: state.festivalName)
+                let festivalName = state.festivalName
+                state.path = .selectFestival(.init(selectedFestival: festivalName))
                 return .none
-            case .selectFestival(.presented(.doneButtonTapped)):
-                let name = state.selectFestival?.selectedFestival
+            case .filterButtonTapped:
+                let artists = state.artists
+                let selectedArtists = state.selectedArtists
+                state.path = .selectArtist(.init(artists, selectedArtists))
+                return .none
+            case .path(.presented(.selectFestival(.doneButtonTapped))):
+                let name = state.path?.selectFestival?.selectedFestival
                 if let name { state.festivalName = name }
                 return .none
-            case .selectFestival: return .none
+            case .path(.presented(.selectArtist(.doneButtonTapped))):
+                let artists = state.path?.selectArtist?.selectedArtists
+                if let artists { state.selectedArtists = artists }
+                state.path = nil
+                return .none
+            case .path: return .none
             }
             
         }
-        .ifLet(\.$selectFestival, action: \.selectFestival) {
-            SelectFestivalFeature()
-        }
+        .ifLet(\.$path, action: \.path)
+    }
+}
+
+extension TimetableFeature {
+    @Reducer
+    public enum Path {
+        case selectFestival(SelectFestivalFeature)
+        case selectArtist(SelectArtistFeature)
     }
 }

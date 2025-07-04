@@ -25,10 +25,14 @@ public struct TimetableView: View {
         }
         .background(Color.background1)
         .sheet(
-            item: $store.scope(state: \.selectFestival, action: \.selectFestival)
+            item: $store.scope(state: \.path, action: \.path)
         ) { store in
-            SelectFestivalView(store: store)
-                .presentationDetents([.medium])
+            switch store.case {
+            case .selectFestival(let store):
+                SelectFestivalView(store: store)
+            case .selectArtist(let store):
+                SelectArtistView(store: store)
+            }
         }
     }
 }
@@ -67,7 +71,7 @@ private extension TimetableView {
     
     var filterButton: some View {
         Button {
-            
+            store.send(.filterButtonTapped)
         } label: {
             Image.iconFilter
                 .renderingMode(.template)
