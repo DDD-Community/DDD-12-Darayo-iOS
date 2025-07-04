@@ -21,19 +21,15 @@ public struct ArtistListFeature {
         var artists: [[Artist]]
         
         public init() {
-            let count = (1...4).randomElement()!
-            let artist = Artist(
-                name: (0..<count).map { _ in "아티스트명" }.joined(),
-                imageURLString: ""
-            )
-            
-            self.artists = .init(
-                repeating: .init(
-                    repeating: artist,
-                    count: (1...12).randomElement()!
-                ),
-                count: (1...8).randomElement()!
-            )
+            let count = (1...8).randomElement()!
+            self.artists = (0..<count).map { _ in
+                let count = (1...12).randomElement()!
+                return (0..<count).map { _ in
+                    let count = (1...5).randomElement()!
+                    let name = (0..<count).map { _ in "아티스트" }.joined()
+                    return Artist(name: name, imageURLString: "")
+                }
+            }
         }
         
         var totalDays: Int {
