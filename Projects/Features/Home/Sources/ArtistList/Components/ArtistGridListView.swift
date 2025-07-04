@@ -50,6 +50,8 @@ struct ArtistGridListView: View {
                 }
             }
         }
+        .overlay(alignment: .bottom) { gradient }
+        .ignoresSafeArea()
     }
 }
 
@@ -101,6 +103,19 @@ private extension ArtistGridListView {
                 .multilineTextAlignment(.center)
         }
     }
+    
+    var gradient: some View {
+        LinearGradient(
+            stops: [
+                Gradient.Stop(color: Color.background1.opacity(0), location: 0.00),
+                Gradient.Stop(color: Color.background1, location: 1.00)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+        .frame(height: 184)
+        .allowsHitTesting(false)
+    }
 }
 
 private extension ArtistGridListView {
@@ -118,7 +133,7 @@ private extension ArtistGridListView {
         guard let lastAnchor = anchors[artists.count - 1] else { return }
         let lastItemHeight = proxy[lastAnchor].height
         let scrollViewHeight = proxy.size.height
-        let extraPadding = max(0, scrollViewHeight - lastItemHeight)
+        let extraPadding = max(184, scrollViewHeight - lastItemHeight)
         bottomPadding = extraPadding
     }
 }
