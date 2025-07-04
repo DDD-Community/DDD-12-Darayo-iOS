@@ -11,7 +11,7 @@ import ComposableArchitecture
 import DesignSystem
 
 public struct ArtistListView: View {
-    private let store: StoreOf<ArtistListFeature>
+    @Bindable private var store: StoreOf<ArtistListFeature>
     
     public init(store: StoreOf<ArtistListFeature>) {
         self.store = store
@@ -50,16 +50,18 @@ private extension ArtistListView {
     var dayListView: some View {
         DayListView(
             totalDays: store.totalDays,
-            selectedIndex: store.selectedIndex
-        ) { day in
-            store.send(.dayButtonTapped(day))
+            selectedIndex: store.tabIndex
+        ) { index in
+            store.send(.dayButtonTapped(index))
         }
     }
     
     var artistGridListView: some View {
         ArtistGridListView(
             artists: store.artists,
-            selectedIndex: store.selectedIndex
-        )
+            indexToScroll: store.indexToScroll
+        ) { index in
+            store.send(.indexChanged(index))
+        }
     }
 }

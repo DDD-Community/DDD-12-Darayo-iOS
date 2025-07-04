@@ -6,6 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import ComposableArchitecture
 import Domain
 
@@ -15,53 +16,53 @@ public struct ArtistListFeature {
     
     @ObservableState
     public struct State {
-        var totalDays: Int = 6
-        var selectedIndex: Int = 0
+        var tabIndex: Int = 0
+        var indexToScroll: (Int, Date)?
+        var artists: [[Artist]]
         
-        var artists: [[Artist]] = [
-            .init(
-                repeating: .init(name: "아티스트명아티스트명아티스트명아티스트명", imageURLString: ""),
-                count: 11
-            ),
-            .init(
-                repeating: .init(name: "아티스트명", imageURLString: ""),
-                count: 9
-            ),
-            .init(
-                repeating: .init(name: "아티스트명", imageURLString: ""),
-                count: 7
-            ),
-            .init(
-                repeating: .init(name: "아티스트명아티스트명아티스트명아티스트명", imageURLString: ""),
-                count: 5
-            ),
-            .init(
-                repeating: .init(name: "아티스트명", imageURLString: ""),
-                count: 3
-            ),
-            .init(
-                repeating: .init(name: "아티스트명", imageURLString: ""),
-                count: 1
+        public init() {
+            let count = (1...4).randomElement()!
+            let artist = Artist(
+                name: (0..<count).map { _ in "아티스트명" }.joined(),
+                imageURLString: ""
             )
-        ]
+            
+            self.artists = .init(
+                repeating: .init(
+                    repeating: artist,
+                    count: (1...12).randomElement()!
+                ),
+                count: (1...8).randomElement()!
+            )
+        }
         
-        public init() {}
+        var totalDays: Int {
+            artists.count
+        }
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
         case backButtonTapped
         case dayButtonTapped(Int)
+        case indexChanged(Int)
+        case binding(BindingAction<State>)
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .dayButtonTapped(let index):
-                state.selectedIndex = index
+                state.indexToScroll = (index, .now)
                 return .none
+            case .indexChanged(let index):
+                state.tabIndex = index
+                return .none
+            case .binding: return .none
             }
         }
     }

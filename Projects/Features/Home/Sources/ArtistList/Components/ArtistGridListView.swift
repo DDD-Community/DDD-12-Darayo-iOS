@@ -12,43 +12,41 @@ import Domain
 
 struct ArtistGridListView: View {
     private let artists: [[Artist]]
-    private let selectedIndex: Int
+    private let indexToScroll: (Int, Date)?
+    private let onIndexChange: (Int) -> Void
+    
+    @State private var bottomPadding: CGFloat = 0
     
     init(
         artists: [[Artist]],
-        selectedIndex: Int
+        indexToScroll: (Int, Date)?,
+        onIndexChange: @escaping (Int) -> Void
     ) {
         self.artists = artists
-        self.selectedIndex = selectedIndex
+        self.indexToScroll = indexToScroll
+        self.onIndexChange = onIndexChange
     }
-    
-    private let columns = [
-        GridItem(.flexible(), spacing: 20),
-        GridItem(.flexible(), spacing: 20),
-        GridItem(.flexible(), spacing: 20)
-    ]
+
+    private let columns: [GridItem] = .init(
+        repeating: .init(.flexible(), spacing: 20),
+        count: 3
+    )
     
     var body: some View {
-        ScrollViewReader { proxy in
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(0..<artists.count, id: \.self) { index in
-                        VStack(spacing: 0) {
-                            Text("DAY\(index + 1)")
-                                .pretendard(style: .title1)
-                                .foregroundStyle(Color.point1)
-                                .frame(maxWidth: .infinity)
-                                .id(index)
-                            
-                            artistGridView(artists[index])
-                        }
-                    }
+        GeometryReader { geometryProxy in
+            ScrollViewReader { scrollProxy in
+                ScrollView {
+                    artistGridListView()
                 }
-                .padding(.horizontal, 16)
-            }
-            .onChange(of: selectedIndex) { _, index in
-                withAnimation {
-                    proxy.scrollTo(index, anchor: .top)
+                .onPreferenceChange(AnchorsKey.self) { anchors in
+                    updateIndex(geometryProxy, anchors)
+                    updateBottomPadding(geometryProxy, anchors)
+                }
+                .onChange(of: indexToScroll?.1) { _, _ in
+                    guard let index = indexToScroll?.0 else { return }
+                    withAnimation {
+                        scrollProxy.scrollTo(index, anchor: .top)
+                    }
                 }
             }
         }
@@ -56,6 +54,30 @@ struct ArtistGridListView: View {
 }
 
 private extension ArtistGridListView {
+    func artistGridListView() -> some View {
+        VStack(spacing: 0) {
+            ForEach(0..<artists.count, id: \.self) { index in
+                VStack(spacing: 0) {
+                    textHeaderView(index)
+                    artistGridView(artists[index])
+                }
+                .anchorPreference(key: AnchorsKey.self, value: .bounds) { anchor in
+                    [index: anchor]
+                }
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, bottomPadding)
+    }
+    
+    func textHeaderView(_ index: Int) -> some View {
+        Text("DAY\(index + 1)")
+            .pretendard(style: .title1)
+            .foregroundStyle(Color.point1)
+            .frame(maxWidth: .infinity)
+            .id(index)
+    }
+    
     func artistGridView(_ artists: [Artist]) -> some View {
         LazyVGrid(columns: columns, spacing: 16) {
             ForEach(0..<artists.count, id: \.self) { index in
@@ -78,5 +100,36 @@ private extension ArtistGridListView {
                 .frame(maxWidth: .infinity)
                 .multilineTextAlignment(.center)
         }
+    }
+}
+
+private extension ArtistGridListView {
+    func updateIndex(_ proxy: GeometryProxy, _ anchors: [Int: Anchor<CGRect>]) {
+        let index = anchors
+            .filter{ proxy[$0.value].maxY > 0 }
+            .sorted { proxy[$0.value].maxY < proxy[$1.value].maxY }
+            .first?.key
+        
+        guard let index else { return }
+        onIndexChange(index)
+    }
+    
+    func updateBottomPadding(_ proxy: GeometryProxy, _ anchors: [Int: Anchor<CGRect>]) {
+        guard let lastAnchor = anchors[artists.count - 1] else { return }
+        let lastItemHeight = proxy[lastAnchor].height
+        let scrollViewHeight = proxy.size.height
+        let extraPadding = max(0, scrollViewHeight - lastItemHeight)
+        bottomPadding = extraPadding
+    }
+}
+
+private struct AnchorsKey: PreferenceKey {
+    static var defaultValue: [Int: Anchor<CGRect>] = [:]
+    
+    static func reduce(
+        value: inout [Int: Anchor<CGRect>],
+        nextValue: () -> [Int: Anchor<CGRect>]
+    ) {
+        value.merge(nextValue()) { $1 }
     }
 }
