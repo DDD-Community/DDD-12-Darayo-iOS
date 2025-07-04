@@ -14,6 +14,7 @@ public extension Image {
     static let iconChecked = Self("icon_checked")
     static let iconChevronLeft = Self("icon_chevron_left")
     static let iconChevronRight = Self("icon_chevron_right")
+    static let iconClose = Self("icon_close")
     static let iconDown = Self("icon_down")
     static let iconDownload = Self("icon_download")
     static let iconFilter = Self("icon_filter")

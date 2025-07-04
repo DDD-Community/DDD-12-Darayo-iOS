@@ -11,7 +11,7 @@ import ComposableArchitecture
 import DesignSystem
 
 public struct TimetableView: View {
-    private let store: StoreOf<TimetableFeature>
+    @Bindable private var store: StoreOf<TimetableFeature>
     
     public init(store: StoreOf<TimetableFeature>) {
         self.store = store
@@ -24,6 +24,12 @@ public struct TimetableView: View {
             timetableView
         }
         .background(Color.background1)
+        .sheet(
+            item: $store.scope(state: \.selectFestival, action: \.selectFestival)
+        ) { store in
+            SelectFestivalView(store: store)
+                .presentationDetents([.medium])
+        }
     }
 }
 
@@ -43,7 +49,7 @@ private extension TimetableView {
     
     var festivalButton: some View {
         Button {
-            
+            store.send(.festivalButtonTapped)
         } label: {
             HStack(spacing: 2) {
                 Text(store.festivalName)
