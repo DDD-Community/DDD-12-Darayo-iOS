@@ -17,6 +17,11 @@ public struct MyPageFeature {
         var isNotificationOn: Bool = true
         var isLatestVersion: Bool = true
         
+        // 알림 설정 뷰 진입 여부
+        var isPresentingNotificationSetting: Bool = false
+        // 알림 설정 화면의 상태
+        var notificationSetting: NotificationSettingFeature.State = .init()
+        
         var currentVersion: String
         var latestVersion: String
         
@@ -31,6 +36,7 @@ public struct MyPageFeature {
         case menuTapped(Menu)
         case binding(BindingAction<State>)
         case dismissNotificationSetting
+        case notificationSetting(NotificationSettingFeature.Action)
     }
     
     public init() {}
@@ -43,14 +49,23 @@ public struct MyPageFeature {
             case .menuTapped(let menu):
                 switch menu {
                 case .notificationSetting:
+                    state.isPresentingNotificationSetting = true
                     return .none
-                case .favoritesNotification, .inquiry, .termsOfService:
+                default:
                     return .none
+                    
+//                case .favoritesNotification, .inquiry, .termsOfService:
+//                    return .none
                 }
+                
             case .dismissNotificationSetting:
                 state.isPresentingNotificationSetting = false
                 return .none
+                
             case .binding:
+                return .none
+                
+            case .notificationSetting:
                 return .none
             }
         }

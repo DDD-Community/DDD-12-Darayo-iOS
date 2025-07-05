@@ -30,6 +30,16 @@ public struct MyPageView: View {
             }
         }
         .background(Color.background1)
+        .navigationDestination(
+                isPresented: $store.isPresentingNotificationSetting
+            ) {
+                NotificationSettingView(
+                    store: store.scope(
+                        state: \.notificationSetting,
+                        action: \.notificationSetting
+                    )
+                )
+            }
     }
 }
 
@@ -181,4 +191,13 @@ private extension MyPageView {
             .padding(16)
         }
     }
+}
+
+#Preview {
+    MyPageView(
+        store: Store(
+            initialState: MyPageFeature.State(),
+            reducer: { MyPageFeature() }
+        )
+    )
 }
