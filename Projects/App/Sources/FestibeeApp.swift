@@ -23,6 +23,9 @@ struct FestibeeApp: App {
                     RootFeature()
                 }
             )
+            .overlay(alignment: .bottom) {
+                Banner()
+            }
         }
     }
 }

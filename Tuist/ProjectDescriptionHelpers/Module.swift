@@ -16,7 +16,6 @@ public enum Module: Hashable, Sendable {
     
     public var name: String {
         switch self {
-        case .app: ProjectInfo.appName
         case .feature(let module): module.name
         default: "\(self)".capitalized
         }
@@ -28,10 +27,10 @@ public enum Module: Hashable, Sendable {
         let appBundleID = "com.\(organizationName).\(appName)"
         
         switch self {
-        case .app: return appBundleID
+        case .app: return "${BUNDLE_IDENTIFIER}"
         case .feature(let module):
             let moduleName = module.name.lowercased()
-            return "\(appBundleID).feature.\(moduleName)"
+            return "\(appBundleID).\(moduleName)"
         default:
             let moduleName = name.lowercased()
             return "\(appBundleID).\(moduleName)"

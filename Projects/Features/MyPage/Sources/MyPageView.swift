@@ -71,8 +71,8 @@ private extension MyPageView {
     
     var versionText: some View {
         VStack(alignment: .leading, spacing: 2) {
-            versionTextView(title: "현재 버전", version: "NN.NN.N")
-            versionTextView(title: "최신 버전", version: "NN.NN.N")
+            versionTextView(title: "현재 버전", version: store.currentVersion)
+            versionTextView(title: "최신 버전", version: store.latestVersion)
         }
         .padding(.leading, 20)
     }

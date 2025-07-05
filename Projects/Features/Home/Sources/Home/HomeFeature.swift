@@ -6,6 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import ComposableArchitecture
 import Domain
 
@@ -15,7 +16,7 @@ public struct HomeFeature {
     public struct State {
         var displayMode: DisplayMode = .grid
         var isFiltered: Bool = false
-        var festivals: [Festival] = [
+        var allFestivals: [Festival] = [
             .init(
                 title: "인천 펜타포트 락 페스티벌",
                 dateString: "25.08.01-25.08.03",
@@ -48,11 +49,28 @@ public struct HomeFeature {
             ),
         ]
         
+        var favorites: Set<Festival> = .init()
+        
+        var selectedDate: Date?
+        
         public init() {}
+        
+        var festivals: [Festival] {
+            switch isFiltered {
+            case true: allFestivals.filter { favorites.contains($0) }
+            case false: allFestivals
+            }
+        }
+        
+        var isFavorite: [Bool] {
+            festivals.map { favorites.contains($0) }
+        }
     }
     
     public enum Action: BindableAction {
         case festivalTapped(Festival)
+        case heartButtonTapped(Festival)
+        case dateSelected(Date)
         case binding(BindingAction<State>)
     }
     
@@ -63,6 +81,16 @@ public struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .festivalTapped: return .none
+            case .heartButtonTapped(let festival):
+                if state.favorites.contains(festival) {
+                    state.favorites.remove(festival)
+                } else {
+                    state.favorites.insert(festival)
+                }
+                return .none
+            case .dateSelected(let date):
+                state.selectedDate = date
+                return .none
             case .binding: return .none
             }
         }

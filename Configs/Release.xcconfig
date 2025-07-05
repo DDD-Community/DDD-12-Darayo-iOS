@@ -1,0 +1,5 @@
+#include "./Shared.xcconfig"
+
+BUNDLE_IDENTIFIER = com.darayo.festibee
+BUNDLE_DISPLAY_NAME = FESTIBEE
+ENV = PROD
