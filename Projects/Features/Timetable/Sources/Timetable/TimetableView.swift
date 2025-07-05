@@ -32,6 +32,7 @@ public struct TimetableView: View {
                 SelectFestivalView(store: store)
             case .selectArtist(let store):
                 SelectArtistView(store: store)
+                    .presentationDetents([.medium, .large])
             }
         }
     }
