@@ -1,19 +1,17 @@
 //
-//  TimetableFeature.swift
-//  Timetable
+//  NotificationSettingFeature.swift
+//  MyPage
 //
-//  Created by 이정원 on 6/23/25.
+//  Created by 이정원 on 7/5/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
 import ComposableArchitecture
 
 @Reducer
-public struct TimetableFeature {
+public struct NotificationSettingFeature {
     @ObservableState
     public struct State {
-        var festivalName: String = "서울 재즈 페스티벌"
-        var dateString: String = "25.08.08 (금)"
         public init() {}
     }
     

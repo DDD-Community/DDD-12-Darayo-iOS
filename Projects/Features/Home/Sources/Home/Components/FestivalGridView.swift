@@ -12,16 +12,20 @@ import Domain
 
 struct FestivalGridView: View {
     private let festivals: [Festival]
-    private let action: (Festival) -> Void
-    @State private var isFavorite: [Bool]
+    private let isFavorite: [Bool]
+    private let festivalTapped: (Festival) -> Void
+    private let heartButtonTapped: (Festival) -> Void
     
     init(
         festivals: [Festival],
-        action: @escaping (Festival) -> Void
+        isFavorite: [Bool],
+        festivalTapped: @escaping (Festival) -> Void,
+        heartButtonTapped: @escaping (Festival) -> Void
     ) {
-        self.isFavorite = .init(repeating: false, count: festivals.count)
         self.festivals = festivals
-        self.action = action
+        self.isFavorite = isFavorite
+        self.festivalTapped = festivalTapped
+        self.heartButtonTapped = heartButtonTapped
     }
     
     private let columns = [
@@ -35,7 +39,9 @@ struct FestivalGridView: View {
                 ForEach(0..<festivals.count, id: \.self) { index in
                     ZStack(alignment: .topLeading) {
                         festivalCardView(festival: festivals[index])
-                        heartView(isFavorite: $isFavorite[index])
+                        heartButton(isFavorite: isFavorite[index]) {
+                            heartButtonTapped(festivals[index])
+                        }
                     }
                 }
             }
@@ -46,7 +52,7 @@ struct FestivalGridView: View {
 private extension FestivalGridView {
     func festivalCardView(festival: Festival) -> some View {
         Button {
-            action(festival)
+            festivalTapped(festival)
         } label: {
             VStack(spacing: 0) {
                 imageView(image: Image.sampleFestival)
@@ -104,15 +110,16 @@ private extension FestivalGridView {
         }
     }
     
-    func heartView(isFavorite: Binding<Bool>) -> some View {
-        let heart: Image = switch isFavorite.wrappedValue {
+    func heartButton(
+        isFavorite: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        let heart: Image = switch isFavorite {
         case true: Image.iconHeartFill
         case false: Image.iconHeart
         }
         
-        return Button {
-            isFavorite.wrappedValue.toggle()
-        } label: {
+        return Button(action: action) {
             heart
                 .resizable()
                 .frame(width: 28, height: 28)

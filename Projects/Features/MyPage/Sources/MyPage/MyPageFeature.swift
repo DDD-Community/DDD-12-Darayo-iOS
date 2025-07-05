@@ -6,8 +6,9 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-import ComposableArchitecture
 import Foundation
+import ComposableArchitecture
+import Util
 
 @Reducer
 public struct MyPageFeature {
@@ -15,19 +16,26 @@ public struct MyPageFeature {
     public struct State {
         var isNotificationOn: Bool = true
         var isLatestVersion: Bool = true
-        // 특정 페스티벌 알림 설정 화면(NotificationSettingView)의 present 여부를 관리
         var isPresentingNotificationSetting: Bool = false
-        public init() {}
+        
+        var currentVersion: String
+        var latestVersion: String
+        
+        public init() {
+            let appVersion = Bundle.appVersion
+            self.currentVersion = appVersion
+            self.latestVersion = appVersion
+        }
     }
     
     public enum Action: BindableAction {
         case menuTapped(Menu)
         case binding(BindingAction<State>)
-        // 알림 설정 화면을 닫을 때 사용할 액션
         case dismissNotificationSetting
     }
     
     public init() {}
+    
     public var body: some ReducerOf<Self> {
         BindingReducer()
         
@@ -57,6 +65,7 @@ extension MyPageFeature {
         case notificationSetting
         case inquiry
         case termsOfService
+        case privacyPolicy
     }
 }
 
@@ -71,20 +80,19 @@ public struct NotificationSettingFeature {
     }
     
     public enum Action {
-        case festivalTapped(Festival) // 향후 상세 페이지 진입용
-        case toggleNotification(Festival.ID) // 페스티벌 알림 토글
-        case backButtonTapped // 뒤로 가기 처리용
+        case festivalTapped(Festival)
+        case toggleNotification(Festival.ID)
+        case backButtonTapped
     }
     
     public init() {}
+    
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .festivalTapped:
-                // 상세 화면으로 이동 (추후 구현)
                 return .none
             case .toggleNotification(let id):
-                // // 리스트에서 ID로 찾아 isNotificationEnabled를 토글
                 if let index = state.festivals.firstIndex(where: { $0.id == id }) {
                     state.festivals[index].isNotificationEnabled.toggle()
                 }

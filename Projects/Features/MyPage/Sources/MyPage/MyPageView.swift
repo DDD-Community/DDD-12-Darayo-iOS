@@ -40,6 +40,7 @@ private extension MyPageView {
         case .notificationSetting: "특정 페스티벌만 알림 받기"
         case .inquiry: "1:1 문의하기"
         case .termsOfService: "이용약관"
+        case .privacyPolicy: "개인정보 처리방침"
         }
     }
 }
@@ -71,8 +72,8 @@ private extension MyPageView {
     
     var versionText: some View {
         VStack(alignment: .leading, spacing: 2) {
-            versionTextView(title: "현재 버전", version: "NN.NN.N")
-            versionTextView(title: "최신 버전", version: "NN.NN.N")
+            versionTextView(title: "현재 버전", version: store.currentVersion)
+            versionTextView(title: "최신 버전", version: store.latestVersion)
         }
         .padding(.leading, 20)
     }
@@ -125,6 +126,8 @@ private extension MyPageView {
             menuButton(menu: .inquiry)
             divider
             menuButton(menu: .termsOfService)
+            divider
+            menuButton(menu: .privacyPolicy)
             divider
         }
     }

@@ -22,15 +22,19 @@ public struct MainView: View {
     }
     
     public var body: some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .bottom) {
-                let hasBottomSafeArea = proxy.safeAreaInsets.bottom > 0
-                let tabBarHeight: CGFloat = hasBottomSafeArea ? 90 : 69
-                
-                tabView(bottomPadding: tabBarHeight - 24)
-                tabBar(height: tabBarHeight)
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+           mainView
+        } destination: { store in
+            switch store.case {
+            case .festival(let store): FestivalView(store: store)
+            case .artistList(let store): ArtistListView(store: store)
+            case .notificationSetting(let store): NotificationSettingView(store: store)
+            case .inquiry(let store): InquiryView(store: store)
+            case .termsOfService(let store): TermsOfServiceView(store: store)
+            case .privacyPolicy(let store): PrivacyPolicyView(store: store)
             }
-            .ignoresSafeArea(edges: .bottom)
         }
     }
 }
@@ -46,24 +50,33 @@ private extension MainView {
 }
 
 private extension MainView {
-    func tabView(bottomPadding: CGFloat) -> some View {
-        TabView {
-            Group {
-                switch store.currentTab {
-                case .home:
-                    let store = store.scope(state: \.home, action: \.home)
-                    HomeView(store: store)
-                case .timetable:
-                    let store = store.scope(state: \.timetable, action: \.timetable)
-                    TimetableView(store: store)
-                case .myPage:
-                    let store = store.scope(state: \.myPage, action: \.myPage)
-                    MyPageView(store: store)
-                }
+    var mainView: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .bottom) {
+                let hasBottomSafeArea = proxy.safeAreaInsets.bottom > 0
+                let tabBarHeight: CGFloat = hasBottomSafeArea ? 90 : 69
+                
+                tabView(bottomPadding: tabBarHeight - 24)
+                tabBar(height: tabBarHeight)
             }
-            .padding(.bottom, bottomPadding)
             .ignoresSafeArea(edges: .bottom)
         }
+    }
+    
+    func tabView(bottomPadding: CGFloat) -> some View {
+        TabView(selection: $store.currentTab) {
+            HomeView(store: store.scope(state: \.home, action: \.home))
+                .tag(MainFeature.Tab.home)
+            
+            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
+                .tag(MainFeature.Tab.timetable)
+            
+            MyPageView(store: store.scope(state: \.myPage, action: \.myPage))
+                .tag(MainFeature.Tab.myPage)
+        }
+        .padding(.bottom, bottomPadding)
+        .ignoresSafeArea(edges: .bottom)
+        
     }
     
     func tabBar(height: CGFloat) -> some View {

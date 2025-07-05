@@ -19,6 +19,7 @@ public struct MainFeature {
         var home: HomeFeature.State = .init()
         var timetable: TimetableFeature.State = .init()
         var myPage: MyPageFeature.State = .init()
+        var path: StackState<Path.State> = .init()
     }
     
     public enum Action: BindableAction {
@@ -26,6 +27,7 @@ public struct MainFeature {
         case timetable(TimetableFeature.Action)
         case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
+        case path(StackActionOf<Path>)
     }
     
     public init() {}
@@ -46,11 +48,36 @@ public struct MainFeature {
         
         Reduce { state, action in
             switch action {
+            case .home(.festivalTapped(let festival)):
+                state.path.append(.festival(.init(festival: festival)))
+                return .none
+            case .myPage(.menuTapped(let menu)):
+                let pathState = getPathState(menu: menu)
+                guard let pathState else { return .none }
+                state.path.append(pathState)
+                return .none
+            case .path(.element(_, .festival(.seeAllButtonTapped))):
+                state.path.append(.artistList(.init()))
+                return .none
             case .home: return .none
             case .timetable: return .none
             case .myPage: return .none
             case .binding: return .none
+            case .path: return .none
             }
+        }
+        .forEach(\.path, action: \.path)
+    }
+}
+
+private extension MainFeature {
+    func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
+        return switch menu {
+        case .favoritesNotification: nil
+        case .notificationSetting: .notificationSetting(.init())
+        case .inquiry: .inquiry(.init())
+        case .termsOfService: .termsOfService(.init())
+        case .privacyPolicy: .privacyPolicy(.init())
         }
     }
 }
@@ -68,5 +95,15 @@ extension MainFeature {
             case .myPage: "MY"
             }
         }
+    }
+    
+    @Reducer
+    public enum Path {
+        case festival(FestivalFeature)
+        case artistList(ArtistListFeature)
+        case notificationSetting(NotificationSettingFeature)
+        case inquiry(InquiryFeature)
+        case termsOfService(TermsOfServiceFeature)
+        case privacyPolicy(PrivacyPolicyFeature)
     }
 }

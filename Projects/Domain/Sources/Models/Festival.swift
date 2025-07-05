@@ -6,9 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-import Foundation
-
-public struct Festival {
+public struct Festival: Hashable {
     public let title: String
     public let dateString: String
     public let place: String
