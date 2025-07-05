@@ -25,9 +25,7 @@ public struct ArtistListFeature {
             self.artists = (0..<count).map { _ in
                 let count = (1...12).randomElement()!
                 return (0..<count).map { _ in
-                    let count = (1...5).randomElement()!
-                    let name = (0..<count).map { _ in "아티스트" }.joined()
-                    return Artist(name: name, imageURLString: "")
+                    return Artist(name: "아티스트명", imageURLString: "")
                 }
             }
         }
