@@ -16,7 +16,6 @@ public struct MyPageFeature {
     public struct State {
         var isNotificationOn: Bool = true
         var isLatestVersion: Bool = true
-        var isPresentingNotificationSetting: Bool = false
         
         var currentVersion: String
         var latestVersion: String
@@ -44,7 +43,6 @@ public struct MyPageFeature {
             case .menuTapped(let menu):
                 switch menu {
                 case .notificationSetting:
-                    state.isPresentingNotificationSetting = true
                     return .none
                 case .favoritesNotification, .inquiry, .termsOfService:
                     return .none
@@ -69,63 +67,3 @@ extension MyPageFeature {
     }
 }
 
-// MARK: - NotificationSettingFeature
-
-@Reducer
-public struct NotificationSettingFeature {
-    @ObservableState
-    public struct State {
-        var festivals: [Festival] = Festival.dummyData
-        public init() {}
-    }
-    
-    public enum Action {
-        case festivalTapped(Festival)
-        case toggleNotification(Festival.ID)
-        case backButtonTapped
-    }
-    
-    public init() {}
-    
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            switch action {
-            case .festivalTapped:
-                return .none
-            case .toggleNotification(let id):
-                if let index = state.festivals.firstIndex(where: { $0.id == id }) {
-                    state.festivals[index].isNotificationEnabled.toggle()
-                }
-                return .none
-            case .backButtonTapped:
-                return .none
-            }
-        }
-    }
-}
-
-// MARK: - Festival Model
-
-public struct Festival: Identifiable, Equatable {
-    public let id = UUID()
-    public let name: String
-    public let location: String
-    public let period: String
-    public var isNotificationEnabled: Bool
-    
-    public init(name: String, location: String, period: String, isNotificationEnabled: Bool = true) {
-        self.name = name
-        self.location = location
-        self.period = period
-        self.isNotificationEnabled = isNotificationEnabled
-    }
-    
-    public static let dummyData: [Festival] = [
-        Festival(name: "페스티벌명 최대 1줄", location: "장소 인천 송도 달빛광장", period: "25.08.01 - 25.08.03"),
-        Festival(name: "페스티벌명 최대 1줄", location: "장소 인천 송도 달빛광장", period: "25.08.01 - 25.08.03"),
-        Festival(name: "페스티벌명 최대 1줄", location: "장소 인천 송도 달빛광장", period: "25.08.01 - 25.08.03"),
-        Festival(name: "페스티벌명 최대 1줄", location: "장소 인천 송도 달빛광장", period: "25.08.01 - 25.08.03"),
-        Festival(name: "페스티벌명 최대 1줄", location: "장소 인천 송도 달빛광장", period: "25.08.01 - 25.08.03"),
-        Festival(name: "페스티벌명 최대 1줄", location: "장소 인천 송도 달빛광장", period: "25.08.01 - 25.08.03"),
-    ]
-}
