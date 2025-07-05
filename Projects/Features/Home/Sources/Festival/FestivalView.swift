@@ -141,7 +141,7 @@ private extension FestivalView {
                 count: 10
             )
         ) {
-            
+            store.send(.seeAllButtonTapped)
         }
     }
     

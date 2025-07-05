@@ -54,6 +54,9 @@ public struct MainFeature {
             case .home: return .none
             case .timetable: return .none
             case .myPage: return .none
+            case .path(.element(_, .festival(.seeAllButtonTapped))):
+                state.path.append(.artistList(.init()))
+                return .none
             case .binding: return .none
             case .path: return .none
             }
@@ -80,5 +83,6 @@ extension MainFeature {
     @Reducer
     public enum Path {
         case festival(FestivalFeature)
+        case artistList(ArtistListFeature)
     }
 }
