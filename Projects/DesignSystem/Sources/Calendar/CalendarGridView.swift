@@ -1,0 +1,37 @@
+//
+//  CalendarGridView.swift
+//  DesignSystem
+//
+//  Created by 이다영 on 6/28/25.
+//  Copyright © 2025 Darayo. All rights reserved.
+//
+
+import SwiftUI
+
+struct CalendarGridView: View {
+    let currentMonth: Date
+    let selectedDate: Date?
+    let calendar: CalendarModel
+    let dates: [Date]
+    let onDateSelected: (Date) -> Void
+    
+    var body: some View {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 12) {
+            ForEach(dates, id: \.self) { date in
+                CalendarDayCell(
+                    date: date,
+                    currentMonth: currentMonth,
+                    selectedDate: selectedDate,
+                    hasEvent: hasEvent(for: date),
+                    onDateSelected: onDateSelected
+                )
+            }
+        }
+    }
+    
+    private func hasEvent(for date: Date) -> Bool {
+        return calendar.events.contains { event in
+            Foundation.Calendar.current.isDate(event.date, inSameDayAs: date)
+        }
+    }
+}

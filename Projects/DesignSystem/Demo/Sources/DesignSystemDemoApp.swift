@@ -34,6 +34,10 @@ private extension DesignSystemDemoApp {
             NavigationLink("Timetable") {
                 TimetableDemoView()
             }
+            
+            NavigationLink("Calendar") {
+                CalendarDemoView()
+            }
         }
         .navigationTitle("Design System")
     }

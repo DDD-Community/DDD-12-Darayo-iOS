@@ -22,6 +22,7 @@ public extension Image {
     static let iconMyPage = Self("icon_my_page")
     static let iconPicture = Self("icon_picture")
     static let iconPlus = Self("icon_plus")
+    static let iconSelectedDay = Self("icon_selectedDay")
     static let iconTimetable = Self("icon_timetable")
     static let iconUnchecked = Self("icon_unchecked")
     static let sampleFestival = Self("sample_festival")
