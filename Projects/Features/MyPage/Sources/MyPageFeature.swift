@@ -50,5 +50,6 @@ extension MyPageFeature {
         case notificationSetting
         case inquiry
         case termsOfService
+        case privacyPolicy
     }
 }
