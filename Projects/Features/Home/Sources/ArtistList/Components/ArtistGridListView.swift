@@ -28,7 +28,7 @@ struct ArtistGridListView: View {
     }
 
     private let columns: [GridItem] = .init(
-        repeating: .init(.flexible(), spacing: 20),
+        repeating: .init(.flexible(), spacing: 20, alignment: .top),
         count: 3
     )
     
