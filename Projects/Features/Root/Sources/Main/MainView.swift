@@ -22,15 +22,14 @@ public struct MainView: View {
     }
     
     public var body: some View {
-        GeometryReader { proxy in
-            ZStack(alignment: .bottom) {
-                let hasBottomSafeArea = proxy.safeAreaInsets.bottom > 0
-                let tabBarHeight: CGFloat = hasBottomSafeArea ? 90 : 69
-                
-                tabView(bottomPadding: tabBarHeight - 24)
-                tabBar(height: tabBarHeight)
+        NavigationStack(
+            path: $store.scope(state: \.path, action: \.path)
+        ) {
+           mainView
+        } destination: { store in
+            switch store.case {
+            case .festival(let store): FestivalView(store: store)
             }
-            .ignoresSafeArea(edges: .bottom)
         }
     }
 }
@@ -46,6 +45,19 @@ private extension MainView {
 }
 
 private extension MainView {
+    var mainView: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .bottom) {
+                let hasBottomSafeArea = proxy.safeAreaInsets.bottom > 0
+                let tabBarHeight: CGFloat = hasBottomSafeArea ? 90 : 69
+                
+                tabView(bottomPadding: tabBarHeight - 24)
+                tabBar(height: tabBarHeight)
+            }
+            .ignoresSafeArea(edges: .bottom)
+        }
+    }
+    
     func tabView(bottomPadding: CGFloat) -> some View {
         TabView(selection: $store.currentTab) {
             HomeView(store: store.scope(state: \.home, action: \.home))
