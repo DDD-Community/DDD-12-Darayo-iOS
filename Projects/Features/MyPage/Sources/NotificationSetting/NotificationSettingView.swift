@@ -10,15 +10,31 @@ import SwiftUI
 import ComposableArchitecture
 
 public struct NotificationSettingView: View {
-    private let store: StoreOf<NotificationSettingFeature>
-    
+    let store: StoreOf<NotificationSettingFeature>
+
     public init(store: StoreOf<NotificationSettingFeature>) {
         self.store = store
     }
-    
+
     public var body: some View {
-        VStack {
-            Text("Notification Setting")
+        WithViewStore(store, observe: { $0 }) { viewStore in
+            ScrollView {
+                VStack(spacing: 12) {
+                    ForEach(viewStore.festivals) { festival in
+                        FestivalNotificationCellView(
+                            festival: festival,
+                            toggleAction: {
+                                viewStore.send(.toggleNotification(id: festival.id, isOn: .random()))
+                            }
+                        )
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+            }
+            .navigationTitle("알림 설정한 페스티벌 목록")
+            .background(Color.background1.ignoresSafeArea())
         }
     }
 }
+

@@ -10,14 +10,18 @@ public struct Festival: Hashable {
     public let title: String
     public let dateString: String
     public let place: String
+    public var isNotificationEnabled: Bool
+
     
     public init(
         title: String,
         dateString: String,
-        place: String
+        place: String,
+        isNotificationEnabled: Bool = true
     ) {
         self.title = title
         self.dateString = dateString
         self.place = place
+        self.isNotificationEnabled = isNotificationEnabled
     }
 }

@@ -9,13 +9,14 @@
 import SwiftUI
 import ComposableArchitecture
 import Domain
+import DesignSystem
 
 public struct FestivalNotificationCellView: View {
-    public let festival: Festival
+    public let festival: FestivalNotification
         public let toggleAction: () -> Void
 
         public init(
-            festival: Festival,
+            festival: FestivalNotification,
             toggleAction: @escaping () -> Void
         ) {
             self.festival = festival
@@ -40,7 +41,7 @@ public struct FestivalNotificationCellView: View {
             }
             
             VStack(alignment: .leading, spacing: 6) {
-                Text(festival.title)
+                Text(festival.name)
                     .pretendard(style: .title4)
                     .foregroundStyle(.white)
                     .lineLimit(1)
@@ -50,7 +51,8 @@ public struct FestivalNotificationCellView: View {
                         .pretendard(style: .body4)
                         .foregroundColor(.grey4)
                     
-                    Text(festival.place)
+                    //Text(festival.place)
+                    Text("어딘가")
                         .pretendard(style: .body4)
                         .foregroundColor(.grey3)
                         .lineLimit(1)
@@ -61,12 +63,23 @@ public struct FestivalNotificationCellView: View {
                         .pretendard(style: .body4)
                         .foregroundColor(.grey4)
                     
-                    Text(festival.dateString)
+                    //Text(festival.dateString)
+                    Text("25.08.01 - 25.08.03")
                         .pretendard(style: .body4)
                         .foregroundColor(.grey3)
                 }
             }
             Spacer()
+            
+            Button(action: toggleAction) {
+                Image(systemName: festival.isNotificationOn ? "bell.fill" : "bell")
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(.white)
+            }
         }
+        .padding(16)
+        .background(Color.background2)
+        .clipShape(RoundedRectangle(cornerRadius: 4))
     }
 }
