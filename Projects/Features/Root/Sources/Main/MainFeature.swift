@@ -6,10 +6,12 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import ComposableArchitecture
 import Home
 import Timetable
 import MyPage
+import Util
 
 @Reducer
 public struct MainFeature {
@@ -20,6 +22,7 @@ public struct MainFeature {
         var timetable: TimetableFeature.State = .init()
         var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
+        var url: URL?
     }
     
     public enum Action: BindableAction {
@@ -51,6 +54,9 @@ public struct MainFeature {
             case .home(.festivalTapped(let festival)):
                 state.path.append(.festival(.init(festival: festival)))
                 return .none
+            case .myPage(.menuTapped(.inquiry)):
+                state.url = URL(string: URLConstant.inquiry)
+                return .none
             case .myPage(.menuTapped(let menu)):
                 let pathState = getPathState(menu: menu)
                 guard let pathState else { return .none }
@@ -73,11 +79,11 @@ public struct MainFeature {
 private extension MainFeature {
     func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
         return switch menu {
-        case .favoritesNotification: nil
         case .notificationSetting: .notificationSetting(.init())
-        case .inquiry: .inquiry(.init())
         case .termsOfService: .termsOfService(.init())
         case .privacyPolicy: .privacyPolicy(.init())
+        case .favoritesNotification: nil
+        case .inquiry: nil
         }
     }
 }
@@ -102,7 +108,6 @@ extension MainFeature {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
         case notificationSetting(NotificationSettingFeature)
-        case inquiry(InquiryFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
     }
