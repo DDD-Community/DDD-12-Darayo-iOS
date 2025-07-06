@@ -51,17 +51,34 @@ public struct MainFeature {
             case .home(.festivalTapped(let festival)):
                 state.path.append(.festival(.init(festival: festival)))
                 return .none
-            case .home: return .none
-            case .timetable: return .none
-            case .myPage: return .none
+            case .myPage(.menuTapped(let menu)):
+                let pathState = getPathState(menu: menu)
+                guard let pathState else { return .none }
+                state.path.append(pathState)
+                return .none
             case .path(.element(_, .festival(.seeAllButtonTapped))):
                 state.path.append(.artistList(.init()))
                 return .none
+            case .home: return .none
+            case .timetable: return .none
+            case .myPage: return .none
             case .binding: return .none
             case .path: return .none
             }
         }
         .forEach(\.path, action: \.path)
+    }
+}
+
+private extension MainFeature {
+    func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
+        return switch menu {
+        case .favoritesNotification: nil
+        case .notificationSetting: .notificationSetting(.init())
+        case .inquiry: .inquiry(.init())
+        case .termsOfService: .termsOfService(.init())
+        case .privacyPolicy: .privacyPolicy(.init())
+        }
     }
 }
 
@@ -84,5 +101,9 @@ extension MainFeature {
     public enum Path {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
+        case notificationSetting(NotificationSettingFeature)
+        case inquiry(InquiryFeature)
+        case termsOfService(TermsOfServiceFeature)
+        case privacyPolicy(PrivacyPolicyFeature)
     }
 }
