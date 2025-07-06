@@ -15,5 +15,6 @@ public enum Constant {
     
     public enum Text {
         public static let termsOfService = Bundle.module.string(fileName: "TermsOfService") ?? ""
+        public static let privacyPolicy = Bundle.module.string(fileName: "PrivacyPolicy") ?? ""
     }
 }
