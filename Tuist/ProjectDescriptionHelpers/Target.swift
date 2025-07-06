@@ -64,7 +64,7 @@ private extension Module {
     
     var resources: ResourceFileElements? {
         switch self {
-        case .app, .designSystem: ["Resources/**"]
+        case .app, .designSystem, .util: ["Resources/**"]
         default: nil
         }
     }

@@ -55,7 +55,7 @@ public struct MainFeature {
                 state.path.append(.festival(.init(festival: festival)))
                 return .none
             case .myPage(.menuTapped(.inquiry)):
-                state.url = URL(string: URLConstant.inquiry)
+                state.url = URL(string: Constant.URL.inquiry)
                 return .none
             case .myPage(.menuTapped(let menu)):
                 let pathState = getPathState(menu: menu)

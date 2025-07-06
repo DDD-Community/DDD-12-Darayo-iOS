@@ -16,3 +16,11 @@ public extension Bundle {
         return Bundle.main.object(forInfoDictionaryKey: key) as? String
     }
 }
+
+extension Bundle {
+    func string(fileName: String) -> String? {
+        let path = path(forResource: fileName, ofType: "txt")
+        guard let path else { return nil }
+        return try? String(contentsOfFile: path, encoding: .utf8)
+    }
+}
