@@ -8,6 +8,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import DesignSystem
 
 public struct TermsOfServiceView: View {
     private let store: StoreOf<TermsOfServiceFeature>
@@ -17,8 +18,17 @@ public struct TermsOfServiceView: View {
     }
     
     public var body: some View {
-        VStack {
-            Text("Terms of Service")
+        ScrollView {
+            Text(store.text)
+                .pretendard(style: .caption2)
+                .padding(.horizontal, 16)
+                .padding(.top, 16)
+                .padding(.bottom, 200)
         }
+        .navigation(title: "이용약관") {
+            store.send(.backButtonTapped)
+        }
+        .gradient(height: 184)
+        .background(Color.background1)
     }
 }

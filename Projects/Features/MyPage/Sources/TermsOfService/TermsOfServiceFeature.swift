@@ -7,22 +7,29 @@
 //
 
 import ComposableArchitecture
+import Util
 
 @Reducer
 public struct TermsOfServiceFeature {
+    @Dependency(\.dismiss) private var dismiss
+    
     @ObservableState
     public struct State {
+        let text = Constant.Text.termsOfService
         public init() {}
     }
     
     public enum Action {
-        
+        case backButtonTapped
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
-            return .none
+            switch action {
+            case .backButtonTapped:
+                return .run { _ in await dismiss() }
+            }
         }
     }
 }
