@@ -32,6 +32,7 @@ public struct FestivalNotificationCellView: View {
                 Text(festival.name)
                     .pretendard(style: .title4)
                     .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity, alignment: .topLeading)
                     .lineLimit(1)
                 
                 VStack(alignment: .leading, spacing: 0) {
@@ -61,6 +62,7 @@ public struct FestivalNotificationCellView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 12)
+            .padding(.vertical, 12)
             
             Spacer()
             
@@ -71,6 +73,7 @@ public struct FestivalNotificationCellView: View {
             }
             .padding(.trailing, 12)
         }
+        .frame(height: 88)
         .background(Color.background2)
         .clipShape(RoundedRectangle(cornerRadius: 4))
     }
