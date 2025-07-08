@@ -24,16 +24,21 @@ public struct NotificationSettingView: View {
                         FestivalNotificationCellView(
                             festival: festival,
                             toggleAction: {
-                                viewStore.send(.toggleNotification(id: festival.id, isOn: .random()))
+                                viewStore.send(.toggleNotification(id: festival.id, isOn: !festival.isNotificationOn))
                             }
                         )
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
+                .padding(.bottom, 24)
             }
-            .navigationTitle("알림 설정한 페스티벌 목록")
             .background(Color.background1.ignoresSafeArea())
+            .navigationTitle("알림 설정한 페스티벌 목록")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .onAppear {
+            store.send(.onAppear)
         }
     }
 }
