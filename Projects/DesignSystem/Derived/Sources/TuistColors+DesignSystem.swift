@@ -9,6 +9,8 @@ public extension Color {
     static let background2 = Self("Background2")
     static let background3 = Self("Background3")
     static let font = Self("Font")
+    static let gradientSplash1 = Self("GradientSplash1")
+    static let gradientSplash2 = Self("GradientSplash2")
     static let grey1 = Self("Grey1")
     static let grey2 = Self("Grey2")
     static let grey3 = Self("Grey3")
