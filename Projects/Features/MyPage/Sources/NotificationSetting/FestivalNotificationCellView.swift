@@ -12,16 +12,17 @@ import Domain
 import DesignSystem
 
 public struct FestivalNotificationCellView: View {
-    public let festival: FestivalNotification
-        public let toggleAction: () -> Void
+    let festival: FestivalNotification
+    let toggleAction: () -> Void
 
-        public init(
-            festival: FestivalNotification,
-            toggleAction: @escaping () -> Void
-        ) {
-            self.festival = festival
-            self.toggleAction = toggleAction
-        }
+    public init(
+        festival: FestivalNotification,
+        toggleAction: @escaping () -> Void
+    ) {
+        self.festival = festival
+        self.toggleAction = toggleAction
+    }
+    
     public var body: some View {
         HStack(spacing: 0) {
             // 페스티벌 이미지
@@ -46,7 +47,7 @@ public struct FestivalNotificationCellView: View {
                             .foregroundColor(.grey3)
                             .lineLimit(1)
                     }
-                    .frame(minHeight: 17, maxHeight: 17, alignment: .leading)
+                    .lineLimit(1)
                 
                     HStack(spacing: 6) {
                         Text("행사일")
@@ -57,18 +58,19 @@ public struct FestivalNotificationCellView: View {
                             .pretendard(style: .body4)
                             .foregroundColor(.grey3)
                     }
-                    .frame(minHeight: 17, maxHeight: 17, alignment: .leading)
+                    .lineLimit(1)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.leading, 12)
             .padding(.vertical, 12)
-            
-            Spacer()
+            .padding(.trailing, 8)
             
             Button(action: toggleAction) {
-                Image(systemName: festival.isNotificationOn ? "bell.fill" : "bell")
-                    .font(.system(size: 24))
+                (festival.isNotificationOn ? Image.iconNotificationFill : Image.iconNotification)
+                    .resizable()
+                    .renderingMode(.template)
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(.white)
             }
             .padding(.trailing, 12)
