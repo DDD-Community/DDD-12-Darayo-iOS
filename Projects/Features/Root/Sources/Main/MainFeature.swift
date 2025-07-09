@@ -59,6 +59,9 @@ public struct MainFeature {
             case .path(.element(_, .festival(.seeAllButtonTapped))):
                 state.path.append(.artistList(.init()))
                 return .none
+            case .path(.element(_, .notificationSetting(.backButtonTapped))):
+               state.path.removeLast()
+               return .none
             case .home: return .none
             case .timetable: return .none
             case .myPage: return .none

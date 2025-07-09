@@ -27,6 +27,7 @@ public struct NotificationSettingFeature {
     public enum Action {
         case onAppear
         case toggleNotification(id: UUID, isOn: Bool)
+        case backButtonTapped 
     }
     
     public init() {}
@@ -47,6 +48,9 @@ public struct NotificationSettingFeature {
                 if let index = state.festivals.firstIndex(where: { $0.id == id }) {
                     state.festivals[index].isNotificationOn = isOn
                 }
+                return .none
+                
+            case .backButtonTapped:
                 return .none
             }
         }
