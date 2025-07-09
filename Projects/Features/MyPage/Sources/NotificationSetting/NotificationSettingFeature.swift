@@ -26,7 +26,7 @@ public struct NotificationSettingFeature {
     
     public enum Action {
         case onAppear
-        case toggleNotification(id: UUID, isOn: Bool)
+        case toggleNotification(id: UUID)
     }
     
     public init() {}
@@ -42,10 +42,10 @@ public struct NotificationSettingFeature {
                 ]
                 return .none
                 
-            case let .toggleNotification(id, isOn):
+            case let .toggleNotification(id):
                 // 해당 id에 맞는 항목의 알림 상태 업데이트
                 if let index = state.festivals.firstIndex(where: { $0.id == id }) {
-                    state.festivals[index].isNotificationOn = isOn
+                    state.festivals[index].isNotificationOn.toggle()
                 }
                 return .none
             }
