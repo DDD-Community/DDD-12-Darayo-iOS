@@ -39,6 +39,7 @@ public extension Image {
     static let iconTriangle = Self("icon_triangle")
     static let iconUnchecked = Self("icon_unchecked")
     static let iconWebsite = Self("icon_website")
+    static let logo = Self("logo")
     static let logoSplash = Self("logo_splash")
     static let sampleFestival = Self("sample_festival")
 }

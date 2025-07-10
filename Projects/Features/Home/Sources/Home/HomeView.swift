@@ -39,19 +39,12 @@ private extension HomeView {
     
     var navigationBar: some View {
         HStack {
-            logo
+            Image.logo
             Spacer()
             displayModeView(mode: $store.displayMode)
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 16)
-    }
-    
-    var logo: some View {
-        Text("FESTIBEE")
-            .pretendard(style: .title1)
-            .foregroundStyle(Color.white)
-        
     }
     
     func displayModeView(mode: Binding<HomeFeature.DisplayMode>) -> some View {
