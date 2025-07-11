@@ -83,9 +83,10 @@ private extension TimetableView {
     }
     
     var downloadButton: some View {
-        Button {
-            
-        } label: {
+        return ShareLink(
+            item: timetable,
+            preview: SharePreview("Timetable", image: timetable)
+        ) {
             Image.iconDownload
                 .renderingMode(.template)
                 .resizable()
@@ -140,15 +141,15 @@ private extension TimetableView {
     }
     
     var stages: [String] {
-        let alphabets: [String] = ["A", "B", "C", "D"]
+        let alphabets: [String] = ["A", "B", "C", "D", "E", "F", "G", "H"]
         
-        return (0..<4).map {
+        return (0..<8).map {
             return "\(alphabets[$0]) stage"
         }
     }
     
     var schedules: [[Timetable.Schedule]] {
-        (0..<4).map {
+        (0..<8).map {
             makeOneDaySchedule(column: $0)
         }
     }
