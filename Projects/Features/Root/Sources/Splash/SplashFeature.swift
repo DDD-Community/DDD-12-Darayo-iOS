@@ -7,6 +7,7 @@
 //
 
 import ComposableArchitecture
+import Photos
 
 @Reducer
 public struct SplashFeature {
@@ -16,7 +17,7 @@ public struct SplashFeature {
     
     public enum Action {
         case onAppear
-        case timeElapsed
+        case splashDone(Bool)
     }
     
     public init() {}
@@ -25,11 +26,12 @@ public struct SplashFeature {
             switch action {
             case .onAppear:
                 return .run { send in
-                    // MARK: 임시로 1.5초 지연, 추후 API 호출 필요
                     try? await Task.sleep(for: .seconds(1.5))
-                    await send(.timeElapsed)
+                    let status = PHPhotoLibrary.authorizationStatus(for: .addOnly)
+                    let shouldRequestAuthorization = status == .notDetermined
+                    await send(.splashDone(shouldRequestAuthorization))
                 }
-            case .timeElapsed: return .none
+            case .splashDone: return .none
             }
         }
     }

@@ -26,7 +26,8 @@ public struct PermissionFeature {
             switch action {
             case .onAppear:
                 return .run { send in
-                    _ = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+                    let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+                    print(status.rawValue)
                     await send(.authorizationStatusFetched)
                 }
             case .authorizationStatusFetched: return .none
