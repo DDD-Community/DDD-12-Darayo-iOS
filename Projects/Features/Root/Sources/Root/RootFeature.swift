@@ -31,7 +31,7 @@ public struct RootFeature {
             case .path(.splash(.timeElapsed)):
                 state.path = .permission(.init())
                 return .none
-            case .path(.permission(.timeElapsed)):
+            case .path(.permission(.authorizationStatusFetched)):
                 state.path = .main(.init())
                 return .none
             default: return .none

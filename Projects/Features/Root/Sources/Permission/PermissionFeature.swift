@@ -7,6 +7,7 @@
 //
 
 import ComposableArchitecture
+import Photos
 
 @Reducer
 public struct PermissionFeature {
@@ -16,7 +17,7 @@ public struct PermissionFeature {
     
     public enum Action {
         case onAppear
-        case timeElapsed
+        case authorizationStatusFetched
     }
     
     public init() {}
@@ -24,12 +25,11 @@ public struct PermissionFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                // MARK: 임시로 1.5초 지연, 추후 권한 허용 로직 구현 필요
                 return .run { send in
-                    try? await Task.sleep(for: .seconds(1.5))
-                    await send(.timeElapsed)
+                    _ = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
+                    await send(.authorizationStatusFetched)
                 }
-            case .timeElapsed: return .none
+            case .authorizationStatusFetched: return .none
             }
         }
     }
