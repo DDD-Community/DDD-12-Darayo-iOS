@@ -23,8 +23,7 @@ public struct TimetableView: UIViewRepresentable {
     }
     
     public func updateUIView(_ uiView: UIView, context: Context) {
-        uiView.subviews.forEach { $0.removeFromSuperview() }
-        configureContainerView(uiView, context)
+
     }
     
     public func makeCoordinator() -> TimetableViewCoordinator {
