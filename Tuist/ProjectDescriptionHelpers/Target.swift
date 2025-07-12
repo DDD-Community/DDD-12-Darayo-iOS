@@ -64,7 +64,8 @@ private extension Module {
     
     var resources: ResourceFileElements? {
         switch self {
-        case .app, .designSystem, .util: ["Resources/**"]
+        case .app: ["Resources/**", "Support/GoogleService-Info.plist"]
+        case .designSystem, .util: ["Resources/**"]
         default: nil
         }
     }

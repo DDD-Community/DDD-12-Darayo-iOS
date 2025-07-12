@@ -14,6 +14,7 @@ import PackageDescription
 let package = Package(
     name: "Darayo",
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", from: "1.20.2")
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture.git", from: "1.20.2"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "11.15.0")
     ]
 )

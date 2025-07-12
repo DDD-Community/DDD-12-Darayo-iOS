@@ -16,6 +16,7 @@ public extension Project {
             settings: .settings(configurations: .default),
             targets: module.targets,
             schemes: module.schemes,
+            additionalFiles: module.additionalFiles,
             resourceSynthesizers: module.resourceSynthesizers
         )
     }
@@ -35,6 +36,17 @@ private extension Module {
             Environment.allCases.map { environment in
                 Scheme.scheme(name: name, environment: environment)
             }
+        default: []
+        }
+    }
+    
+    var additionalFiles: [FileElement] {
+        return switch self {
+        case .app:
+            [
+                "Support/GoogleService-Info.plist",
+                "../../Configs/Shared.xcconfig"
+            ]
         default: []
         }
     }

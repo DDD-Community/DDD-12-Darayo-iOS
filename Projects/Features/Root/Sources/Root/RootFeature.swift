@@ -34,7 +34,7 @@ public struct RootFeature {
                 case false: .main(.init())
                 }
                 return .none
-            case .path(.permission(.authorizationStatusFetched)):
+            case .path(.permission(.allPermissionsCompleted)):
                 state.path = .main(.init())
                 return .none
             default: return .none
