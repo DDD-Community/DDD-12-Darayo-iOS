@@ -34,6 +34,7 @@ public extension Image {
     static let iconPicture = Self("icon_picture")
     static let iconPlus = Self("icon_plus")
     static let iconSelectedDay = Self("icon_selectedDay")
+    static let iconShare = Self("icon_share")
     static let iconSubway = Self("icon_subway")
     static let iconTimetable = Self("icon_timetable")
     static let iconTriangle = Self("icon_triangle")

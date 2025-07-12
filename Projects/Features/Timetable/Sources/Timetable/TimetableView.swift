@@ -87,7 +87,7 @@ private extension TimetableView {
             item: timetable,
             preview: SharePreview("Timetable", image: timetable)
         ) {
-            Image.iconDownload
+            Image.iconShare
                 .renderingMode(.template)
                 .resizable()
                 .frame(width: 24, height: 24)
