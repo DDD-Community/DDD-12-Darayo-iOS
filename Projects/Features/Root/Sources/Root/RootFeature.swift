@@ -29,7 +29,7 @@ public struct RootFeature {
         
         Reduce { state, action in
             switch action {
-            case .path(.splash(.splashDone(let shouldRequestAuthorization))):
+            case .path(.splash(.allTasksDone(let shouldRequestAuthorization))):
                 state.path = switch shouldRequestAuthorization {
                 case true: .permission(.init())
                 case false: .main(.init())

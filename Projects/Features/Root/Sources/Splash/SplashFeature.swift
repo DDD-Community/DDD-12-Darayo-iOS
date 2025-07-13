@@ -10,16 +10,20 @@ import UIKit
 import ComposableArchitecture
 import Photos
 import UserNotifications
+import Domain
 
 @Reducer
 public struct SplashFeature {
+    @Dependency(\.authUseCase) private var authUseCase
+    
     public struct State {
         
     }
     
     public enum Action {
         case onAppear
-        case splashDone(Bool)
+        case allTasksDone(Bool)
+        case showAlert
     }
     
     public init() {}
@@ -28,21 +32,25 @@ public struct SplashFeature {
             switch action {
             case .onAppear:
                 return .run { send in
-                    await send(checkAuthorizationStatus())
+                    await send(doAllTasks())
                 }
-            case .splashDone: return .none
+            case .allTasksDone: return .none
+            case .showAlert: return .none
             }
         }
     }
 }
 
 private extension SplashFeature {
-    func checkAuthorizationStatus() async -> Action {
-        async let waiting: Void = Task.sleep(for: .seconds(1.5))
-        async let shouldRequestAuthorization = isAutorizationNotDetermined
-        
-        try? await waiting
-        return await .splashDone(shouldRequestAuthorization)
+    func doAllTasks() async -> Action {
+        do {
+            async let signIn: Void = authUseCase.signIn()
+            async let shoulRequestAuthorization = isAutorizationNotDetermined
+            try await signIn
+            return await .allTasksDone(shoulRequestAuthorization)
+        } catch {
+            return .showAlert
+        }
     }
     
     var isAutorizationNotDetermined: Bool {

@@ -10,6 +10,7 @@ import Foundation
 
 public enum Constant {
     public enum URL {
+        public static let base = ""
         public static let inquiry = "https://forms.gle/qm6g7U9FwKJkJgce8"
     }
     

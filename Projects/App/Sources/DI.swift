@@ -18,3 +18,7 @@ extension NetworkServiceKey: @retroactive DependencyKey {
 extension SampleRepositoryKey: @retroactive DependencyKey {
     public static let liveValue: SampleRepositoryProtocol = SampleRepository()
 }
+
+extension AuthRepositoryKey: @retroactive DependencyKey {
+    public static let liveValue: AuthRepositoryProtocol = AuthRepository()
+}

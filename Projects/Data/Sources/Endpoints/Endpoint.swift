@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Util
 
 public protocol Endpoint {
     var baseURL: String { get }
@@ -27,12 +28,12 @@ public enum HTTPMethod: String {
 
 extension Endpoint {
     var baseURL: String {
-        // TODO: need to implement base url later.
-        return "https://api.sampleapis.com"
+        Constant.URL.base
     }
     
     var headers: [String: String] {
-        // TODO: need to implement header later.
-        return [:]
+        return [
+            "Content-Type": "application/json"
+        ]
     }
 }
