@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         FirebaseApp.configure()
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
+        UNUserNotificationCenter.current().setBadgeCount(0)
         return true
     }
     
@@ -48,6 +49,6 @@ extension AppDelegate: MessagingDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
-        
+        UNUserNotificationCenter.current().setBadgeCount(0)
     }
 }
