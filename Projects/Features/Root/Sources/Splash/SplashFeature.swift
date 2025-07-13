@@ -6,8 +6,10 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import UIKit
 import ComposableArchitecture
 import Photos
+import UserNotifications
 
 @Reducer
 public struct SplashFeature {
@@ -26,13 +28,44 @@ public struct SplashFeature {
             switch action {
             case .onAppear:
                 return .run { send in
-                    try? await Task.sleep(for: .seconds(1.5))
-                    let status = PHPhotoLibrary.authorizationStatus(for: .addOnly)
-                    let shouldRequestAuthorization = status == .notDetermined
-                    await send(.splashDone(shouldRequestAuthorization))
+                    await send(checkAuthorizationStatus())
                 }
             case .splashDone: return .none
             }
         }
+    }
+}
+
+private extension SplashFeature {
+    func checkAuthorizationStatus() async -> Action {
+        async let waiting: Void = Task.sleep(for: .seconds(1.5))
+        async let shouldRequestAuthorization = isAutorizationNotDetermined
+        
+        try? await waiting
+        return await .splashDone(shouldRequestAuthorization)
+    }
+    
+    var isAutorizationNotDetermined: Bool {
+        get async {
+            await isNotificationAuthroizationNotDetermined || isPhotoAuthroizationNotDetermined
+        }
+    }
+    
+    var isNotificationAuthroizationNotDetermined: Bool {
+        get async {
+            let center =  UNUserNotificationCenter.current()
+            let status = await center.notificationSettings().authorizationStatus
+            
+            if status != .notDetermined {
+                DispatchQueue.main.async {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+            return status == .notDetermined
+        }
+    }
+    
+    var isPhotoAuthroizationNotDetermined: Bool {
+        PHPhotoLibrary.authorizationStatus(for: .addOnly) == .notDetermined
     }
 }
