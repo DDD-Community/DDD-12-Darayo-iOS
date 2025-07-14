@@ -29,6 +29,7 @@ public struct HomeView: View {
             }
         }
         .background(Color.background1)
+        .onAppear { store.send(.onAppear) }
     }
 }
 

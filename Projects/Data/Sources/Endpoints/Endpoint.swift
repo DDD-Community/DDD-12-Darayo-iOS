@@ -16,6 +16,7 @@ public protocol Endpoint {
     var headers: [String: String] { get }
     var queryParameters: Encodable? { get }
     var body: Encodable? { get }
+    var withToken: Bool { get }
 }
 
 public enum HTTPMethod: String {
@@ -32,8 +33,16 @@ extension Endpoint {
     }
     
     var headers: [String: String] {
-        return [
-            "Content-Type": "application/json"
+        var headers = [
+            "Content-Type": "application/json",
         ]
+        
+        if withToken, let token = TokenStorage.accessToken {
+            headers["Authorization"] = "Bearer \(token)"
+        }
+        
+        return headers
     }
+    
+    var withToken: Bool { true }
 }
