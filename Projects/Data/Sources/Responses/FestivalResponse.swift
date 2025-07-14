@@ -6,6 +6,9 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Domain
+import Util
+
 struct FestivalResponse: Decodable {
     let festivalId: Int?
     let name: String?
@@ -40,4 +43,15 @@ struct ArtistResponse: Decodable {
 struct URLInfoResponse: Decodable {
     let url: String?
     let type: String?
+}
+
+extension FestivalResponse {
+    var toDomain: Festival {
+        return .init(
+            name: name ?? "",
+            startDate: startDate?.toDate(dateFormat: .festivalDate),
+            endDate: endDate?.toDate(dateFormat: .festivalDate),
+            placeName: placeName ?? ""
+        )
+    }
 }

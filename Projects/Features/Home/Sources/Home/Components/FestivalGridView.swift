@@ -63,7 +63,7 @@ private extension FestivalGridView {
                         .foregroundStyle(Color.point2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Text(festival.title)
+                    Text(festival.name)
                         .pretendard(style: .title3)
                         .foregroundStyle(Color.white)
                         .multilineTextAlignment(.leading)
@@ -72,7 +72,7 @@ private extension FestivalGridView {
                         .lineLimit(2)
                         .padding(.top, 4)
                     
-                    Text(festival.place)
+                    Text(festival.placeName)
                         .pretendard(style: .body4)
                         .foregroundStyle(Color.grey3)
                         .frame(maxWidth: .infinity, alignment: .leading)
