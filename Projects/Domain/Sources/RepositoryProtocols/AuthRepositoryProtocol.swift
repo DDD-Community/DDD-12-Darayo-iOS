@@ -10,7 +10,8 @@ import Dependencies
 import Util
 
 public protocol AuthRepositoryProtocol {
-    func signIn(deviceID: String) async throws -> String?
+    var isSignedIn: Bool { get }
+    func signIn() async throws
 }
 
 public enum AuthRepositoryKey: TestDependencyKey {

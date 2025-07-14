@@ -13,9 +13,14 @@ public struct AuthRepository: AuthRepositoryProtocol {
     @Dependency(\.networkService) private var networkService
     public init() {}
     
-    public func signIn(deviceID: String) async throws -> String? {
-        let endpoint = AuthEndpoint.signIn(deviceID)
+    public var isSignedIn: Bool {
+        TokenStorage.accessToken != nil
+    }
+    
+    public func signIn() async throws {
+        let endpoint = AuthEndpoint.signIn(DeviceIDProvider.deviceID)
         let response: ResponseWrapper<SignInResponse> = try await networkService.request(endpoint: endpoint)
-        return response.result?.token
+        let accessToken = response.result?.token
+        TokenStorage.accessToken = accessToken
     }
 }

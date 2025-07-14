@@ -10,9 +10,14 @@ import Dependencies
 import Domain
 import Data
 import Network
+import Keychain
 
 extension NetworkServiceKey: @retroactive DependencyKey {
     public static let liveValue: NetworkServiceProtocol = NetworkService()
+}
+
+extension KeychainServiceKey: @retroactive DependencyKey {
+    public static let liveValue: KeychainServiceProtocol = KeychainService()
 }
 
 extension SampleRepositoryKey: @retroactive DependencyKey {

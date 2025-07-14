@@ -44,13 +44,21 @@ public struct SplashFeature {
 private extension SplashFeature {
     func doAllTasks() async -> Action {
         do {
-            async let signIn: Void = authUseCase.signIn()
+            async let waiting: Void = Task.sleep(for: .seconds(1.5))
+            async let signIn: Void = signIn()
             async let shoulRequestAuthorization = isAutorizationNotDetermined
+            
             try await signIn
+            try? await waiting
             return await .allTasksDone(shoulRequestAuthorization)
         } catch {
             return .showAlert
         }
+    }
+    
+    func signIn() async throws {
+        if authUseCase.isSignedIn { return }
+        try await authUseCase.signIn()
     }
     
     var isAutorizationNotDetermined: Bool {

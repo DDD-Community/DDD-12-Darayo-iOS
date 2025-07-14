@@ -11,11 +11,12 @@ import Dependencies
 public struct AuthUseCase {
     @Dependency(\.authRepository) private var authRepository
     
+    public var isSignedIn: Bool {
+        authRepository.isSignedIn
+    }
+    
     public func signIn() async throws {
-        // TODO: fetch device ID
-        let accessToken = try await authRepository.signIn(deviceID: "")
-        // TODO: save access token
-        return
+        try await authRepository.signIn()
     }
 }
 
