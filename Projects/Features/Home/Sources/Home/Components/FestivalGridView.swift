@@ -55,7 +55,7 @@ private extension FestivalGridView {
             festivalTapped(festival)
         } label: {
             VStack(spacing: 0) {
-                imageView(image: Image.sampleFestival)
+                imageView(url: festival.posterURL)
                 
                 VStack(spacing: 0) {
                     Text(festival.dateString)
@@ -89,13 +89,21 @@ private extension FestivalGridView {
         .buttonStyle(.plain)
     }
     
-    func imageView(image: Image) -> some View {
+    func imageView(url: URL?) -> some View {
         ZStack {
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            if let url {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else {
+                        Color.grey3
+                    }
+                }
                 .frame(height: 110)
                 .clipped()
+            }
             
             LinearGradient(
                 gradient: .init(

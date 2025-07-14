@@ -46,12 +46,15 @@ struct URLInfoResponse: Decodable {
 }
 
 extension FestivalResponse {
-    var toDomain: Festival {
+    var toDomain: Festival? {
+        guard let festivalId else { return nil }
         return .init(
+            id: festivalId,
             name: name ?? "",
             startDate: startDate?.toDate(dateFormat: .festivalDate),
             endDate: endDate?.toDate(dateFormat: .festivalDate),
-            placeName: placeName ?? ""
+            placeName: placeName ?? "",
+            posterURLString: posterUrl ?? ""
         )
     }
 }

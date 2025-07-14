@@ -10,21 +10,27 @@ import Foundation
 import Util
 
 public struct Festival: Hashable {
+    public let id: Int
     public let name: String
     public let startDate: Date?
     public let endDate: Date?
     public let placeName: String
+    public let posterURLString: String
     
     public init(
+        id: Int,
         name: String,
         startDate: Date?,
         endDate: Date?,
-        placeName: String
+        placeName: String,
+        posterURLString: String
     ) {
+        self.id = id
         self.name = name
         self.startDate = startDate
         self.endDate = endDate
         self.placeName = placeName
+        self.posterURLString = posterURLString
     }
     
     public var dateString: String {
@@ -32,5 +38,9 @@ public struct Festival: Hashable {
         let end = endDate?.toString(dateFormat: .home)
         guard let start, let end else { return "" }
         return "\(start)-\(end)"
+    }
+    
+    public var posterURL: URL? {
+        URL(string: posterURLString)
     }
 }
