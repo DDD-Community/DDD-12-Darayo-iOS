@@ -16,6 +16,7 @@ public struct Festival: Hashable {
     public let endDate: Date?
     public let placeName: String
     public let posterURLString: String
+    public var isNotificationEnabled: Bool
     
     public init(
         id: Int,
@@ -23,7 +24,8 @@ public struct Festival: Hashable {
         startDate: Date?,
         endDate: Date?,
         placeName: String,
-        posterURLString: String
+        posterURLString: String,
+        isNotificationEnabled: Bool = true
     ) {
         self.id = id
         self.name = name
@@ -31,6 +33,7 @@ public struct Festival: Hashable {
         self.endDate = endDate
         self.placeName = placeName
         self.posterURLString = posterURLString
+        self.isNotificationEnabled = isNotificationEnabled
     }
     
     public var dateString: String {

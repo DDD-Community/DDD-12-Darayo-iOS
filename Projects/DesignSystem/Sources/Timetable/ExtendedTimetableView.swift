@@ -36,6 +36,7 @@ public struct ExtendedTimetableView: View {
             .overlay(alignment: .topLeading) { verticalBorder }
             .overlay(alignment: .topLeading) { horizontalBorder }
         }
+        .background(Color.background1)
     }
 }
 
@@ -43,6 +44,7 @@ private extension ExtendedTimetableView {
     var dayHeaderView: some View {
         Text("25.08.08 (금)")
             .pretendard(style: .title4)
+            .foregroundStyle(Color.white)
             .frame(maxWidth: .infinity)
             .frame(height: 48)
             .background(Color.background2)

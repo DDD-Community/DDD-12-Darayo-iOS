@@ -17,6 +17,7 @@ public enum Module: Hashable, Sendable {
     
     public var name: String {
         switch self {
+        case .app: ProjectInfo.appName
         case .feature(let module): module.name
         default: "\(self)".capitalized
         }
