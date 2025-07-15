@@ -47,7 +47,7 @@ private extension HomeCalendarView {
     
     private var eventListSection: some View {
             EventListView(
-                events: eventsForSelectedDate,
+                events: eventsForSelectedDate, allEvents: calendar.events,
                 title: "좋아요한 페스티벌"
             )
     }
