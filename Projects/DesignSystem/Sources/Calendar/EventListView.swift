@@ -44,6 +44,7 @@ public struct EventListView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
+        .padding(.bottom, 40)
         .background(Color.background1)
     }
 }
@@ -89,26 +90,26 @@ private extension EventListView {
 }
 
 
-#Preview {
-    EventListView(
-        events: [
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "인천 펜타포트 락 페스티벌",
-                location: "인터파크",
-                date: Date(),
-                time: "25.06.12 18:00",
-                category: .reservationDay
-            ),
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "서울 재즈 페스티벌",
-                location: "예스24",
-                date: Date(),
-                time: "25.07.20 19:30",
-                category: .festivalDay
-            )
-        ],
-        title: "좋아요한 페스티벌"
-    )
-}
+//#Preview {
+//    EventListView(
+//        events: [
+//            CalendarModel.Event(
+//                id: UUID().uuidString,
+//                title: "인천 펜타포트 락 페스티벌",
+//                location: "인터파크",
+//                date: Date(),
+//                time: "25.06.12 18:00",
+//                category: .reservationDay
+//            ),
+//            CalendarModel.Event(
+//                id: UUID().uuidString,
+//                title: "서울 재즈 페스티벌",
+//                location: "예스24",
+//                date: Date(),
+//                time: "25.07.20 19:30",
+//                category: .festivalDay
+//            )
+//        ],
+//        title: "좋아요한 페스티벌"
+//    )
+//}
