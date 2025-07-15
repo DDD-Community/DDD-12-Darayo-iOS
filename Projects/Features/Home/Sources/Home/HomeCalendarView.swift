@@ -20,11 +20,15 @@ struct HomeCalendarView: View {
     var body: some View {
         Color.background1.ignoresSafeArea()
         
-        VStack(spacing: 20) {
+        VStack(spacing: 0) {
             calendarSection
+                .padding(.top, 16)
+            
             eventListSection
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                    .padding(.top, 20)
         }
-        .padding(.top, 16)
+//        .padding(.top, 16)
     }
 }
 
@@ -42,12 +46,10 @@ private extension HomeCalendarView {
     }
     
     private var eventListSection: some View {
-        VStack(spacing: 0) {
             EventListView(
                 events: eventsForSelectedDate,
                 title: "좋아요한 페스티벌"
             )
-        }
     }
 }
 
