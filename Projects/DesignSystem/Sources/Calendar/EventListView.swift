@@ -27,17 +27,21 @@ public struct EventListView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             
-            LazyVStack(spacing: 14) {
+            ZStack {
                 if isSelected || events.isEmpty {
                     emptyStateView
-                        .transition(.opacity)
+                        .opacity(isSelected || events.isEmpty ? 1 : 0)
                 } else {
-                    ForEach(events, id: \.id) { event in
-                        EventCard(event: event)
+                    LazyVStack(spacing: 14) {
+                        ForEach(events, id: \.id) { event in
+                            EventCard(event: event)
+                        }
                     }
+                    .padding(.horizontal, 16)
+                    .opacity(isSelected || events.isEmpty ? 0 : 1)
                 }
             }
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
         .background(Color.background1)

@@ -26,9 +26,8 @@ struct HomeCalendarView: View {
             
             eventListSection
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding(.top, 20)
+                .padding(.top, 20)
         }
-//        .padding(.top, 16)
     }
 }
 
