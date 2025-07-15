@@ -47,8 +47,7 @@ public struct FestivalNotificationCellView: View {
                             .foregroundColor(.grey3)
                             .lineLimit(1)
                     }
-                    .lineLimit(1)
-                
+                    
                     HStack(spacing: 6) {
                         Text("행사일")
                             .pretendard(style: .body4)
@@ -57,8 +56,8 @@ public struct FestivalNotificationCellView: View {
                         Text("25.08.01 - 25.08.03")
                             .pretendard(style: .body4)
                             .foregroundColor(.grey3)
+                            .lineLimit(1)
                     }
-                    .lineLimit(1)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
