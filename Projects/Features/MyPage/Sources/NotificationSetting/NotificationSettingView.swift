@@ -27,7 +27,7 @@ public struct NotificationSettingView: View {
                         FestivalNotificationCellView(
                             festival: festival,
                             toggleAction: {
-                                store.send(.toggleNotification(id: festival.id, isOn: !festival.isNotificationOn))
+                                store.send(.toggleNotification(id: festival.id))
                             }
                         )
                     }

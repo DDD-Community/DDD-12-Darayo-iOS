@@ -36,21 +36,14 @@ public struct MyPageFeature {
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
-        
-        Reduce { state,  action in
+
+        Reduce { state, action in
             switch action {
-            case .menuTapped(let menu):
-                switch menu {
-                case .notificationSetting:
-                    return .none
-                    
-                case .favoritesNotification, .inquiry, .termsOfService, .privacyPolicy:
-                    return .none
-                }
+            case .menuTapped:
+                return .none
                 
             case .binding:
                 return .none
-                
             }
         }
     }
