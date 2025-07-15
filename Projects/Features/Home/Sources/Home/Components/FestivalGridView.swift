@@ -74,7 +74,7 @@ private extension FestivalGridView {
                     
                     Text(festival.place)
                         .pretendard(style: .body4)
-                        .foregroundStyle(Color.grey4)
+                        .foregroundStyle(Color.grey3)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .lineLimit(1)
                         .padding(.top, 6)

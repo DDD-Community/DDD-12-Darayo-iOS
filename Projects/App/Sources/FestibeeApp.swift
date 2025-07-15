@@ -12,6 +12,8 @@ import DesignSystem
 
 @main
 struct FestibeeApp: App {
+    @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
+    
     init() {
         DesignSystemFontFamily.registerAllCustomFonts()
     }

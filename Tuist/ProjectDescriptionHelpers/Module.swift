@@ -54,6 +54,8 @@ public enum FeatureModule: Sendable {
 public enum ExternalModule: Sendable {
     case composableArchitecture
     case dependencies
+    case firebaseCore
+    case firebaseMessaging
     
     public var name: String {
         "\(self)".capitalized

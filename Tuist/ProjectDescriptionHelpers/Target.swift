@@ -18,6 +18,7 @@ public extension Target {
             infoPlist: module.infoPlist,
             sources: module.sources,
             resources: module.resources,
+            entitlements: module.entitlements,
             dependencies: module.dependencies,
             settings: .settings(configurations: .default)
         )
@@ -64,7 +65,15 @@ private extension Module {
     
     var resources: ResourceFileElements? {
         switch self {
-        case .app, .designSystem, .util: ["Resources/**"]
+        case .app: ["Resources/**", "Support/GoogleService-Info.plist"]
+        case .designSystem, .util: ["Resources/**"]
+        default: nil
+        }
+    }
+    
+    var entitlements: Entitlements? {
+        switch self {
+        case .app: "App.entitlements"
         default: nil
         }
     }

@@ -6,8 +6,10 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import UIKit
 import ComposableArchitecture
 import Photos
+import UserNotifications
 
 @Reducer
 public struct PermissionFeature {
@@ -17,7 +19,8 @@ public struct PermissionFeature {
     
     public enum Action {
         case onAppear
-        case authorizationStatusFetched
+        case allPermissionsCompleted
+        case showAlert
     }
     
     public init() {}
@@ -26,12 +29,40 @@ public struct PermissionFeature {
             switch action {
             case .onAppear:
                 return .run { send in
-                    let status = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
-                    print(status.rawValue)
-                    await send(.authorizationStatusFetched)
+                    await send(requestAllAuthorizations())
                 }
-            case .authorizationStatusFetched: return .none
+            case .allPermissionsCompleted: return .none
+            case .showAlert:
+                // TODO: Alert 표시
+                return .none
             }
         }
+    }
+}
+
+private extension PermissionFeature {
+    func requestAllAuthorizations() async -> Action {
+        do {
+            try await requestNotificationAuthorization()
+            await requestPhotoAuthorization()
+            return .allPermissionsCompleted
+        } catch {
+            return .showAlert
+        }
+    }
+    
+    func requestNotificationAuthorization() async throws {
+        let isGranted = try await UNUserNotificationCenter
+            .current()
+            .requestAuthorization(options: [.alert, .badge, .sound])
+        
+        guard isGranted else { return }
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+    }
+    
+    func requestPhotoAuthorization() async {
+        _ = await PHPhotoLibrary.requestAuthorization(for: .addOnly)
     }
 }
