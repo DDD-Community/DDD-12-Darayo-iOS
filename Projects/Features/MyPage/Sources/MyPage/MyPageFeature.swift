@@ -16,6 +16,7 @@ public struct MyPageFeature {
     public struct State {
         var isNotificationOn: Bool = true
         var isLatestVersion: Bool = true
+        
         var currentVersion: String
         var latestVersion: String
         
@@ -32,13 +33,24 @@ public struct MyPageFeature {
     }
     
     public init() {}
+    
     public var body: some ReducerOf<Self> {
         BindingReducer()
         
-        Reduce { state, action in
+        Reduce { state,  action in
             switch action {
-            case .menuTapped: return .none
-            case .binding: return .none
+            case .menuTapped(let menu):
+                switch menu {
+                case .notificationSetting:
+                    return .none
+                    
+                case .favoritesNotification, .inquiry, .termsOfService, .privacyPolicy:
+                    return .none
+                }
+                
+            case .binding:
+                return .none
+                
             }
         }
     }
@@ -53,3 +65,4 @@ extension MyPageFeature {
         case privacyPolicy
     }
 }
+
