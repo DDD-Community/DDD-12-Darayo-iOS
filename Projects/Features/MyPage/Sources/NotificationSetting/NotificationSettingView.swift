@@ -11,7 +11,7 @@ import ComposableArchitecture
 import DesignSystem
 
 public struct NotificationSettingView: View {
-    @Bindable private var store: StoreOf<NotificationSettingFeature>
+    private let store: StoreOf<NotificationSettingFeature>
     
     public init(store: StoreOf<NotificationSettingFeature>) {
         self.store = store
