@@ -12,8 +12,8 @@ import Domain
 import DesignSystem
 
 public struct FestivalNotificationCellView: View {
-    let festival: FestivalNotification
-    let toggleAction: () -> Void
+    private let festival: FestivalNotification
+    private let toggleAction: () -> Void
 
     public init(
         festival: FestivalNotification,
