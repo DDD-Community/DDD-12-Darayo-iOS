@@ -40,7 +40,7 @@ public struct EventListView: View {
             .padding(.horizontal, 16)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
-        .background(Color.black)
+        .background(Color.background1)
     }
 }
 

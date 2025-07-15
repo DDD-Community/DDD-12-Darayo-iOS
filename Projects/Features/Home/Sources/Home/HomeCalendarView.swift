@@ -18,12 +18,13 @@ struct HomeCalendarView: View {
     }
     
     var body: some View {
+        Color.background1.ignoresSafeArea()
+        
         VStack(spacing: 20) {
             calendarSection
             eventListSection
         }
         .padding(.top, 16)
-        .background(Color.background1)
     }
 }
 
