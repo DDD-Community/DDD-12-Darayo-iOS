@@ -26,14 +26,19 @@ public struct HomeFeature {
         var allFestivals: [Festival] = []
         var favorites: Set<Festival> = .init()
         var selectedDate: Date?
+        var isLoading: Bool = true
         
         public init() {}
         
         var festivals: [Festival] {
             switch isFiltered {
-            case true: allFestivals.filter { favorites.contains($0) }
+            case true: favoriteFestivals
             case false: allFestivals
             }
+        }
+        
+        var favoriteFestivals: [Festival] {
+            allFestivals.filter { favorites.contains($0) }
         }
         
         var isFavorite: [Bool] {
@@ -43,6 +48,7 @@ public struct HomeFeature {
     
     public enum Action: BindableAction {
         case onAppear
+        case onRefresh
         case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
@@ -58,11 +64,14 @@ public struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .run { send in
-                    await send(fetchFestivals())
-                }
+                guard state.isLoading else { return .none }
+                return .run { send in await send(fetchFestivals()) }
+            case .onRefresh:
+                state.isLoading = true
+                return .run { send in await send(fetchFestivals()) }
             case .festivalsFetched(let festivals):
                 state.allFestivals = festivals
+                state.isLoading = false
                 return .none
             case .festivalTapped: return .none
             case .heartButtonTapped(let festival):

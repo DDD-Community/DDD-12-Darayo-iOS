@@ -13,17 +13,20 @@ import Domain
 struct FestivalGridView: View {
     private let festivals: [Festival]
     private let isFavorite: [Bool]
+    private let isLoading: Bool
     private let festivalTapped: (Festival) -> Void
     private let heartButtonTapped: (Festival) -> Void
     
     init(
         festivals: [Festival],
         isFavorite: [Bool],
+        isLoading: Bool,
         festivalTapped: @escaping (Festival) -> Void,
         heartButtonTapped: @escaping (Festival) -> Void
     ) {
         self.festivals = festivals
         self.isFavorite = isFavorite
+        self.isLoading = isLoading
         self.festivalTapped = festivalTapped
         self.heartButtonTapped = heartButtonTapped
     }
@@ -34,22 +37,38 @@ struct FestivalGridView: View {
     ]
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(0..<festivals.count, id: \.self) { index in
-                    ZStack(alignment: .topLeading) {
-                        festivalCardView(festival: festivals[index])
-                        heartButton(isFavorite: isFavorite[index]) {
-                            heartButtonTapped(festivals[index])
-                        }
-                    }
-                }
-            }
+        switch isLoading {
+        case true: shimmerGridView
+        case false: gridView
         }
     }
 }
 
 private extension FestivalGridView {
+    var gridView: some View {
+        LazyVGrid(columns: columns, spacing: 16) {
+            ForEach(0..<festivals.count, id: \.self) { index in
+                ZStack(alignment: .topLeading) {
+                    festivalCardView(festival: festivals[index])
+                    heartButton(isFavorite: isFavorite[index]) {
+                        heartButtonTapped(festivals[index])
+                    }
+                }
+            }
+        }
+    }
+    
+    var shimmerGridView: some View {
+        LazyVGrid(columns: columns, spacing: 16) {
+            ForEach(0..<12, id: \.self) { index in
+                ShimmerView()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 224)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+        }
+    }
+    
     func festivalCardView(festival: Festival) -> some View {
         Button {
             festivalTapped(festival)
