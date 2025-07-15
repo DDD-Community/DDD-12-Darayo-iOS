@@ -87,7 +87,7 @@ struct CalendarDayCell: View {
         if isSelected {
             return .black
         } else {
-            return .clear
+            return .point1
         }
     }
 }
