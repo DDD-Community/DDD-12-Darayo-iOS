@@ -79,6 +79,19 @@ public struct EventCard: View {
         .background(Color.background2)
         .cornerRadius(4)
     }
+    
+    // MARK: - 포스터 이미지 그림자
+    private var gradientOverlay: some View {
+        LinearGradient(
+            stops: [
+                .init(color: .black.opacity(0.2), location: 0.0),
+                .init(color: .black.opacity(0.05), location: 0.15),
+                .init(color: .clear, location: 0.3)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
 }
     
     // MARK: - Category 색상 로직
@@ -111,21 +124,6 @@ public struct EventCard: View {
         }
     }
 }
-
-// MARK: - 포스터 이미지 그림자
-
-private var gradientOverlay: some View {
-    LinearGradient(
-        stops: [
-            .init(color: .black.opacity(0.2), location: 0.0),
-            .init(color: .black.opacity(0.05), location: 0.15),
-            .init(color: .clear, location: 0.3)
-        ],
-        startPoint: .top,
-        endPoint: .bottom
-    )
-}
-
 
 #Preview {
     EventCard(event: CalendarModel.Event(
