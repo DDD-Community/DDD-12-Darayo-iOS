@@ -18,15 +18,17 @@ struct HomeCalendarView: View {
     }
     
     var body: some View {
-        Color.background1.ignoresSafeArea()
-        ScrollView {
-            VStack(spacing: 0) {
-                calendarSection
-                    .padding(.top, 16)
-                
-                eventListSection
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                    .padding(.top, 20)
+        ZStack {
+            Color.background1.ignoresSafeArea()
+            ScrollView {
+                VStack(spacing: 0) {
+                    calendarSection
+                        .padding(.top, 16)
+                    
+                    eventListSection
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                        .padding(.top, 20)
+                }
             }
         }
     }
