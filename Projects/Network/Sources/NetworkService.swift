@@ -26,6 +26,7 @@ public struct NetworkService: NetworkServiceProtocol {
             code = statusCode
             
             switch statusCode {
+            case 204: return nil
             case 200...299:
                 let response: ResponseWrapper<R> = try data.decode()
                 return response.result

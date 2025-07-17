@@ -27,3 +27,7 @@ extension AuthRepositoryKey: @retroactive DependencyKey {
 extension FestivalRepositoryKey: @retroactive DependencyKey {
     public static let liveValue: FestivalRepositoryProtocol = FestivalRepository()
 }
+
+extension NotificationRepository: @retroactive DependencyKey {
+    public static let liveValue: NotificationRepositoryProtocol = NotificationRepository()
+}
