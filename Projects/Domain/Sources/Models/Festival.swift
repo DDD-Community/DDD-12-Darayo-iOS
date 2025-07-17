@@ -9,13 +9,21 @@
 import Foundation
 import Util
 
-public struct Festival: Hashable {
+public struct Festival: Equatable, Hashable {
     public let id: Int
     public let name: String
     public let startDate: Date?
     public let endDate: Date?
     public let placeName: String
     public let posterURLString: String
+    public let regulation: String
+    public let artists: [Artist]
+    public let transportation: String
+    public let remark: String
+    public let reservations: [Reservation]
+    public let urlInfos: [URLInfo]
+    
+    // TODO: need to refactor
     public var isNotificationEnabled: Bool
     
     public init(
@@ -25,6 +33,12 @@ public struct Festival: Hashable {
         endDate: Date?,
         placeName: String,
         posterURLString: String,
+        regulation: String,
+        artists: [Artist],
+        transportation: String,
+        remark: String,
+        reservations: [Reservation],
+        urlInfos: [URLInfo],
         isNotificationEnabled: Bool = true
     ) {
         self.id = id
@@ -33,6 +47,12 @@ public struct Festival: Hashable {
         self.endDate = endDate
         self.placeName = placeName
         self.posterURLString = posterURLString
+        self.regulation = regulation
+        self.artists = artists
+        self.transportation = transportation
+        self.remark = remark
+        self.reservations = reservations
+        self.urlInfos = urlInfos
         self.isNotificationEnabled = isNotificationEnabled
     }
     

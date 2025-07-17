@@ -7,5 +7,5 @@
 //
 
 public extension Int {
-    var string: String? { String(self) }
+    var string: String { String(self) }
 }

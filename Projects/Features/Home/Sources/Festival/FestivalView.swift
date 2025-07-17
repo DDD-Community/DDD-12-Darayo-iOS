@@ -137,7 +137,11 @@ private extension FestivalView {
     var artistInfoView: some View {
         ArtistInfoView(
             artists: .init(
-                repeating: .init(name: "아티스트명", imageURLString: ""),
+                repeating: .init(
+                    id: UUID().uuidString,
+                    name: "아티스트명",
+                    performanceDate: nil
+                ),
                 count: 10
             )
         ) {
