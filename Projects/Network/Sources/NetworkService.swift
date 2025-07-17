@@ -12,21 +12,37 @@ import Data
 public struct NetworkService: NetworkServiceProtocol {
     public init() {}
     
-    public func request(endpoint: Endpoint) async throws {
-        try await performRequest(endpoint: endpoint)
-    }
-    
-    public func request<Response: Decodable>(endpoint: Endpoint) async throws -> Response {
-        let (data, statusCode) = try await performRequest(endpoint: endpoint)
+    public func request<R: Decodable, E: Endpoint>(endpoint: E) async throws -> E.Response? where E.Response == R {
+        var code: Int?
+        var message: String?
+        
         do {
-            return try data.decode()
-        } catch let error as DecodingError {
-            throw NetworkError(
-                type: .responseDecoding,
-                path: endpoint.path,
-                code: statusCode,
-                message: error.message
+            let urlRequest = try endpoint.urlRequest
+            let (data, urlResponse) = try await urlSession.data(for: urlRequest)
+            let httpURLResponse = urlResponse as? HTTPURLResponse
+            guard let httpURLResponse else { throw NetworkError(type: .noResponse) }
+            
+            let statusCode = httpURLResponse.statusCode
+            code = statusCode
+            
+            switch statusCode {
+            case 200...299:
+                let response: ResponseWrapper<R> = try data.decode()
+                return response.result
+            default:
+                let response: ResponseWrapper<R> = try data.decode()
+                message = response.error
+                throw NetworkError(type: .init(statusCode: statusCode))
+            }
+        } catch {
+            let base = networkError(error)
+            let networkError = NetworkError(
+                type: base.type,
+                path: endpoint.urlString,
+                code: code,
+                message: base.message ?? message
             )
+            throw networkError
         }
     }
 }
@@ -38,55 +54,27 @@ private extension NetworkService {
         return .init(configuration: configuration)
     }
     
-    @discardableResult
-    func performRequest(endpoint: Endpoint) async throws -> (Data, Int) {
-        do {
-            let (data, urlResponse) = try await urlSession.data(for: endpoint.urlRequest)
-            let httpURLResponse = urlResponse as? HTTPURLResponse
-            guard let httpURLResponse else { throw NetworkError(type: .noResponse) }
-            
-            let statusCode = httpURLResponse.statusCode
-            switch statusCode {
-            case 200...299: return (data, statusCode)
-            default: throw NetworkError(type: .init(statusCode: statusCode))
-            }
-        } catch let error as NetworkError {
-            throw NetworkError(type: error.type, path: endpoint.path)
-        } catch let error {
-            throw NetworkError(
-                type: .others,
-                path: endpoint.path,
-                message: error.localizedDescription
-            )
+    func networkError(_ error: Error) -> NetworkError {
+        return switch error {
+        case let urlError as URLError: networkError(urlError)
+        case let decodingError as DecodingError: networkError(decodingError)
+        case let networkError as NetworkError: networkError
+        default: NetworkError(type: .others)
         }
     }
-}
-
-private extension Data {
-    func decode<T: Decodable>() throws -> T {
-        return try JSONDecoder().decode(T.self, from: self)
-    }
-}
-
-private extension DecodingError {
-    var message: String {
-        var message = ""
-        switch self {
-        case .dataCorrupted(let context):
-            message = "Data corrupted: \(context.debugDescription)"
-            message += "CodingPath: \(context.codingPath)"
-        case .keyNotFound(let key, let context):
-            message = "Key '\(key.stringValue)' not found: \(context.debugDescription)"
-            message += "CodingPath: \(context.codingPath)"
-        case .typeMismatch(let type, let context):
-            message = "Type '\(type)' mismatch: \(context.debugDescription)"
-            message += "CodingPath: \(context.codingPath)"
-        case .valueNotFound(let type, let context):
-            message = "Value '\(type)' not found: \(context.debugDescription)"
-            message += "CodingPath: \(context.codingPath)"
-        @unknown default:
-            message = "Unknown DecodingError: \(self)"
+    
+    func networkError(_ error: URLError) -> NetworkError {
+        let message = error.localizedDescription
+        let type: NetworkError.ErrorType = switch error.code {
+        case .networkConnectionLost, .timedOut: .timeout
+        default: .others
         }
-        return message
+        
+        return NetworkError(type: type, message: message)
+    }
+    
+    func networkError(_ error: DecodingError) -> NetworkError {
+        let message = error.message
+        return NetworkError(type: .responseDecoding, message: message)
     }
 }

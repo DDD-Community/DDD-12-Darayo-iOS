@@ -8,15 +8,15 @@
 
 public struct NetworkError: Error {
     public let type: ErrorType
-    public let path: String
+    public let path: String?
     public let code: Int?
-    public let message: String
+    public let message: String?
     
     public init(
         type: ErrorType,
-        path: String = "",
+        path: String? = nil,
         code: Int? = nil,
-        message: String = ""
+        message: String? = nil
     ) {
         self.type = type
         self.path = path
@@ -36,6 +36,7 @@ extension NetworkError {
         case forbidden
         case notFound
         case timeout
+        case client
         case server
         case others
         case responseDecoding
@@ -47,10 +48,19 @@ extension NetworkError {
             case 401: .unauthorized
             case 403: .forbidden
             case 404: .notFound
-            case 408: .timeout
+            case 400...499: .client
             case 500...599: .server
             default: .others
             }
         }
+    }
+    
+    public var logMessage: String {
+        """
+        TYPE: \(type)
+        PATH: \(path ?? "")
+        CODE: \(code?.string ?? "")
+        MESSAGE: \(message ?? "")
+        """
     }
 }

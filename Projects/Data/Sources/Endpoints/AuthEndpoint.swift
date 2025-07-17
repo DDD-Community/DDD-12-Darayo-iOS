@@ -2,36 +2,21 @@
 //  AuthEndpoint.swift
 //  Data
 //
-//  Created by 이정원 on 7/13/25.
+//  Created by 이정원 on 7/17/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-enum AuthEndpoint: Endpoint {
-    case signIn(String)
-    
-    var path: String {
-        switch self {
-        case .signIn: "v1/users/login"
-        }
-    }
-    var method: HTTPMethod {
-        switch self {
-        case .signIn: .post
-        }
+enum AuthEnpoint {
+    private enum Path {
+        static let signIn = "v1/users/login"
     }
     
-    var queryParameters: Encodable? { nil }
-    
-    var body: Encodable? {
-        switch self {
-        case .signIn(let deviceID):
-            return SignInRequest(deviceID: deviceID)
-        }
-    }
-    
-    var withToken: Bool {
-        switch self {
-        case .signIn: false
-        }
+    static func signIn(_ deviceID: String) -> APIEndpoint<SignInResponse> {
+        return APIEndpoint<SignInResponse>(
+            path: Path.signIn,
+            method: .post,
+            body: SignInRequest(deviceID: deviceID),
+            withToken: false
+        )
     }
 }

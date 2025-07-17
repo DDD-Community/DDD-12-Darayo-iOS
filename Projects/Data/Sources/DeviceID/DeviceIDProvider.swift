@@ -21,7 +21,7 @@ struct DeviceIDProvider {
         let data = shared.keychainService.read(forKey: key)
         
         if let data {
-            return data.toString
+            return data.toString ?? ""
         } else {
             let deviceID = UUID().uuidString
             if let data = deviceID.data(using: .utf8) {

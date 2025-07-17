@@ -20,10 +20,6 @@ extension KeychainServiceKey: @retroactive DependencyKey {
     public static let liveValue: KeychainServiceProtocol = KeychainService()
 }
 
-extension SampleRepositoryKey: @retroactive DependencyKey {
-    public static let liveValue: SampleRepositoryProtocol = SampleRepository()
-}
-
 extension AuthRepositoryKey: @retroactive DependencyKey {
     public static let liveValue: AuthRepositoryProtocol = AuthRepository()
 }

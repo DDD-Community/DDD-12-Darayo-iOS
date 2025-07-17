@@ -2,26 +2,16 @@
 //  FestivalEndpoint.swift
 //  Data
 //
-//  Created by 이정원 on 7/15/25.
+//  Created by 이정원 on 7/17/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-enum FestivalEndpoint: Endpoint {
-    case fetchFestivals
-    
-    var path: String {
-        switch self {
-        case .fetchFestivals: "v1/festival"
-        }
+enum FestivalEndpoint {
+    private enum Path {
+        static let fetchFestivals = "v1/festival"
     }
     
-    var method: HTTPMethod {
-        switch self {
-        case .fetchFestivals: .get
-        }
+    static var fetchFestivals: APIEndpoint<[FestivalResponse]> {
+        return .init(path: Path.fetchFestivals, method: .get)
     }
-    
-    var queryParameters: Encodable? { nil }
-    
-    var body: Encodable? { nil }
 }

@@ -15,7 +15,7 @@ public struct FestivalRepository: FestivalRepositoryProtocol {
     
     public func fetchFestivals() async throws -> [Festival] {
         let endpoint = FestivalEndpoint.fetchFestivals
-        let response: ResponseWrapper<[FestivalResponse]> = try await networkService.request(endpoint: endpoint)
-        return response.result?.compactMap { $0.toDomain } ?? []
+        let result = try await networkService.request(endpoint: endpoint)
+        return result?.compactMap { $0.toDomain } ?? []
     }
 }

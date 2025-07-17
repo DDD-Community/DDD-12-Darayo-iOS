@@ -6,8 +6,9 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-struct ResponseWrapper<T: Decodable>: Decodable {
-    let resultCode: String?
-    let resultMsg: String?
-    let result: T?
+public struct ResponseWrapper<T: Decodable>: Decodable {
+    public let resultCode: String?
+    public let resultMsg: String?
+    public let error: String?
+    public let result: T?
 }
