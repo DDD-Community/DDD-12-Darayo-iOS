@@ -18,7 +18,7 @@ public struct AuthRepository: AuthRepositoryProtocol {
     }
     
     public func signIn() async throws {
-        let endpoint = AuthEnpoint.signIn(DeviceIDProvider.deviceID)
+        let endpoint = AuthEndpoint.signIn(DeviceIDProvider.deviceID)
         let data = try await networkService.request(endpoint: endpoint)
         let accessToken = data?.token
         TokenStorage.accessToken = accessToken

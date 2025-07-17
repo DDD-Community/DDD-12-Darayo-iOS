@@ -6,7 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-enum AuthEnpoint {
+enum AuthEndpoint {
     private enum Path {
         static let signIn = "v1/users/login"
     }
