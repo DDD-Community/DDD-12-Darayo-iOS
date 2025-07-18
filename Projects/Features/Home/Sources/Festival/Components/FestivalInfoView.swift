@@ -13,15 +13,18 @@ struct FestivalInfoView: View {
     private let title: String
     private let place: String
     private let dateString: String
+    private let posterURL: URL?
     
     init(
         title: String,
         place: String,
-        dateString: String
+        dateString: String,
+        posterURL: URL?
     ) {
         self.title = title
         self.place = place
         self.dateString = dateString
+        self.posterURL = posterURL
     }
     
     var body: some View {
@@ -46,12 +49,21 @@ struct FestivalInfoView: View {
 
 private extension FestivalInfoView {
     var imageView: some View {
-        Image.sampleFestival
-            .resizable()
-            .scaledToFill()
-            .frame(maxWidth: .infinity)
-            .frame(height: 190)
-            .clipped()
+        Group {
+            if let posterURL {
+                AsyncImage(url: posterURL) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        ShimmerView()
+                    }
+                }
+                .frame(height: 190)
+                .clipped()
+            }
+        }
     }
     
     var gradient: some View {

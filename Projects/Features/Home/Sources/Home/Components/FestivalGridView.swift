@@ -105,7 +105,6 @@ private extension FestivalGridView {
             }
         }
         .clipShape(RoundedRectangle(cornerRadius: 4))
-        .buttonStyle(.plain)
     }
     
     func imageView(url: URL?) -> some View {

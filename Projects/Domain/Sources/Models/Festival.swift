@@ -55,15 +55,31 @@ public struct Festival: Equatable, Hashable {
         self.urlInfos = urlInfos
         self.isNotificationEnabled = isNotificationEnabled
     }
-    
-    public var dateString: String {
+}
+
+public extension Festival {
+    var dateString: String {
         let start = startDate?.toString(dateFormat: .home)
         let end = endDate?.toString(dateFormat: .home)
         guard let start, let end else { return "" }
         return "\(start)-\(end)"
     }
     
-    public var posterURL: URL? {
+    var posterURL: URL? {
         URL(string: posterURLString)
+    }
+    
+    var purchaseDates: [[Date]] {
+        let dates: [[Date]] = reservations.compactMap {
+            let open = $0.openDateTime?.startOfDay
+            let close = $0.closeDateTime?.startOfDay
+            guard let open, let close else { return nil }
+            return [open, close]
+        }
+        
+        return Array(Set(dates)).sorted { lhs, rhs in
+            guard lhs[0] == rhs[0] else { return lhs[0] < rhs[0] }
+            return lhs[1] < rhs[1]
+        }
     }
 }

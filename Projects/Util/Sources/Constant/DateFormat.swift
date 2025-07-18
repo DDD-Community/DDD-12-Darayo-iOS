@@ -11,13 +11,17 @@ public enum DateFormat {
     case home
     case performanceDate
     case reservation
+    case festivalWithWeekday
+    case reservationWithWeekday
     
     var value: String {
         switch self {
-        case .festivalDate: "yyyy-MM-dd"
+        case .festivalDate, .performanceDate:
+            "yyyy-MM-dd"
         case .home: "yy.MM.dd"
-        case .performanceDate: "yyyy-MM-dd"
         case .reservation: "yyyy-MM-dd'T'HH:mm:ss"
+        case .festivalWithWeekday, .reservationWithWeekday:
+            "yyyy. MM. dd (E)"
         }
     }
 }

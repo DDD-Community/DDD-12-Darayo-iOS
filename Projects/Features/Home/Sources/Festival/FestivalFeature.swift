@@ -8,6 +8,7 @@
 
 import ComposableArchitecture
 import Domain
+import Util
 
 @Reducer
 public struct FestivalFeature {
@@ -22,6 +23,24 @@ public struct FestivalFeature {
         
         public init(festival: Festival) {
             self.festival = festival
+        }
+        
+        var dateString: String {
+            let dateFormat = DateFormat.festivalWithWeekday
+            let startDate = festival.startDate?.toString(dateFormat: dateFormat) ?? ""
+            let endDate = festival.endDate?.toString(dateFormat: dateFormat) ?? ""
+            return "\(startDate) - \(endDate)"
+        }
+        
+        var purchaseDates: [String] {
+            festival.purchaseDates.map { dates in
+                let dateFormat = DateFormat.reservationWithWeekday
+                let open = dates[0].toString(dateFormat: dateFormat)
+                let close = dates[1].toString(dateFormat: dateFormat)
+                if open == close { return "\(open)" }
+                else if dates[1] == .distantFuture.startOfDay { return "\(open) - " }
+                else { return "\(open) - \(close)" }
+            }
         }
     }
     

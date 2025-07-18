@@ -115,6 +115,5 @@ private extension MainView {
             .padding(.top, 14)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
     }
 }

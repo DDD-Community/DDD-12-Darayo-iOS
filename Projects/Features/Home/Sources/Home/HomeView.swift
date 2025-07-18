@@ -77,6 +77,5 @@ private extension HomeView {
                 .frame(width: 24, height: 24)
                 .foregroundStyle(color)
         }
-        .buttonStyle(.plain)
     }
 }

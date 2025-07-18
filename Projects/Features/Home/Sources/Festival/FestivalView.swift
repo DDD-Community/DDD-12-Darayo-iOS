@@ -116,35 +116,23 @@ private extension FestivalView {
     
     var festivalInfoView: some View {
         FestivalInfoView(
-            title: "인천펜타포트 락 페스티벌",
-            place: "송도 달빛축제공원",
-            dateString: "2025. 08. 01 (금) - 08. 03 (일)"
+            title: store.festival.name,
+            place: store.festival.placeName,
+            dateString: store.dateString,
+            posterURL: store.festival.posterURL
         )
     }
     
     var ticketInfoView: some View {
         TicketInfoView(
             vendors: [.yes24, .melon],
-            purchaseDates: [
-                "2025. 8. 1 (금) - 2025. 8. 3 (일)",
-                "2025. 8. 1 (금) - 2025. 8. 3 (일)",
-                "2025. 8. 1 (금) - 2025. 8. 3 (일)"
-            ],
+            purchaseDates: store.purchaseDates,
             platforms: [.instagram, .website]
         )
     }
     
     var artistInfoView: some View {
-        ArtistInfoView(
-            artists: .init(
-                repeating: .init(
-                    id: UUID().uuidString,
-                    name: "아티스트명",
-                    performanceDate: nil
-                ),
-                count: 10
-            )
-        ) {
+        ArtistInfoView(artists: store.festival.artists) {
             store.send(.seeAllButtonTapped)
         }
     }

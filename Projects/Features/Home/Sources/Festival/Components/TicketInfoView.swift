@@ -26,7 +26,7 @@ struct TicketInfoView: View {
     }
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             titleView
             vendorInfoView
             dateInfoView

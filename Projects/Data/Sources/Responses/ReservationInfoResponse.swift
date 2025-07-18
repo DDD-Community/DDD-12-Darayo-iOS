@@ -6,6 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import Domain
 
 struct ReservationInfoResponse: Decodable {
@@ -21,7 +22,11 @@ extension ReservationInfoResponse {
     var toDomain: Reservation? {
         guard let reservationInfoId else { return nil }
         let openDateTime = openDateTime?.toDate(dateFormat: .reservation)
-        let closeDateTime = closeDateTime?.toDate(dateFormat: .reservation)
+        let closeDateTime: Date? = switch closeDateTime?.contains("9999") {
+        case true: Date.distantFuture
+        case false: closeDateTime?.toDate(dateFormat: .reservation)
+        default: nil
+        }
         
         return Reservation(
             id: reservationInfoId.string,
