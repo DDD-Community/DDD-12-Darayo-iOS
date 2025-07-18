@@ -82,4 +82,8 @@ public extension Festival {
             return lhs[1] < rhs[1]
         }
     }
+    
+    var vendors: [Vendor] {
+        reservations.map { $0.vendor }
+    }
 }

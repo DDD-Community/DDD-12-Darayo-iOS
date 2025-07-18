@@ -6,14 +6,15 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-public enum Vendor {
-    case yes24
-    case melon
+public struct Vendor {
+    public let name: String
+    public let urlString: String
     
-    public var name: String {
-        switch self {
-        case .yes24: "예스 24"
-        case .melon: "멜론"
-        }
+    public init(
+        name: String,
+        urlString: String
+    ) {
+        self.name = name
+        self.urlString = urlString
     }
 }

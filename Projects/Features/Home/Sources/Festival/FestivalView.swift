@@ -125,7 +125,7 @@ private extension FestivalView {
     
     var ticketInfoView: some View {
         TicketInfoView(
-            vendors: [.yes24, .melon],
+            vendors: store.festival.vendors,
             purchaseDates: store.purchaseDates,
             platforms: [.instagram, .website]
         )

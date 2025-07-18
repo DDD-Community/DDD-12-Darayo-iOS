@@ -55,7 +55,14 @@ private extension TicketInfoView {
                 .foregroundStyle(Color.point1)
                 .frame(width: 50, alignment: .leading)
             
+            Text("미정")
+                .pretendard(style: .body0)
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .renderedIf(vendors.isEmpty)
+            
             vendorListView
+                .renderedIf(!vendors.isEmpty)
         }
     }
     
@@ -68,7 +75,8 @@ private extension TicketInfoView {
                 let vendor = vendors[index]
                 
                 Button {
-                    
+                    guard let url = URL(string: vendor.urlString) else { return }
+                    UIApplication.shared.open(url)
                 } label: {
                     HStack(spacing: 6) {
                         Text("\(vendor.name) 티켓")
