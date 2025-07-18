@@ -12,7 +12,8 @@ public struct AuthUseCase {
     @Dependency(\.authRepository) private var authRepository
     
     public var isSignedIn: Bool {
-        authRepository.isSignedIn
+        let isSignedIn = authRepository.isSignedIn
+        return isSignedIn
     }
     
     public func signIn() async throws {

@@ -10,8 +10,7 @@ import Dependencies
 import Util
 
 public protocol NetworkServiceProtocol {
-    func request(endpoint: Endpoint) async throws
-    func request<Response: Decodable>(endpoint: Endpoint) async throws -> Response
+    func request<R: Decodable, E: Endpoint>(endpoint: E) async throws -> E.Response? where E.Response == R
 }
 
 public enum NetworkServiceKey: TestDependencyKey {
