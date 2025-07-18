@@ -30,9 +30,6 @@ public struct EventListView: View {
             header
             
             ZStack {
-                emptyStateView
-                    .opacity(isSelected || events.isEmpty ? 1 : 0)
-                
                 LazyVStack(spacing: 14) {
                     ForEach(events, id: \.id) { event in
                         EventCard(event: event)
@@ -40,6 +37,14 @@ public struct EventListView: View {
                 }
                 .padding(.horizontal, 16)
                 .opacity(isSelected || events.isEmpty ? 0 : 1)
+                .overlay(
+                    Group {
+                        if isSelected || events.isEmpty {
+                            emptyStateView
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+                )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
