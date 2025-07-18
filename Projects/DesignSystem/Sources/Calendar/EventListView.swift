@@ -10,16 +10,18 @@ import SwiftUI
 
 public struct EventListView: View {
     let events: [CalendarModel.Event]
+    let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
     let title: String
     
     @State private var isSelected: Bool = false
     
     public init(
         events: [CalendarModel.Event],
-        title: String = "좋아요한 페스티벌",
-        icon: String = "checkmark.square"
+        allEvents: [CalendarModel.Event],
+        title: String = "좋아요한 페스티벌"
     ) {
         self.events = events
+        self.allEvents = allEvents
         self.title = title
     }
     
@@ -27,20 +29,28 @@ public struct EventListView: View {
         VStack(alignment: .leading, spacing: 0) {
             header
             
-            LazyVStack(spacing: 14) {
-                if isSelected || events.isEmpty {
-                    emptyStateView
-                        .transition(.opacity)
-                } else {
+            ZStack {
+                LazyVStack(spacing: 14) {
                     ForEach(events, id: \.id) { event in
                         EventCard(event: event)
                     }
                 }
+                .padding(.horizontal, 16)
+                .opacity(isSelected || events.isEmpty ? 0 : 1)
+                .overlay(
+                    Group {
+                        if isSelected || events.isEmpty {
+                            emptyStateView
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.2), value: isSelected)
+                )
             }
-            .padding(.horizontal, 16)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }
-        .background(Color.black)
+        .padding(.bottom, 40)
+        .background(Color.background1)
     }
 }
 
@@ -67,44 +77,33 @@ private extension EventListView {
         .contentShape(Rectangle())
     }
     
+    // MARK: - 안내 멘트 출력
     var emptyStateView: some View {
-        VStack(spacing: 8) {
-            Text("아직 좋아요한 페스티벌이 없어요!")
-                .pretendard(style: .body3)
-                .foregroundColor(.grey3)
-                .multilineTextAlignment(.center)
+        VStack(spacing: 10) {
+            Spacer(minLength: 80)
             
-            Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
-                .pretendard(style: .caption1)
-                .foregroundColor(.grey4)
-                .multilineTextAlignment(.center)
+            if isSelected && allEvents.isEmpty {
+                // 좋아요한것 체크 했는데 좋아요 기록이 없음
+                Text("아직 좋아요한 페스티벌이 없어요!")
+                    .pretendard(style: .title3)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                
+                Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
+                    .pretendard(style: .body4)
+                    .foregroundColor(.grey3)
+                    .multilineTextAlignment(.center)
+            } else {
+                // 그 외엔 날짜에 일정 없음
+                Text("선택한 날짜에 페스티벌 일정이 없어요")
+                    .pretendard(style: .title3)
+                    .foregroundColor(.grey4)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Spacer()
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 40)
+        .frame(maxHeight: .infinity)
     }
-}
-
-
-#Preview {
-    EventListView(
-        events: [
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "인천 펜타포트 락 페스티벌",
-                location: "인터파크",
-                date: Date(),
-                time: "25.06.12 18:00",
-                category: .reservationDay
-            ),
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "서울 재즈 페스티벌",
-                location: "예스24",
-                date: Date(),
-                time: "25.07.20 19:30",
-                category: .festivalDay
-            )
-        ],
-        title: "좋아요한 페스티벌"
-    )
 }
