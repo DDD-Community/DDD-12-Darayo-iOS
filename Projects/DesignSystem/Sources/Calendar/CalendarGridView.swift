@@ -16,7 +16,7 @@ struct CalendarGridView: View {
     let onDateSelected: (Date) -> Void
     
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 12) {
+        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 8) {
             ForEach(dates, id: \.self) { date in
                 CalendarDayCell(
                     date: date,
