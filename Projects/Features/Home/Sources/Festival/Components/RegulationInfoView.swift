@@ -10,14 +10,14 @@ import SwiftUI
 import DesignSystem
 
 struct RegulationInfoView: View {
-    private let regulations: [String]
+    private let regulation: String
     @Binding private var isExpanded: Bool
     
     init(
         regulation: String,
         isExpanded: Binding<Bool>
     ) {
-        self.regulations = regulation.components(separatedBy: "\n")
+        self.regulation = regulation
         self._isExpanded = isExpanded
     }
     
@@ -27,10 +27,15 @@ struct RegulationInfoView: View {
                 titleView
                 Spacer()
                 button
+                    .renderedIf(!regulation.isEmpty)
             }
+            
+            emptyView
+                .renderedIf(regulation.isEmpty)
             
             textView
                 .renderedIf(isExpanded)
+                .renderedIf(!regulation.isEmpty)
         }
         .background(Color.grey6)
         .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -43,6 +48,7 @@ private extension RegulationInfoView {
             .pretendard(style: .title3)
             .foregroundStyle(Color.white)
             .padding(.leading, 16)
+            .padding(.top, regulation.isEmpty ? 12 : 0)
     }
     
     var button: some View {
@@ -60,22 +66,23 @@ private extension RegulationInfoView {
         }
     }
     
+    var emptyView: some View {
+        Text("아직 등록된 반입 규정 정보가 없어요")
+            .pretendard(style: .body0)
+            .foregroundStyle (Color.white)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 16)
+            .padding(.top, 12)
+            .padding(.bottom, 20)
+    }
+    
     var textView: some View {
-        LazyVStack(spacing: 0) {
-            ForEach(0..<regulations.count, id: \.self) { index in
-                HStack(alignment: .top, spacing: 0) {
-                    Text("  •  ")
-                        .pretendard(style: .body0)
-                        .foregroundStyle(Color.white)
-                    
-                    Text(regulations[index])
-                        .pretendard(style: .body0)
-                        .foregroundStyle(Color.white)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.bottom, 15)
+        Text(regulation)
+            .pretendard(style: .body0)
+            .foregroundStyle(Color.white)
+            .multilineTextAlignment(.leading)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.bottom, 15)
     }
 }
