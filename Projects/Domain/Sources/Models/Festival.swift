@@ -18,7 +18,7 @@ public struct Festival: Equatable, Hashable {
     public let posterURLString: String
     public let regulation: String
     public let artists: [Artist]
-    public let transportation: String
+    public let transportationInfo: String
     public let remark: String
     public let reservations: [Reservation]
     public let urlInfos: [URLInfo]
@@ -35,7 +35,7 @@ public struct Festival: Equatable, Hashable {
         posterURLString: String,
         regulation: String,
         artists: [Artist],
-        transportation: String,
+        transportationInfo: String,
         remark: String,
         reservations: [Reservation],
         urlInfos: [URLInfo],
@@ -49,7 +49,7 @@ public struct Festival: Equatable, Hashable {
         self.posterURLString = posterURLString
         self.regulation = regulation
         self.artists = artists
-        self.transportation = transportation
+        self.transportationInfo = transportationInfo
         self.remark = remark
         self.reservations = reservations
         self.urlInfos = urlInfos

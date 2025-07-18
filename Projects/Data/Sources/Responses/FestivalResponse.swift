@@ -37,7 +37,7 @@ extension FestivalResponse {
             posterURLString: posterUrl ?? "",
             regulation: banGoods ?? "",
             artists: artists?.compactMap { $0.toDomain } ?? [],
-            transportation: transportationInfo ?? "",
+            transportationInfo: transportationInfo ?? "",
             remark: remark ?? "",
             reservations: reservationInfos?.compactMap { $0.toDomain } ?? [],
             urlInfos: urlInfos?.compactMap { $0.toDomain } ?? []
