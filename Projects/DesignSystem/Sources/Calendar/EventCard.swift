@@ -75,7 +75,6 @@ public struct EventCard: View {
             
             Spacer()
         }
-        .frame(height: 108)
         .background(Color.background2)
         .cornerRadius(4)
     }
