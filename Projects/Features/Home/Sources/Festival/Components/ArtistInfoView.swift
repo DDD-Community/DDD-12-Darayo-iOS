@@ -31,7 +31,11 @@ struct ArtistInfoView: View {
             }
             .padding(.horizontal, 16)
             
-            artistListView
+            switch artists.isEmpty {
+            case true: emptyView
+            case false: artistListView
+            }
+            
         }
         .padding(.top, 12)
         .padding(.bottom, 20)
@@ -53,6 +57,14 @@ private extension ArtistInfoView {
                 .pretendard(style: .caption2)
                 .foregroundStyle(Color.white)
         }
+        .renderedIf(!artists.isEmpty)
+    }
+    
+    var emptyView: some View {
+        Text("아직 등록된 아티스트가 없어요")
+            .pretendard(style: .body0)
+            .foregroundStyle(Color.white)
+            .frame(maxWidth: .infinity)
     }
     
     var artistListView: some View {

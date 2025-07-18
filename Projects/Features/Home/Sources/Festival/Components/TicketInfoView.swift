@@ -93,6 +93,12 @@ private extension TicketInfoView {
                 .foregroundStyle(Color.point1)
                 .frame(width: 50, alignment: .leading)
             
+            Text("미정")
+                .pretendard(style: .body0)
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .renderedIf(purchaseDates.isEmpty)
+            
             VStack(spacing: 2) {
                 ForEach(0..<purchaseDates.count, id: \.self) { index in
                     Text(purchaseDates[index])
@@ -101,6 +107,7 @@ private extension TicketInfoView {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            .renderedIf(!purchaseDates.isEmpty)
         }
     }
     
