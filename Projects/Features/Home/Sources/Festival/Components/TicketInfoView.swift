@@ -13,16 +13,16 @@ import Domain
 struct TicketInfoView: View {
     private let vendors: [Vendor]
     private let purchaseDates: [String]
-    private let platforms: [Platform]
+    private let urlInfos: [URLInfo]
     
     init(
         vendors: [Vendor],
         purchaseDates: [String],
-        platforms: [Platform]
+        urlInfos: [URLInfo]
     ) {
         self.vendors = vendors
         self.purchaseDates = purchaseDates
-        self.platforms = platforms
+        self.urlInfos = urlInfos
     }
     
     var body: some View {
@@ -30,7 +30,7 @@ struct TicketInfoView: View {
             titleView
             vendorInfoView
             dateInfoView
-            platformInfoView
+            urlInfoView
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
@@ -119,7 +119,7 @@ private extension TicketInfoView {
         }
     }
     
-    var platformInfoView: some View {
+    var urlInfoView: some View {
         HStack(spacing: 12) {
             Text("공식계정")
                 .pretendard(style: .body2)
@@ -127,14 +127,15 @@ private extension TicketInfoView {
                 .frame(width: 50, alignment: .leading)
             
             HStack(spacing: 9) {
-                ForEach(0..<platforms.count, id: \.self) { index in
-                    let image: Image = switch platforms[index] {
+                ForEach(0..<urlInfos.count, id: \.self) { index in
+                    let image: Image = switch urlInfos[index].platform {
                     case .instagram: .iconInstagram
-                    case .website: .iconWebsite
+                    case .homepage: .iconWebsite
                     }
                     
                     Button {
-                        
+                        guard let url = URL(string: urlInfos[index].urlString) else { return }
+                        UIApplication.shared.open(url)
                     } label: {
                         image
                             .renderingMode(.template)

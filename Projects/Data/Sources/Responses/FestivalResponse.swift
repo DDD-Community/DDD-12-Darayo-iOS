@@ -40,7 +40,7 @@ extension FestivalResponse {
             transportation: transportationInfo ?? "",
             remark: remark ?? "",
             reservations: reservationInfos?.compactMap { $0.toDomain } ?? [],
-            urlInfos: urlInfos?.map { $0.toDomain } ?? []
+            urlInfos: urlInfos?.compactMap { $0.toDomain } ?? []
         )
     }
 }

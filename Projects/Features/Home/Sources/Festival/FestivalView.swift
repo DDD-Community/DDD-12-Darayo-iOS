@@ -127,7 +127,7 @@ private extension FestivalView {
         TicketInfoView(
             vendors: store.festival.vendors,
             purchaseDates: store.purchaseDates,
-            platforms: [.instagram, .website]
+            urlInfos: store.festival.urlInfos
         )
     }
     

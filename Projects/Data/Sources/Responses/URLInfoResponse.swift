@@ -14,10 +14,12 @@ struct URLInfoResponse: Decodable {
 }
 
 extension URLInfoResponse {
-    var toDomain: URLInfo {
+    var toDomain: URLInfo? {
+        guard let url, let type else { return nil }
+        
         return .init(
-            urlString: url ?? "",
-            type: .init(value: type)
+            urlString: url,
+            platform: .init(value: type)
         )
     }
 }
