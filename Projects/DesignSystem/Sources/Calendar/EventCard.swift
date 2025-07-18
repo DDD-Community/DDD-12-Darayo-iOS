@@ -26,7 +26,6 @@ public struct EventCard: View {
                     .overlay(gradientOverlay)
             }
             .frame(width: 108, height: 108)
-            .clipShape(RoundedCorner(radius: 4, corners: [.topLeft, .bottomLeft]))
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
