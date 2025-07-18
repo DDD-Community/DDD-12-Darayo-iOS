@@ -28,4 +28,10 @@ enum AuthEndpoint: Endpoint {
             return SignInRequest(deviceID: deviceID)
         }
     }
+    
+    var withToken: Bool {
+        switch self {
+        case .signIn: false
+        }
+    }
 }

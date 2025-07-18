@@ -22,22 +22,45 @@ struct HomeGridView: View {
             favoritesButton(isFiltered: $store.isFiltered)
                 .padding(.bottom, 10)
             
-            festivalGridView
-                .renderedIf(!store.festivals.isEmpty)
-            
-            emptyView
-                .renderedIf(store.festivals.isEmpty)
+            ZStack {
+                ZStack {
+                    switch store.isFiltered {
+                    case true:
+                        festivalGridView
+                    case false:
+                        festivalGridView
+                            .refreshable {
+                                store.send(.onRefresh)
+                            }
+                    }
+                }
+                .renderedIf(shouldShowGridView)
+                
+                emptyView
+                    .renderedIf(shouldShowEmptyView)
+            }
         }
         .background(Color.background1)
     }
 }
 
 private extension HomeGridView {
+    var shouldShowEmptyView: Bool {
+        return !store.isLoading && store.festivals.isEmpty
+    }
+    
+    var shouldShowGridView: Bool {
+        !shouldShowEmptyView
+    }
+}
+
+private extension HomeGridView {
     var festivalGridView: some View {
-        ScrollView {
+        ScrollView(store.isLoading ? [] : [.vertical]) {
             FestivalGridView(
                 festivals: store.festivals,
-                isFavorite: store.isFavorite
+                isFavorite: store.isFavorite,
+                isLoading: store.isLoading
             ) { festival in
                 store.send(.festivalTapped(festival))
             } heartButtonTapped: { festival in
@@ -47,6 +70,7 @@ private extension HomeGridView {
             .padding(.bottom, 100)
             .padding(.bottom, 24)
         }
+        .id(store.isFiltered)
     }
     
     func favoritesButton(isFiltered: Binding<Bool>) -> some View {

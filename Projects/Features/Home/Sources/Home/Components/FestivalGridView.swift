@@ -13,17 +13,20 @@ import Domain
 struct FestivalGridView: View {
     private let festivals: [Festival]
     private let isFavorite: [Bool]
+    private let isLoading: Bool
     private let festivalTapped: (Festival) -> Void
     private let heartButtonTapped: (Festival) -> Void
     
     init(
         festivals: [Festival],
         isFavorite: [Bool],
+        isLoading: Bool,
         festivalTapped: @escaping (Festival) -> Void,
         heartButtonTapped: @escaping (Festival) -> Void
     ) {
         self.festivals = festivals
         self.isFavorite = isFavorite
+        self.isLoading = isLoading
         self.festivalTapped = festivalTapped
         self.heartButtonTapped = heartButtonTapped
     }
@@ -34,28 +37,44 @@ struct FestivalGridView: View {
     ]
     
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, spacing: 16) {
-                ForEach(0..<festivals.count, id: \.self) { index in
-                    ZStack(alignment: .topLeading) {
-                        festivalCardView(festival: festivals[index])
-                        heartButton(isFavorite: isFavorite[index]) {
-                            heartButtonTapped(festivals[index])
-                        }
-                    }
-                }
-            }
+        switch isLoading {
+        case true: shimmerGridView
+        case false: gridView
         }
     }
 }
 
 private extension FestivalGridView {
+    var gridView: some View {
+        LazyVGrid(columns: columns, spacing: 16) {
+            ForEach(0..<festivals.count, id: \.self) { index in
+                ZStack(alignment: .topLeading) {
+                    festivalCardView(festival: festivals[index])
+                    heartButton(isFavorite: isFavorite[index]) {
+                        heartButtonTapped(festivals[index])
+                    }
+                }
+            }
+        }
+    }
+    
+    var shimmerGridView: some View {
+        LazyVGrid(columns: columns, spacing: 16) {
+            ForEach(0..<12, id: \.self) { index in
+                ShimmerView()
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 224)
+                    .clipShape(RoundedRectangle(cornerRadius: 4))
+            }
+        }
+    }
+    
     func festivalCardView(festival: Festival) -> some View {
         Button {
             festivalTapped(festival)
         } label: {
             VStack(spacing: 0) {
-                imageView(image: Image.sampleFestival)
+                imageView(url: festival.posterURL)
                 
                 VStack(spacing: 0) {
                     Text(festival.dateString)
@@ -63,7 +82,7 @@ private extension FestivalGridView {
                         .foregroundStyle(Color.point2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
-                    Text(festival.title)
+                    Text(festival.name)
                         .pretendard(style: .title3)
                         .foregroundStyle(Color.white)
                         .multilineTextAlignment(.leading)
@@ -72,7 +91,7 @@ private extension FestivalGridView {
                         .lineLimit(2)
                         .padding(.top, 4)
                     
-                    Text(festival.place)
+                    Text(festival.placeName)
                         .pretendard(style: .body4)
                         .foregroundStyle(Color.grey3)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -89,13 +108,21 @@ private extension FestivalGridView {
         .buttonStyle(.plain)
     }
     
-    func imageView(image: Image) -> some View {
+    func imageView(url: URL?) -> some View {
         ZStack {
-            image
-                .resizable()
-                .aspectRatio(contentMode: .fill)
+            if let url {
+                AsyncImage(url: url) { phase in
+                    if let image = phase.image {
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                    } else {
+                        Color.grey3
+                    }
+                }
                 .frame(height: 110)
                 .clipped()
+            }
             
             LinearGradient(
                 gradient: .init(

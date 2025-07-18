@@ -6,22 +6,44 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-public struct Festival: Hashable {
-    public let title: String
-    public let dateString: String
-    public let place: String
-    public var isNotificationEnabled: Bool
+import Foundation
+import Util
 
+public struct Festival: Hashable {
+    public let id: Int
+    public let name: String
+    public let startDate: Date?
+    public let endDate: Date?
+    public let placeName: String
+    public let posterURLString: String
+    public var isNotificationEnabled: Bool
     
     public init(
-        title: String,
-        dateString: String,
-        place: String,
+        id: Int,
+        name: String,
+        startDate: Date?,
+        endDate: Date?,
+        placeName: String,
+        posterURLString: String,
         isNotificationEnabled: Bool = true
     ) {
-        self.title = title
-        self.dateString = dateString
-        self.place = place
+        self.id = id
+        self.name = name
+        self.startDate = startDate
+        self.endDate = endDate
+        self.placeName = placeName
+        self.posterURLString = posterURLString
         self.isNotificationEnabled = isNotificationEnabled
+    }
+    
+    public var dateString: String {
+        let start = startDate?.toString(dateFormat: .home)
+        let end = endDate?.toString(dateFormat: .home)
+        guard let start, let end else { return "" }
+        return "\(start)-\(end)"
+    }
+    
+    public var posterURL: URL? {
+        URL(string: posterURLString)
     }
 }
