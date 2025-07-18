@@ -18,12 +18,14 @@ public struct EventCard: View {
     public var body: some View {
         HStack(spacing: 0) {
             
-            Image.sampleFestival
-                .resizable()
-                .scaledToFill()
-                .frame(width: 108, height: 108)
-                .clipped()
-                .cornerRadius(4)
+            ZStack {
+                Image.sampleFestival
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 108, height: 108)
+                    .overlay(gradientOverlay)
+            }
+            .frame(width: 108, height: 108)
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -67,14 +69,26 @@ public struct EventCard: View {
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .topLeading)
             .padding(.horizontal, 12)
-            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity, alignment: .top)
+            
             Spacer()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.background2)
         .cornerRadius(4)
+    }
+    
+    // MARK: - 포스터 이미지 그림자
+    private var gradientOverlay: some View {
+        LinearGradient(
+            stops: [
+                .init(color: .black.opacity(0.2), location: 0.0),
+                .init(color: .black.opacity(0.05), location: 0.15),
+                .init(color: .clear, location: 0.3)
+            ],
+            startPoint: .top,
+            endPoint: .bottom
+        )
     }
 }
     

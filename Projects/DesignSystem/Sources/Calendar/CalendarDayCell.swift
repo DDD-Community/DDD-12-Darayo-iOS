@@ -40,23 +40,28 @@ struct CalendarDayCell: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 36, height: 36)
+                    .zIndex(0)
             }
             
-            ZStack {
-                // 날짜 숫자
+            VStack(spacing: 0) {
+                // 날짜 숫자(고정)
                 Text("\(dayNumber)")
                     .pretendard(style: .body3)
                     .foregroundColor(textColor)
-                    .frame(maxWidth: .infinity, alignment: .top)
-                    .offset(y: -2)
+                    .padding(.top, 11)
                 
-                // 이벤트 dot
+                // 이벤트 dot(고정)
                 if hasEvent && isCurrentMonth {
                     Circle()
-                        .fill(isSelected ? .black : Color.point1)
+                        .fill(dotColor)
                         .frame(width: 4, height: 4)
-                        .offset(y: 7)
+                        .offset(y: -2)
+                    
+                } else {
+                    Spacer()
+                        .frame(width: 4, height: 4)
                 }
+                Spacer()
             }
         }
         .frame(width: 36, height: 36 , alignment: .top)
@@ -77,6 +82,14 @@ struct CalendarDayCell: View {
             return .white
         }
     }
+    
+    private var dotColor: Color {
+        if isSelected {
+            return .black
+        } else {
+            return .point1
+        }
+    }
 }
 
 #Preview {
@@ -90,5 +103,5 @@ struct CalendarDayCell: View {
         }
     )
     .padding()
-    .background(Color.black) // 배경 확인용
+    .background(Color.black)
 }
