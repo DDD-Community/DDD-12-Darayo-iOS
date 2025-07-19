@@ -8,18 +8,21 @@
 
 import Foundation
 
-public struct Artist: Hashable {
+public struct Artist: Equatable, Hashable {
     public let id: String
     public let name: String
+    public let performanceDate: Date?
     public let imageURLString: String
     
     public init(
-        id: String = UUID().uuidString,
+        id: String,
         name: String,
-        imageURLString: String
+        performanceDate: Date?,
+        imageURLString: String = ""
     ) {
         self.id = id
         self.name = name
+        self.performanceDate = performanceDate
         self.imageURLString = imageURLString
     }
 }

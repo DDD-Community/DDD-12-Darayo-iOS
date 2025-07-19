@@ -13,24 +13,24 @@ import Domain
 struct TicketInfoView: View {
     private let vendors: [Vendor]
     private let purchaseDates: [String]
-    private let platforms: [Platform]
+    private let urlInfos: [URLInfo]
     
     init(
         vendors: [Vendor],
         purchaseDates: [String],
-        platforms: [Platform]
+        urlInfos: [URLInfo]
     ) {
         self.vendors = vendors
         self.purchaseDates = purchaseDates
-        self.platforms = platforms
+        self.urlInfos = urlInfos
     }
     
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(alignment: .leading, spacing: 12) {
             titleView
             vendorInfoView
             dateInfoView
-            platformInfoView
+            urlInfoView
         }
         .padding(.horizontal, 16)
         .padding(.top, 12)
@@ -55,7 +55,14 @@ private extension TicketInfoView {
                 .foregroundStyle(Color.point1)
                 .frame(width: 50, alignment: .leading)
             
+            Text("미정")
+                .pretendard(style: .body0)
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .renderedIf(vendors.isEmpty)
+            
             vendorListView
+                .renderedIf(!vendors.isEmpty)
         }
     }
     
@@ -68,7 +75,8 @@ private extension TicketInfoView {
                 let vendor = vendors[index]
                 
                 Button {
-                    
+                    guard let url = URL(string: vendor.urlString) else { return }
+                    UIApplication.shared.open(url)
                 } label: {
                     HStack(spacing: 6) {
                         Text("\(vendor.name) 티켓")
@@ -93,6 +101,12 @@ private extension TicketInfoView {
                 .foregroundStyle(Color.point1)
                 .frame(width: 50, alignment: .leading)
             
+            Text("미정")
+                .pretendard(style: .body0)
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .renderedIf(purchaseDates.isEmpty)
+            
             VStack(spacing: 2) {
                 ForEach(0..<purchaseDates.count, id: \.self) { index in
                     Text(purchaseDates[index])
@@ -101,10 +115,11 @@ private extension TicketInfoView {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
+            .renderedIf(!purchaseDates.isEmpty)
         }
     }
     
-    var platformInfoView: some View {
+    var urlInfoView: some View {
         HStack(spacing: 12) {
             Text("공식계정")
                 .pretendard(style: .body2)
@@ -112,14 +127,15 @@ private extension TicketInfoView {
                 .frame(width: 50, alignment: .leading)
             
             HStack(spacing: 9) {
-                ForEach(0..<platforms.count, id: \.self) { index in
-                    let image: Image = switch platforms[index] {
+                ForEach(0..<urlInfos.count, id: \.self) { index in
+                    let image: Image = switch urlInfos[index].platform {
                     case .instagram: .iconInstagram
-                    case .website: .iconWebsite
+                    case .homepage: .iconWebsite
                     }
                     
                     Button {
-                        
+                        guard let url = URL(string: urlInfos[index].urlString) else { return }
+                        UIApplication.shared.open(url)
                     } label: {
                         image
                             .renderingMode(.template)

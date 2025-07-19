@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import OSLog
 import Data
 
 public struct NetworkService: NetworkServiceProtocol {
@@ -18,14 +19,18 @@ public struct NetworkService: NetworkServiceProtocol {
         
         do {
             let urlRequest = try endpoint.urlRequest
+            Logger.debug(request: urlRequest)
+            
             let (data, urlResponse) = try await urlSession.data(for: urlRequest)
             let httpURLResponse = urlResponse as? HTTPURLResponse
             guard let httpURLResponse else { throw NetworkError(type: .noResponse) }
             
             let statusCode = httpURLResponse.statusCode
             code = statusCode
+            Logger.debug(path: endpoint.urlString, response: data.jsonString)
             
             switch statusCode {
+            case 204: return nil
             case 200...299:
                 let response: ResponseWrapper<R> = try data.decode()
                 return response.result
@@ -42,6 +47,7 @@ public struct NetworkService: NetworkServiceProtocol {
                 code: code,
                 message: base.message ?? message
             )
+            Logger.error(networkError)
             throw networkError
         }
     }

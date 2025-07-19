@@ -54,13 +54,4 @@ extension NetworkError {
             }
         }
     }
-    
-    public var logMessage: String {
-        """
-        TYPE: \(type)
-        PATH: \(path ?? "")
-        CODE: \(code?.string ?? "")
-        MESSAGE: \(message ?? "")
-        """
-    }
 }

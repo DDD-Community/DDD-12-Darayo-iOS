@@ -92,7 +92,6 @@ private extension HomeGridView {
                     .foregroundStyle(Color.grey3)
             }
         }
-        .buttonStyle(.plain)
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.leading, 16)
     }

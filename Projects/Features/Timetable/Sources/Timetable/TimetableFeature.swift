@@ -6,6 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
+import Foundation
 import ComposableArchitecture
 import Domain
 
@@ -17,7 +18,11 @@ public struct TimetableFeature {
         var dateString: String = "25.08.08 (금)"
         
         var artists: [Artist] = (0..<15).map { _ in
-            .init(name: "아티스트명", imageURLString: "")
+            .init(
+                id: UUID().uuidString,
+                name: "아티스트명",
+                performanceDate: nil
+            )
         }
         var selectedArtists: Set<Artist> = .init()
         

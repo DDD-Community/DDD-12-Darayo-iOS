@@ -25,36 +25,22 @@ struct FestivalResponse: Decodable {
     let urlInfos: [URLInfoResponse]?
 }
 
-struct ReservationInfoResponse: Decodable {
-    let reservationInfoId: Int?
-    let openDateTime: String?
-    let closeDateTime: String?
-    let ticketURL: String?
-    let type: String?
-    let remark: String?
-}
-
-struct ArtistResponse: Decodable {
-    let artistId: Int?
-    let artistDisplayName: String?
-    let performanceDate: String?
-}
-
-struct URLInfoResponse: Decodable {
-    let url: String?
-    let type: String?
-}
-
 extension FestivalResponse {
     var toDomain: Festival? {
         guard let festivalId else { return nil }
-        return .init(
+        return Festival(
             id: festivalId,
             name: name ?? "",
             startDate: startDate?.toDate(dateFormat: .festivalDate),
             endDate: endDate?.toDate(dateFormat: .festivalDate),
             placeName: placeName ?? "",
-            posterURLString: posterUrl ?? ""
+            posterURLString: posterUrl ?? "",
+            regulation: banGoods ?? "",
+            artists: artists?.compactMap { $0.toDomain } ?? [],
+            transportationInfo: transportationInfo ?? "",
+            remark: remark ?? "",
+            reservations: reservationInfos?.compactMap { $0.toDomain } ?? [],
+            urlInfos: urlInfos?.compactMap { $0.toDomain } ?? []
         )
     }
 }

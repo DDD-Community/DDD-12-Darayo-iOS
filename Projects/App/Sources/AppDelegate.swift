@@ -10,6 +10,8 @@ import UIKit
 import Firebase
 import FirebaseMessaging
 import UserNotifications
+import Dependencies
+import Data
 
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
@@ -33,7 +35,8 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
 
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-        // TODO: 우리 서버로 토큰 전송
+        let notificationRepository = NotificationRepository()
+        Task { try? await notificationRepository.registerPushToken(token: fcmToken) }
     }
     
     func userNotificationCenter(

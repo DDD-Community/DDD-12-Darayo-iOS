@@ -15,4 +15,9 @@ public extension Date {
         dateFormatter.dateFormat = dateFormat.value
         return dateFormatter.string(from: self)
     }
+    
+    var startOfDay: Date {
+        let calendar = Calendar.default
+        return calendar.startOfDay(for: self)
+    }
 }
