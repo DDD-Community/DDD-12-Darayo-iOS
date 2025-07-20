@@ -57,11 +57,6 @@ private extension ArtistListView {
     }
     
     var artistGridListView: some View {
-        ArtistGridListView(
-            artists: store.artists,
-            indexToScroll: store.indexToScroll
-        ) { index in
-            store.send(.indexChanged(index))
-        }
+        NewArtistGridListView(artists: store.artists)
     }
 }
