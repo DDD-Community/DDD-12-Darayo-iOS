@@ -49,6 +49,7 @@ public struct FestivalFeature {
         case notificationButtonTapped
         case heartButtonTapped
         case seeAllButtonTapped
+        case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
     }
     
@@ -66,7 +67,10 @@ public struct FestivalFeature {
             case .heartButtonTapped:
                 state.isFavorite.toggle()
                 return .none
-            case .seeAllButtonTapped: return .none
+            case .seeAllButtonTapped:
+                let artists = state.festival.artists
+                return .send(.navigateToArtistList(artists))
+            case .navigateToArtistList: return .none
             case .binding: return .none
             }
         }
