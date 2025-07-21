@@ -14,6 +14,19 @@ public struct FestivalUseCase {
     public func fetchFestivals() async throws -> [Festival] {
         return try await festivalRepository.fetchFestivals()
     }
+    
+    public func fetchLikedFestivals() async throws -> [LikedFestival] {
+        return try await festivalRepository.fetchLikedFestivals()
+    }
+    
+    public func addLikedFestival(id: Int) async throws {
+        let likedFestival = LikedFestival(id: id, creationDate: .now)
+        return try await festivalRepository.addLikedFestival(festival: likedFestival)
+    }
+    
+    public func deleteLikedFestival(id: Int) async throws {
+        return try await festivalRepository.deleteLikedFestival(id: id)
+    }
 }
 
 private enum FestivalUseCaseKey: DependencyKey {
