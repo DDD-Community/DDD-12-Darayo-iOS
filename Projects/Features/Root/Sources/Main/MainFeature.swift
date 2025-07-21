@@ -51,8 +51,8 @@ public struct MainFeature {
         
         Reduce { state, action in
             switch action {
-            case .home(.festivalTapped(let festival)):
-                state.path.append(.festival(.init(festival: festival)))
+            case let .home(.navigateToFestival(festival, isFavorite)):
+                state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
             case .myPage(.menuTapped(.inquiry)):
                 state.url = URL(string: Constant.URL.inquiry)

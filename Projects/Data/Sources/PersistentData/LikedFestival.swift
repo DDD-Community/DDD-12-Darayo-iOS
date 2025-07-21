@@ -11,7 +11,7 @@ import SwiftData
 import Domain
 
 @Model
-public final class LikedFestival: Sendable {
+public final class LikedFestival: @unchecked Sendable {
     @Attribute(.unique) public var id: Int
     var creationDate: Date
 

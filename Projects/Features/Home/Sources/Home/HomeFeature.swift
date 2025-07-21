@@ -54,12 +54,14 @@ public struct HomeFeature {
         case onAppear
         case onRefresh
         case festivalsFetched([Festival], [LikedFestival])
+        case likedFestivalsFetched([LikedFestival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
         case dateSelected(Date)
         case likedFestivalsUpdated([LikedFestival])
         case showAlert
         case binding(BindingAction<State>)
+        case navigateToFestival(Festival, Bool)
     }
     
     public init() {}
@@ -69,8 +71,10 @@ public struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.isLoading else { return .none }
-                return .run { send in await send(fetchFestivals()) }
+                return switch state.isLoading {
+                case true: .run { send in await send(fetchFestivals()) }
+                case false: .run { send in await send( fetchLikedFestivals()) }
+                }
             case .onRefresh:
                 state.isLoading = true
                 return .run { send in await send(fetchFestivals()) }
@@ -79,6 +83,12 @@ public struct HomeFeature {
                 state.likedFestivals = Set(likedFestivals.map { $0.id })
                 state.isLoading = false
                 return .none
+            case .likedFestivalsFetched(let likedFestivals):
+                state.likedFestivals = Set(likedFestivals.map { $0.id })
+                return .none
+            case .festivalTapped(let festival):
+                let isFavorite = state.likedFestivals.contains(festival.id)
+                return .send(.navigateToFestival(festival, isFavorite))
             case .heartButtonTapped(let festival):
                 let id = festival.id
                 let isLiked = !state.likedFestivals.contains(id)
@@ -91,9 +101,9 @@ public struct HomeFeature {
             case .likedFestivalsUpdated(let likedFestivals):
                 state.likedFestivals = Set(likedFestivals.map { $0.id })
                 return .none
-            case .festivalTapped: return .none
             case .showAlert: return .none
             case .binding: return .none
+            case .navigateToFestival: return .none
             }
         }
     }
@@ -105,6 +115,15 @@ private extension HomeFeature {
             async let likedFestivals = festivalUseCase.fetchLikedFestivals()
             async let festivals =  festivalUseCase.fetchFestivals()
             return try await .festivalsFetched(festivals, likedFestivals)
+        } catch {
+            return .showAlert
+        }
+    }
+    
+    func fetchLikedFestivals() async -> Action {
+        do {
+            async let likedFestivals = festivalUseCase.fetchLikedFestivals()
+            return try await .likedFestivalsFetched(likedFestivals)
         } catch {
             return .showAlert
         }
