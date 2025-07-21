@@ -90,7 +90,7 @@ private extension ArtistCollectionView {
     func updateBottomInset(_ sectionCount: Int) {
         let lastSection = sectionCount - 1
         let lastItem = numberOfItems(inSection: lastSection) - 1
-        guard lastSection > 0 , lastItem > 0 else { return }
+        guard lastSection >= 0 , lastItem >= 0 else { return }
         
         let headerAttributes = layoutAttributesForSupplementaryElement(
             ofKind: UICollectionView.elementKindSectionHeader,
