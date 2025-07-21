@@ -10,7 +10,10 @@ import UIKit
 import DesignSystem
 
 final class ArtistCollectionView: UICollectionView {
-    init() {
+    private let sectionCount: Int
+    
+    init(sectionCount: Int) {
+        self.sectionCount = sectionCount
         super.init(frame: .zero, collectionViewLayout: .init())
         backgroundColor = .background1
         register()
@@ -19,6 +22,11 @@ final class ArtistCollectionView: UICollectionView {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        updateBottomInset(sectionCount)
     }
 }
 
@@ -77,5 +85,25 @@ private extension ArtistCollectionView {
     
     var compositionalLayout: UICollectionViewCompositionalLayout {
         return .init(section: section)
+    }
+    
+    func updateBottomInset(_ sectionCount: Int) {
+        let lastSection = sectionCount - 1
+        let lastItem = numberOfItems(inSection: lastSection) - 1
+        guard lastSection > 0 , lastItem > 0 else { return }
+        
+        let headerAttributes = layoutAttributesForSupplementaryElement(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            at: IndexPath(item: 0, section: lastSection)
+        )
+        
+        let lastCellAttributes = layoutAttributesForItem(
+            at: IndexPath(item: lastItem, section: lastSection)
+        )
+        
+        guard let headerAttributes, let lastCellAttributes else { return }
+        let sectionHeight = lastCellAttributes.frame.maxY - headerAttributes.frame.minY
+        let bottomInset = max(0, bounds.height - sectionHeight - 52 - safeAreaInsets.bottom)
+        contentInset.bottom = bottomInset
     }
 }

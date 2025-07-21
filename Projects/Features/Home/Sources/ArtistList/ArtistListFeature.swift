@@ -17,7 +17,7 @@ public struct ArtistListFeature {
     @ObservableState
     public struct State {
         var tabIndex: Int = 0
-        var indexToScroll: (Int, Date)?
+        var sectionToScroll: Int?
         var artists: [[Artist]]
         
         public init(artists: [Artist]) {
@@ -49,7 +49,7 @@ public struct ArtistListFeature {
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .dayButtonTapped(let index):
-                state.indexToScroll = (index, .now)
+                state.sectionToScroll = index
                 return .none
             case .indexChanged(let index):
                 state.tabIndex = index
