@@ -14,27 +14,29 @@ public struct PersistentDataService: PersistentDataServiceProtocol {
     private let container = ModelContainer.festibee
     public init() {}
 
-    @MainActor public func fetchAll<T: PersistentModel>() throws -> [T] {
-        let context = container.mainContext
+    public func fetchAll<T: PersistentModel>() throws -> [T] {
+        let context = ModelContext(container)
         let descriptor = FetchDescriptor<T>(predicate: nil)
         return try context.fetch(descriptor)
     }
     
-    @MainActor public func fetch<T: PersistentModel>(predicate: Predicate<T>) async throws -> [T] {
-        let context = container.mainContext
+    public func fetch<T: PersistentModel>(predicate: Predicate<T>) throws -> [T] {
+        let context = ModelContext(container)
         let descriptor = FetchDescriptor<T>(predicate: predicate)
         return try context.fetch(descriptor)
     }
 
-    @MainActor public func insert<T: PersistentModel>(_ data: T) throws {
-        let context = container.mainContext
+    public func insert<T: PersistentModel>(_ data: T) throws {
+        let context = ModelContext(container)
         context.insert(data)
         try context.save()
     }
 
-    @MainActor public func delete<T: PersistentModel>(_ data: T) throws {
-        let context = container.mainContext
-        context.delete(data)
+    public func delete<T: PersistentModel>(predicate: Predicate<T>) throws {
+        let context = ModelContext(container)
+        let descriptor = FetchDescriptor<T>(predicate: predicate)
+        let data = try context.fetch(descriptor).first
+        if let data { context.delete(data) }
         try context.save()
     }
 }

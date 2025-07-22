@@ -15,17 +15,17 @@ public struct FestivalUseCase {
         return try await festivalRepository.fetchFestivals()
     }
     
-    public func fetchLikedFestivals() async throws -> [LikedFestival] {
-        return try await festivalRepository.fetchLikedFestivals()
+    public func fetchLikedFestivals() throws -> [LikedFestival] {
+        return try festivalRepository.fetchLikedFestivals()
     }
     
-    public func addLikedFestival(id: Int) async throws {
+    public func addLikedFestival(id: Int) throws {
         let likedFestival = LikedFestival(id: id, creationDate: .now)
-        return try await festivalRepository.addLikedFestival(festival: likedFestival)
+        return try festivalRepository.addLikedFestival(festival: likedFestival)
     }
     
-    public func deleteLikedFestival(id: Int) async throws {
-        return try await festivalRepository.deleteLikedFestival(id: id)
+    public func deleteLikedFestival(id: Int) throws {
+        return try festivalRepository.deleteLikedFestival(id: id)
     }
 }
 

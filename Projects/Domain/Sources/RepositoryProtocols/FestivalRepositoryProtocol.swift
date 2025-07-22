@@ -11,9 +11,9 @@ import Util
 
 public protocol FestivalRepositoryProtocol {
     func fetchFestivals() async throws -> [Festival]
-    func fetchLikedFestivals() async throws -> [LikedFestival]
-    func addLikedFestival(festival: LikedFestival) async throws
-    func deleteLikedFestival(id: Int) async throws
+    func fetchLikedFestivals() throws -> [LikedFestival]
+    func addLikedFestival(festival: LikedFestival) throws
+    func deleteLikedFestival(id: Int) throws
 }
 
 public enum FestivalRepositoryKey: TestDependencyKey {

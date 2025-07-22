@@ -51,8 +51,6 @@ public struct FestivalFeature {
         case notificationButtonTapped
         case heartButtonTapped
         case seeAllButtonTapped
-        case likedFestivalsUpdated(Bool)
-        case showAlert
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
     }
@@ -71,16 +69,13 @@ public struct FestivalFeature {
             case .heartButtonTapped:
                 let id = state.festival.id
                 let isLiked = !state.isFavorite
-                return .run { send in
-                    await send(updateLikedFestivals(id: id, isLiked: isLiked))
-                }
+                updateLikedFestivals(id: id, isLiked: isLiked)
+                let likedFestivals = fetchLikedFestivals()
+                state.isFavorite = likedFestivals.contains(id)
+                return .none
             case .seeAllButtonTapped:
                 let artists = state.festival.artists
                 return .send(.navigateToArtistList(artists))
-            case .likedFestivalsUpdated(let isFavorite):
-                state.isFavorite = isFavorite
-                return .none
-            case .showAlert: return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
             }
@@ -89,17 +84,15 @@ public struct FestivalFeature {
 }
 
 private extension FestivalFeature {
-    func updateLikedFestivals(id: Int, isLiked: Bool) async -> Action {
-        do {
-            switch isLiked {
-            case true: try await festivalUseCase.addLikedFestival(id: id)
-            case false: try await festivalUseCase.deleteLikedFestival(id: id)
-            }
-            let likedFestivals = try await festivalUseCase.fetchLikedFestivals()
-            let isFavorite = likedFestivals.contains { $0.id == id }
-            return .likedFestivalsUpdated(isFavorite)
-        } catch {
-            return .showAlert
+    func fetchLikedFestivals() -> Set<Int> {
+        let likedFestivals = (try? festivalUseCase.fetchLikedFestivals()) ?? []
+        return Set(likedFestivals.map { $0.id })
+    }
+    
+    func updateLikedFestivals(id: Int, isLiked: Bool) {
+        switch isLiked {
+        case true: try? festivalUseCase.addLikedFestival(id: id)
+        case false: try? festivalUseCase.deleteLikedFestival(id: id)
         }
     }
 }

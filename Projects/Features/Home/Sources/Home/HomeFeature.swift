@@ -53,12 +53,10 @@ public struct HomeFeature {
     public enum Action: BindableAction {
         case onAppear
         case onRefresh
-        case festivalsFetched([Festival], [LikedFestival])
-        case likedFestivalsFetched([LikedFestival])
+        case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
         case dateSelected(Date)
-        case likedFestivalsUpdated([LikedFestival])
         case showAlert
         case binding(BindingAction<State>)
         case navigateToFestival(Festival, Bool)
@@ -71,20 +69,15 @@ public struct HomeFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return switch state.isLoading {
-                case true: .run { send in await send(fetchFestivals()) }
-                case false: .run { send in await send( fetchLikedFestivals()) }
-                }
+                state.likedFestivals = fetchLikedFestivals()
+                guard state.isLoading else { return .none }
+                return .run { send in await send(fetchFestivals()) }
             case .onRefresh:
                 state.isLoading = true
                 return .run { send in await send(fetchFestivals()) }
-            case .festivalsFetched(let festivals, let likedFestivals):
+            case .festivalsFetched(let festivals):
                 state.allFestivals = festivals
-                state.likedFestivals = Set(likedFestivals.map { $0.id })
                 state.isLoading = false
-                return .none
-            case .likedFestivalsFetched(let likedFestivals):
-                state.likedFestivals = Set(likedFestivals.map { $0.id })
                 return .none
             case .festivalTapped(let festival):
                 let isFavorite = state.likedFestivals.contains(festival.id)
@@ -92,14 +85,11 @@ public struct HomeFeature {
             case .heartButtonTapped(let festival):
                 let id = festival.id
                 let isLiked = !state.likedFestivals.contains(id)
-                return .run { send in
-                    await send(updateLikedFestivals(id: id, isLiked: isLiked))
-                }
+                updateLikedFestivals(id: id, isLiked: isLiked)
+                state.likedFestivals = fetchLikedFestivals()
+                return .none
             case .dateSelected(let date):
                 state.selectedDate = date
-                return .none
-            case .likedFestivalsUpdated(let likedFestivals):
-                state.likedFestivals = Set(likedFestivals.map { $0.id })
                 return .none
             case .showAlert: return .none
             case .binding: return .none
@@ -112,33 +102,22 @@ public struct HomeFeature {
 private extension HomeFeature {
     func fetchFestivals() async -> Action {
         do {
-            async let likedFestivals = festivalUseCase.fetchLikedFestivals()
-            async let festivals =  festivalUseCase.fetchFestivals()
-            return try await .festivalsFetched(festivals, likedFestivals)
+            let festivals = try await festivalUseCase.fetchFestivals()
+            return .festivalsFetched(festivals)
         } catch {
             return .showAlert
         }
     }
     
-    func fetchLikedFestivals() async -> Action {
-        do {
-            async let likedFestivals = festivalUseCase.fetchLikedFestivals()
-            return try await .likedFestivalsFetched(likedFestivals)
-        } catch {
-            return .showAlert
-        }
+    func fetchLikedFestivals() -> Set<Int> {
+        let likedFestivals = (try? festivalUseCase.fetchLikedFestivals()) ?? []
+        return Set(likedFestivals.map { $0.id })
     }
     
-    func updateLikedFestivals(id: Int, isLiked: Bool) async -> Action {
-        do {
-            switch isLiked {
-            case true: try await festivalUseCase.addLikedFestival(id: id)
-            case false: try await festivalUseCase.deleteLikedFestival(id: id)
-            }
-            let likedFestivals = try await festivalUseCase.fetchLikedFestivals()
-            return .likedFestivalsUpdated(likedFestivals)
-        } catch {
-            return .showAlert
+    func updateLikedFestivals(id: Int, isLiked: Bool) {
+        switch isLiked {
+        case true: try? festivalUseCase.addLikedFestival(id: id)
+        case false: try? festivalUseCase.deleteLikedFestival(id: id)
         }
     }
 }

@@ -12,10 +12,10 @@ import Dependencies
 import Util
 
 public protocol PersistentDataServiceProtocol {
-    @MainActor func fetchAll<T: PersistentModel>() throws -> [T]
-    @MainActor func fetch<T: PersistentModel>(predicate: Predicate<T>) async throws -> [T]
-    @MainActor func insert<T: PersistentModel>(_ data: T) throws
-    @MainActor func delete<T: PersistentModel>(_ data: T) throws
+    func fetchAll<T: PersistentModel>() throws -> [T]
+    func fetch<T: PersistentModel>(predicate: Predicate<T>) throws -> [T]
+    func insert<T: PersistentModel>(_ data: T) throws
+    func delete<T: PersistentModel>(predicate: Predicate<T>) throws
 }
 
 public enum PersistentDataServiceKey: TestDependencyKey {
