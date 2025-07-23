@@ -13,7 +13,7 @@ import Domain
 
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
-    private enum ScrollID { case bottom }
+    private enum ScrollID { case regulationInfo }
     
     public init(store: StoreOf<FestivalFeature>) {
         self.store = store
@@ -22,32 +22,31 @@ public struct FestivalView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 12) {
-                        festivalInfoView
-                        ticketInfoView
-                        artistInfoView
-                        transportationInfoView
-                        regulationInfoView
-                        
-                        Color.clear
-                            .frame(height: 0)
-                            .id(ScrollID.bottom)
+            GeometryReader { geometryProxy in
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            festivalInfoView
+                            ticketInfoView
+                            artistInfoView
+                            transportationInfoView
+                            regulationInfoView
+                                .id(ScrollID.regulationInfo)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, geometryProxy.safeAreaInsets.bottom > 0 ? 0 : 16)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
-                }
-                .onChange(of: store.isExpanded) { _, isExpanded in
-                    guard isExpanded else { return }
-                    withAnimation {
-                        proxy.scrollTo(ScrollID.bottom, anchor: .bottom)
+                    .onChange(of: store.isExpanded) { _, isExpanded in
+                        guard isExpanded else { return }
+                        withAnimation {
+                            proxy.scrollTo(ScrollID.regulationInfo, anchor: .top)
+                        }
                     }
                 }
                 .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
+                // timetableButton
             }
-            
-            timetableButton
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
