@@ -12,6 +12,7 @@ import DesignSystem
 
 public struct MyPageView: View {
     @Bindable private var store: StoreOf<MyPageFeature>
+    @Environment(\.scenePhase) private var scenePhase
     
     public init(store: StoreOf<MyPageFeature>) {
         self.store = store
@@ -30,6 +31,11 @@ public struct MyPageView: View {
             }
         }
         .background(Color.background1)
+        .onAppear { store.send(.onAppear) }
+        .onChange(of: scenePhase) { oldValue, _ in
+            guard oldValue == .background else { return }
+            store.send(.enteredForeground)
+        }
     }
 }
 
@@ -113,7 +119,11 @@ private extension MyPageView {
             menuHeaderView(title: "알림")
             menuView(
                 menu: .favoritesNotification,
-                isOn: $store.isNotificationOn
+                isOn: Binding {
+                    store.isNotificationOn
+                } set: { isOn in
+                    store.send(.toggleChanged(isOn))
+                }
             )
             divider
             menuButton(menu: .notificationSetting)
