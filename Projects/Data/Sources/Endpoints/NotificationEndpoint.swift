@@ -9,6 +9,7 @@
 enum NotificationEndpoint {
     private enum Path {
         static let registerPushToken = "v1/user/alarm"
+        static let fetchSubscribedFestivals = "v1/festival/alarmed"
     }
     
     static func registerPushToken(token: String?) -> APIEndpoint<String> {
@@ -16,6 +17,13 @@ enum NotificationEndpoint {
             path: Path.registerPushToken,
             method: .put,
             body: PushTokenRequest(token: token)
+        )
+    }
+    
+    static var fetchSubscribedFestivals: APIEndpoint<[FestivalResponse]> {
+        return .init(
+            path: Path.fetchSubscribedFestivals,
+            method: .get
         )
     }
 }

@@ -12,7 +12,7 @@ import Domain
 @Reducer
 public struct NotificationSettingFeature {
     @Dependency(\.dismiss) private var dismiss
-    @Dependency(\.festivalUseCase) private var festivalUseCase
+    @Dependency(\.notificationUseCase) private var notificationUseCase
     
     @ObservableState
     public struct State: Equatable {
@@ -56,8 +56,7 @@ public struct NotificationSettingFeature {
 private extension NotificationSettingFeature {
     func fetchSubsribedFestivals() async -> Action {
         do {
-            // TODO: need to change api
-            let festivals = try await festivalUseCase.fetchFestivals()
+            let festivals = try await notificationUseCase.fetchSubscribedFestivals()
             return .festivalsFestched(festivals)
         } catch {
             return .showAlert

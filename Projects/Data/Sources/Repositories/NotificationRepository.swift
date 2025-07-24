@@ -17,4 +17,10 @@ public struct NotificationRepository: NotificationRepositoryProtocol {
         let endpoint = NotificationEndpoint.registerPushToken(token: token)
         _ = try await networkService.request(endpoint: endpoint)
     }
+    
+    public func fetchSubscribedFestivals() async throws -> [Festival] {
+        let endpoint = NotificationEndpoint.fetchSubscribedFestivals
+        let result = try await networkService.request(endpoint: endpoint)
+        return result?.compactMap { $0.toDomain } ?? []
+    }
 }

@@ -14,6 +14,10 @@ public struct NotificationUseCase {
     public func registerPushToken(token: String?) async throws {
         try await notificationRepository.registerPushToken(token: token)
     }
+    
+    public func fetchSubscribedFestivals() async throws -> [Festival] {
+        try await notificationRepository.fetchSubscribedFestivals()
+    }
 }
 
 private enum NotificationUseCaseKey: DependencyKey {
