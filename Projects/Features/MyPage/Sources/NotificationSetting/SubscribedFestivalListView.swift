@@ -48,6 +48,7 @@ private extension SubscribedFestivalListView {
                     Text(festival.name)
                         .pretendard(style: .title4)
                         .foregroundStyle(Color.white)
+                        .lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     
                     VStack(spacing: 0) {
@@ -63,8 +64,10 @@ private extension SubscribedFestivalListView {
                 }
             }
             .padding(12)
+            .frame(height: 88)
             .background(Color.background2)
         }
+        .clipShape(RoundedRectangle(cornerRadius: 4))
     }
     
     func imageView(url: URL?) -> some View {
@@ -84,13 +87,16 @@ private extension SubscribedFestivalListView {
             }
             
             LinearGradient(
-                stops: [
-                    Gradient.Stop(color: .black, location: 0),
-                    Gradient.Stop(color: .black.opacity(0), location: 0.5),
-                ],
+                gradient: .init(
+                    colors: [
+                        .black.opacity(0.5),
+                        .black.opacity(0)
+                    ]
+                ),
                 startPoint: .top,
                 endPoint: .bottom
             )
+            .frame(width: 108, height: 88)
         }
     }
     
@@ -104,6 +110,7 @@ private extension SubscribedFestivalListView {
                 .pretendard(style: .body4)
                 .foregroundStyle(Color.grey3)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .lineLimit(1)
         }
     }
 }

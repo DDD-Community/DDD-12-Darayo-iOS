@@ -11,7 +11,8 @@ import Domain
 
 @Reducer
 public struct NotificationSettingFeature {
-    @Dependency(\.dismiss) var dismiss
+    @Dependency(\.dismiss) private var dismiss
+    @Dependency(\.festivalUseCase) private var festivalUseCase
     
     @ObservableState
     public struct State: Equatable {
@@ -34,7 +35,9 @@ public struct NotificationSettingFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                return .none
+                return .run { send in
+                    await send(fetchSubsribedFestivals())
+                }
             case .festivalsFestched(let festivals):
                 state.festivals = festivals
                 state.isLoading = false
@@ -53,7 +56,7 @@ public struct NotificationSettingFeature {
 private extension NotificationSettingFeature {
     func fetchSubsribedFestivals() async -> Action {
         do {
-            let festivals: [Festival] = []
+            let festivals = try await festivalUseCase.fetchFestivals()
             return .festivalsFestched(festivals)
         } catch {
             return .showAlert
