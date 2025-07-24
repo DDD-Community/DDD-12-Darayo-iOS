@@ -78,6 +78,7 @@ private extension NotificationSettingView {
             }
             .padding(16)
         }
+        .animation(.easeOut, value: store.festivals)
     }
     
     var emptyView: some View {
