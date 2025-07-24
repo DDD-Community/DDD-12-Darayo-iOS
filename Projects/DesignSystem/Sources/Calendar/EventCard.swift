@@ -64,17 +64,12 @@ public struct EventCard: View {
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(alignment: .center) {
-                        Text(event.category.label)
-                            .pretendard(style: .caption2)
-                            .foregroundColor(event.category.textColor)
-                            .padding(.horizontal, 8)
-                            .frame(width: 47, height: 16)
-                            .background(event.category.backgroundColor)
-                            .cornerRadius(16)
-                        
-                        Spacer()
-                    }
+                    Text(event.category.label)
+                        .pretendard(style: .caption2)
+                        .foregroundColor(event.category.textColor)
+                        .frame(width: 47, height: 16)
+                        .background(event.category.backgroundColor)
+                        .cornerRadius(16)
                     
                     Text(event.title)
                         .pretendard(style: .title3)
@@ -83,50 +78,7 @@ public struct EventCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 
-                VStack(alignment: .leading, spacing: 0) {
-                    if event.category == .reservationDay {
-                        // catrgory: 예매일
-                        HStack(spacing: 6) {
-                            Text("예매처")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.grey4)
-                            Text("\(event.location)")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.grey3)
-                                .lineLimit(1)
-                        }
-
-                        HStack(spacing: 6) {
-                            Text("예매일시")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.grey4)
-                            Text("\(event.time)")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.gray)
-                        }
-
-                    } else {
-                        // catrgory: 행사일
-                        HStack(spacing: 6) {
-                            Text("장소")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.grey4)
-                            Text("\(event.location)")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.grey3)
-                                .lineLimit(1)
-                        }
-
-                        HStack(spacing: 6) {
-                            Text("행사일")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.grey4)
-                            Text("\(event.time)")
-                                .pretendard(style: .body4)
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
+                infoSection(for: event)
             }
             .padding(.horizontal, 12)
             .frame(maxWidth: .infinity, alignment: .top)
@@ -168,3 +120,28 @@ public struct EventCard: View {
         }
     }
 }
+
+@ViewBuilder
+private func infoSection(for event: CalendarModel.Event) -> some View {
+    VStack(alignment: .leading, spacing: 0) {
+        infoRow(label: event.category == .reservationDay ? "예매처" : "장소",
+                value: event.location)
+
+        infoRow(label: event.category == .reservationDay ? "예매일시" : "행사일",
+                value: event.time)
+    }
+}
+
+private func infoRow(label: String, value: String) -> some View {
+    HStack(spacing: 6) {
+        Text(label)
+            .pretendard(style: .body4)
+            .foregroundColor(.grey4)
+
+        Text(value)
+            .pretendard(style: .body4)
+            .foregroundColor(.grey3)
+            .lineLimit(1)
+    }
+}
+
