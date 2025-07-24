@@ -79,10 +79,10 @@ public struct MainFeature {
 private extension MainFeature {
     func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
         return switch menu {
-        case .notificationSetting: .notificationSetting(.init())
+        case .individualNotificationSettings: .notificationSetting(.init())
         case .termsOfService: .termsOfService(.init())
         case .privacyPolicy: .privacyPolicy(.init())
-        case .favoritesNotification: nil
+        case .notificationSettings: nil
         case .inquiry: nil
         }
     }

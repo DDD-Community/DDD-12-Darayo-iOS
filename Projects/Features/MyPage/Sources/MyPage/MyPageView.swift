@@ -42,8 +42,8 @@ public struct MyPageView: View {
 private extension MyPageView {
     func title(of menu: MyPageFeature.Menu) -> String {
         switch menu {
-        case .favoritesNotification: "좋아요한 페스티벌 알림 받기"
-        case .notificationSetting: "특정 페스티벌만 알림 받기"
+        case .notificationSettings: "페스티벌 알림 설정"
+        case .individualNotificationSettings: "개별 페스티벌 알림 관리"
         case .inquiry: "1:1 문의하기"
         case .termsOfService: "이용약관"
         case .privacyPolicy: "개인정보 처리방침"
@@ -118,7 +118,7 @@ private extension MyPageView {
         VStack(spacing: 0) {
             menuHeaderView(title: "알림")
             menuView(
-                menu: .favoritesNotification,
+                menu: .notificationSettings,
                 isOn: Binding {
                     store.isNotificationOn
                 } set: { isOn in
@@ -126,7 +126,7 @@ private extension MyPageView {
                 }
             )
             divider
-            menuButton(menu: .notificationSetting)
+            menuButton(menu: .individualNotificationSettings)
         }
     }
     

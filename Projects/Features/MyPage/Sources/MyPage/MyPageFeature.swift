@@ -122,8 +122,8 @@ private extension MyPageFeature {
 
 extension MyPageFeature {
     public enum Menu {
-        case favoritesNotification
-        case notificationSetting
+        case notificationSettings
+        case individualNotificationSettings
         case inquiry
         case termsOfService
         case privacyPolicy
