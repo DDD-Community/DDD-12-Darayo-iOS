@@ -99,7 +99,9 @@ private extension EventListView {
     // MARK: - 안내 멘트 출력
     var emptyStateView: some View {
         VStack(spacing: 10) {
-            Spacer(minLength: 80)
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: 400)
             
             if isSelected && allEvents.isEmpty {
                 // 좋아요한것 체크 했는데 좋아요 기록이 없음
@@ -120,7 +122,9 @@ private extension EventListView {
                     .multilineTextAlignment(.center)
             }
             
-            Spacer()
+            Rectangle()
+                .fill(Color.clear)
+                .frame(minHeight: 200)
         }
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
