@@ -47,10 +47,20 @@ public struct EventCard: View {
                 } else {
                     Color.grey4
                 }
+                
+                LinearGradient(
+                    gradient: .init(
+                        colors: [
+                            .black.opacity(0.5),
+                            .black.opacity(0)
+                        ]
+                    ),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             }
             .frame(width: 108, height: 108)
             .clipped()
-            .overlay(gradientOverlay)
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
@@ -104,17 +114,17 @@ public struct EventCard: View {
     }
     
     // MARK: - 포스터 이미지 그림자
-    private var gradientOverlay: some View {
-        LinearGradient(
-            stops: [
-                .init(color: .black.opacity(0.2), location: 0.0),
-                .init(color: .black.opacity(0.05), location: 0.15),
-                .init(color: .clear, location: 0.3)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
-    }
+//    private var gradientOverlay: some View {
+//        LinearGradient(
+//            stops: [
+//                .init(color: .black.opacity(0.2), location: 0.0),
+//                .init(color: .black.opacity(0.05), location: 0.15),
+//                .init(color: .clear, location: 0.3)
+//            ],
+//            startPoint: .top,
+//            endPoint: .bottom
+//        )
+//    }
 }
     
     // MARK: - Category 색상 로직
