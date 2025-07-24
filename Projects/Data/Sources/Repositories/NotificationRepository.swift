@@ -23,4 +23,20 @@ public struct NotificationRepository: NotificationRepositoryProtocol {
         let result = try await networkService.request(endpoint: endpoint)
         return result?.compactMap { $0.toDomain } ?? []
     }
+    
+    public func fetchSubscriptionInfo(festivalID: String) async throws -> Bool {
+        let endpoint = NotificationEndpoint.fetchSubsrciptionInfo(festivalID: festivalID)
+        let result = try await networkService.request(endpoint: endpoint)
+        return result == true
+    }
+    
+    public func subscribe(festivalID: String) async throws {
+        let endpoint = NotificationEndpoint.subscribe(festivalID: festivalID)
+        _ = try await networkService.request(endpoint: endpoint)
+    }
+    
+    public func unsubscribe(festivalID: String) async throws {
+        let endpoint = NotificationEndpoint.unsubscribe(festivalID: festivalID)
+        _ = try await networkService.request(endpoint: endpoint)
+    }
 }

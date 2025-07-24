@@ -50,6 +50,7 @@ public struct FestivalView: View {
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
+        .onAppear { store.send(.onAppear) }
     }
 }
 

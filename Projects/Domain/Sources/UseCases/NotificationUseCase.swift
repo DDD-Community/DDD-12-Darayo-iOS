@@ -18,6 +18,18 @@ public struct NotificationUseCase {
     public func fetchSubscribedFestivals() async throws -> [Festival] {
         try await notificationRepository.fetchSubscribedFestivals()
     }
+    
+    public func fetchSubscriptionInfo(festivalID: String) async throws -> Bool {
+        try await notificationRepository.fetchSubscriptionInfo(festivalID: festivalID)
+    }
+    
+    public func subscribe(festivalID: String) async throws {
+        try await notificationRepository.subscribe(festivalID: festivalID)
+    }
+    
+    public func unsubscribe(festivalID: String) async throws {
+        try await notificationRepository.unsubscribe(festivalID: festivalID)
+    }
 }
 
 private enum NotificationUseCaseKey: DependencyKey {

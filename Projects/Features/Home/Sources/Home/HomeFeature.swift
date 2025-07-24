@@ -13,6 +13,8 @@ import Domain
 @Reducer
 public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
+    @Dependency(\.notificationUseCase) private var notificationUseCase
+    private enum CancelID { case subscription }
     
     enum DisplayMode {
         case grid
@@ -87,7 +89,11 @@ public struct HomeFeature {
                 let isLiked = !state.likedFestivals.contains(id)
                 updateLikedFestivals(id: id, isLiked: isLiked)
                 state.likedFestivals = fetchLikedFestivals()
-                return .none
+                guard isLiked else { return .none }
+                return .run { _ in
+                    try? await updateSubscriptionInfo(id: id, isLiked: isLiked)
+                }
+                .cancellable(id: CancelID.subscription, cancelInFlight: true)
             case .dateSelected(let date):
                 state.selectedDate = date
                 return .none
@@ -116,8 +122,20 @@ private extension HomeFeature {
     
     func updateLikedFestivals(id: Int, isLiked: Bool) {
         switch isLiked {
-        case true: try? festivalUseCase.addLikedFestival(id: id)
-        case false: try? festivalUseCase.deleteLikedFestival(id: id)
+        case true:
+            try? festivalUseCase.addLikedFestival(id: id)
+        case false:
+            try? festivalUseCase.deleteLikedFestival(id: id)
+        }
+    }
+    
+    func updateSubscriptionInfo(id: Int, isLiked: Bool) async throws {
+        let festivalID = String(id)
+        switch isLiked {
+        case true:
+            try await notificationUseCase.subscribe(festivalID: festivalID)
+        case false:
+            try await notificationUseCase.unsubscribe(festivalID: festivalID)
         }
     }
 }
