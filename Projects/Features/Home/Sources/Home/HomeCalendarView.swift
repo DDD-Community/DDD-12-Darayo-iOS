@@ -84,7 +84,8 @@ private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
             location: festival.placeName,
             date: startDate,
             time: festival.dateString,
-            category: .festivalDay
+            category: .festivalDay,
+            posterURL: URL(string: festival.posterURLString)
         )
     }
 }

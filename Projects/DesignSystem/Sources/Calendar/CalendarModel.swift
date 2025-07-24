@@ -24,6 +24,7 @@ extension CalendarModel {
         public let date: Date
         public let time: String
         public let category: EventCategory
+        public let posterURL: URL?
         
         public init(
             id: String = UUID().uuidString,
@@ -31,7 +32,8 @@ extension CalendarModel {
             location: String,
             date: Date,
             time: String,
-            category: EventCategory
+            category: EventCategory,
+            posterURL: URL? = nil
         ) {
             self.id = id
             self.title = title
@@ -39,6 +41,7 @@ extension CalendarModel {
             self.date = date
             self.time = time
             self.category = category
+            self.posterURL = posterURL
         }
     }
 }

@@ -19,13 +19,23 @@ public struct EventCard: View {
         HStack(spacing: 0) {
             
             ZStack {
-                Image.sampleFestival
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 108, height: 108)
-                    .overlay(gradientOverlay)
+                if let url = event.posterURL {
+                    AsyncImage(url: url) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            Color.grey4
+                        }
+                    }
+                } else {
+                    Color.grey4
+                }
             }
             .frame(width: 108, height: 108)
+            .clipped()
+            .overlay(gradientOverlay)
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
