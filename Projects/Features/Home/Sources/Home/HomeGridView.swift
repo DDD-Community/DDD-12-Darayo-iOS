@@ -98,9 +98,7 @@ private extension HomeGridView {
     
     var emptyView: some View {
         VStack(spacing: 0) {
-            Image.iconPetalBackground
-                .resizable()
-                .frame(width: 109, height: 120)
+            Image.star
             
             Text("아직 좋아요한 페스티벌이 없어요!")
                 .pretendard(style: .title2)
