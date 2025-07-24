@@ -12,6 +12,7 @@ import Domain
 @Reducer
 public struct NotificationSettingFeature {
     @Dependency(\.dismiss) private var dismiss
+    @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
     @ObservableState
@@ -24,6 +25,7 @@ public struct NotificationSettingFeature {
     public enum Action {
         case onAppear
         case festivalsFestched([Festival])
+        case unsubscribed(Int)
         case noticiationButtonTapped(Festival)
         case showAlert
         case backButtonTapped
@@ -43,6 +45,12 @@ public struct NotificationSettingFeature {
                 state.isLoading = false
                 return .none
             case .noticiationButtonTapped(let festival):
+                let id = festival.id
+                return .run { send in
+                    await send(unsubscribe(id: id))
+                }
+            case .unsubscribed(let id):
+                state.festivals.removeAll { $0.id == id }
                 return .none
             case .showAlert:
                 return .none
@@ -61,5 +69,12 @@ private extension NotificationSettingFeature {
         } catch {
             return .showAlert
         }
+    }
+    
+    func unsubscribe(id: Int) async -> Action {
+        let festivalID = String(id)
+        try? festivalUseCase.deleteLikedFestival(id: id)
+        try? await notificationUseCase.unsubscribe(festivalID: festivalID)
+        return .unsubscribed(id)
     }
 }
