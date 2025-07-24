@@ -11,6 +11,7 @@ public enum Module: Hashable, Sendable {
     case domain
     case data
     case network
+    case persistence
     case keychain
     case util
     case designSystem

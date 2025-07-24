@@ -9,6 +9,8 @@
 import SwiftUI
 import Root
 import DesignSystem
+import SwiftData
+import Persistence
 
 @main
 struct FestibeeApp: App {
@@ -30,6 +32,7 @@ struct FestibeeApp: App {
             }
             .preferredColorScheme(.dark)
         }
+        .modelContainer(.festibee)
     }
 }
 

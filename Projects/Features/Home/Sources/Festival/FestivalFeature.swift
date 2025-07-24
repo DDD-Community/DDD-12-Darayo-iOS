@@ -13,6 +13,7 @@ import Util
 @Reducer
 public struct FestivalFeature {
     @Dependency(\.dismiss) private var dismiss
+    @Dependency(\.festivalUseCase) private var festivalUseCase
     
     @ObservableState
     public struct State {
@@ -21,8 +22,9 @@ public struct FestivalFeature {
         var isFavorite: Bool = false
         var isExpanded: Bool = true
         
-        public init(festival: Festival) {
+        public init(festival: Festival, isFavorite: Bool) {
             self.festival = festival
+            self.isFavorite = isFavorite
         }
         
         var dateString: String {
@@ -65,7 +67,11 @@ public struct FestivalFeature {
                 state.isNotificationOn.toggle()
                 return .none
             case .heartButtonTapped:
-                state.isFavorite.toggle()
+                let id = state.festival.id
+                let isLiked = !state.isFavorite
+                updateLikedFestivals(id: id, isLiked: isLiked)
+                let likedFestivals = fetchLikedFestivals()
+                state.isFavorite = likedFestivals.contains(id)
                 return .none
             case .seeAllButtonTapped:
                 let artists = state.festival.artists
@@ -73,6 +79,20 @@ public struct FestivalFeature {
             case .navigateToArtistList: return .none
             case .binding: return .none
             }
+        }
+    }
+}
+
+private extension FestivalFeature {
+    func fetchLikedFestivals() -> Set<Int> {
+        let likedFestivals = (try? festivalUseCase.fetchLikedFestivals()) ?? []
+        return Set(likedFestivals.map { $0.id })
+    }
+    
+    func updateLikedFestivals(id: Int, isLiked: Bool) {
+        switch isLiked {
+        case true: try? festivalUseCase.addLikedFestival(id: id)
+        case false: try? festivalUseCase.deleteLikedFestival(id: id)
         }
     }
 }

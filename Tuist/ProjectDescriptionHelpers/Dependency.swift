@@ -9,7 +9,7 @@ import ProjectDescription
 
 extension Module {
     private static let dependencyInfo: [Module: [Module]] = [
-        .app: [.feature(.root), .network, .keychain],
+        .app: [.feature(.root), .network, .persistence, .keychain],
         .feature(.root): [.feature(.home), .feature(.timetable), .feature(.myPage)],
         .feature(.home): [.feature(.base)],
         .feature(.timetable): [.feature(.base)],
@@ -18,6 +18,7 @@ extension Module {
         .domain: [.util],
         .data: [.domain],
         .network: [.data],
+        .persistence: [.data],
         .keychain: [.data]
     ]
     
