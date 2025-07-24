@@ -56,6 +56,7 @@ public struct NotificationSettingFeature {
 private extension NotificationSettingFeature {
     func fetchSubsribedFestivals() async -> Action {
         do {
+            // TODO: need to change api
             let festivals = try await festivalUseCase.fetchFestivals()
             return .festivalsFestched(festivals)
         } catch {
