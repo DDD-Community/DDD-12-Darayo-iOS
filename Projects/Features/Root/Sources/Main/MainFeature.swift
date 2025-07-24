@@ -19,7 +19,7 @@ public struct MainFeature {
     public struct State {
         var currentTab: Tab = .home
         var home: HomeFeature.State = .init()
-        var timetable: TimetableFeature.State = .init()
+        // var timetable: TimetableFeature.State = .init()
         var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
@@ -27,7 +27,7 @@ public struct MainFeature {
     
     public enum Action: BindableAction {
         case home(HomeFeature.Action)
-        case timetable(TimetableFeature.Action)
+        // case timetable(TimetableFeature.Action)
         case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
@@ -41,9 +41,9 @@ public struct MainFeature {
             HomeFeature()
         }
         
-        Scope(state: \.timetable, action: \.timetable) {
-            TimetableFeature()
-        }
+//        Scope(state: \.timetable, action: \.timetable) {
+//            TimetableFeature()
+//        }
         
         Scope(state: \.myPage, action: \.myPage) {
             MyPageFeature()
@@ -66,7 +66,7 @@ public struct MainFeature {
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
             case .home: return .none
-            case .timetable: return .none
+            // case .timetable: return .none
             case .myPage: return .none
             case .binding: return .none
             case .path: return .none
@@ -91,13 +91,13 @@ private extension MainFeature {
 extension MainFeature {
     public enum Tab: CaseIterable {
         case home
-        case timetable
+        // case timetable
         case myPage
         
         var name: String {
             switch self {
             case .home: "홈"
-            case .timetable: "타임테이블"
+            // case .timetable: "타임테이블"
             case .myPage: "MY"
             }
         }
