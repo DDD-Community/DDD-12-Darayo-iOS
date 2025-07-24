@@ -23,6 +23,7 @@ extension CalendarModel {
         public let title: String
         public let location: String
         public let date: Date
+        public let endDate: Date?
         public let time: String
         public let category: EventCategory
         public let posterURL: URL?
@@ -33,6 +34,7 @@ extension CalendarModel {
             title: String,
             location: String,
             date: Date,
+            endDate: Date? = nil,
             time: String,
             category: EventCategory,
             posterURL: URL? = nil
@@ -42,6 +44,7 @@ extension CalendarModel {
             self.title = title
             self.location = location
             self.date = date
+            self.endDate = endDate
             self.time = time
             self.category = category
             self.posterURL = posterURL

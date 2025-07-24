@@ -96,7 +96,7 @@ private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
                 title: festival.name,
                 location: vendorNames, // 예매처
                 date: openDate,
-                time: openDate.toString(dateFormat: .reservationWithWeekday), // 예매일
+                time: openDate.toString(dateFormat: .reservateionDateTime), // 예매일
                 category: .reservationDay,
                 posterURL: URL(string: festival.posterURLString)
             ))
@@ -114,7 +114,8 @@ private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
                     title: festival.name,
                     location: festival.placeName, // 행사 장소
                     date: currentDate,
-                    time: festival.dateString, // 행사일
+                    endDate: endDate,
+                    time: "\(startDate.toString(dateFormat: .eventDate)) - \(endDate.toString(dateFormat: .eventDate))", // 행사일
                     category: .festivalDay,
                     posterURL: URL(string: festival.posterURLString)
                 ))
