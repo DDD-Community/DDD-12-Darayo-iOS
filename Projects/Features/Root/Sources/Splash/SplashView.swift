@@ -20,8 +20,7 @@ public struct SplashView: View {
     public var body: some View {
         ZStack {
             background
-            VStack(spacing: 0) {
-                characterImage
+            VStack(spacing: 12) {
                 logo
                 slogan
             }
@@ -50,19 +49,13 @@ private extension SplashView {
         .ignoresSafeArea()
     }
     
-    var characterImage: some View {
-        Image.characterSplash
-    }
-    
     var logo: some View {
         Image.logoSplash
-            .padding(.top, 20)
     }
     
     var slogan: some View {
-        Text("슬로건슬로건슬로건")
-            .pretendard(style: .title4)
-            .foregroundStyle(Color.grey3)
-            .padding(.top, 8)
+        Text("페스티벌을 향한 가장 빠른 날개짓")
+            .pretendard(style: .body1)
+            .foregroundStyle(Color.white)
     }
 }

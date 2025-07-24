@@ -19,7 +19,7 @@ public struct MainFeature {
     public struct State {
         var currentTab: Tab = .home
         var home: HomeFeature.State = .init()
-        var timetable: TimetableFeature.State = .init()
+        // var timetable: TimetableFeature.State = .init()
         var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
@@ -27,7 +27,7 @@ public struct MainFeature {
     
     public enum Action: BindableAction {
         case home(HomeFeature.Action)
-        case timetable(TimetableFeature.Action)
+        // case timetable(TimetableFeature.Action)
         case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
@@ -41,9 +41,9 @@ public struct MainFeature {
             HomeFeature()
         }
         
-        Scope(state: \.timetable, action: \.timetable) {
-            TimetableFeature()
-        }
+//        Scope(state: \.timetable, action: \.timetable) {
+//            TimetableFeature()
+//        }
         
         Scope(state: \.myPage, action: \.myPage) {
             MyPageFeature()
@@ -51,8 +51,8 @@ public struct MainFeature {
         
         Reduce { state, action in
             switch action {
-            case .home(.festivalTapped(let festival)):
-                state.path.append(.festival(.init(festival: festival)))
+            case let .home(.navigateToFestival(festival, isFavorite)):
+                state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
             case .myPage(.menuTapped(.inquiry)):
                 state.url = URL(string: Constant.URL.inquiry)
@@ -62,11 +62,11 @@ public struct MainFeature {
                 guard let pathState else { return .none }
                 state.path.append(pathState)
                 return .none
-            case .path(.element(_, .festival(.seeAllButtonTapped))):
-                state.path.append(.artistList(.init()))
+            case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
+                state.path.append(.artistList(.init(artists: artists)))
                 return .none
             case .home: return .none
-            case .timetable: return .none
+            // case .timetable: return .none
             case .myPage: return .none
             case .binding: return .none
             case .path: return .none
@@ -91,13 +91,13 @@ private extension MainFeature {
 extension MainFeature {
     public enum Tab: CaseIterable {
         case home
-        case timetable
+        // case timetable
         case myPage
         
         var name: String {
             switch self {
             case .home: "홈"
-            case .timetable: "타임테이블"
+            // case .timetable: "타임테이블"
             case .myPage: "MY"
             }
         }

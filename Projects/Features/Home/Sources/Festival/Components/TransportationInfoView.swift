@@ -25,7 +25,7 @@ struct TransportationInfoView: View {
                 .renderedIf(transportationInfo.isEmpty)
             
             VStack(spacing: 12) {
-                mapView
+                // mapView
                 descriptionView
             }
             .renderedIf(!transportationInfo.isEmpty)

@@ -70,7 +70,7 @@ private extension ArtistInfoView {
     var artistListView: some View {
         ScrollView(.horizontal) {
             LazyHStack(spacing: 10) {
-                ForEach(0..<artists.count, id: \.self) { index in
+                ForEach(0..<min(10, artists.count), id: \.self) { index in
                     artistView(artist: artists[index])
                 }
             }
@@ -88,7 +88,8 @@ private extension ArtistInfoView {
             Text(artist.name)
                 .pretendard(style: .body3)
                 .foregroundStyle(Color.white)
+                .lineLimit(1)
         }
-        .frame(minWidth: 65)
+        .frame(width: 65)
     }
 }
