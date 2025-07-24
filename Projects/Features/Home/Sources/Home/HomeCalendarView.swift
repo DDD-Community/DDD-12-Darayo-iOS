@@ -81,18 +81,39 @@ private extension HomeCalendarView {
 }
 
 private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
-    festivals.compactMap { festival in
-        guard let startDate = festival.startDate else { return nil }
+    festivals.flatMap { festival in
+        var events: [CalendarModel.Event] = []
         
-        return CalendarModel.Event(
-            id: UUID().uuidString,
-            festivalId: festival.id,
-            title: festival.name,
-            location: festival.placeName,
-            date: startDate,
-            time: festival.dateString,
-            category: .festivalDay,
-            posterURL: URL(string: festival.posterURLString)
-        )
+        // catrgory: 행사일
+        if let startDate = festival.startDate {
+            events.append(CalendarModel.Event(
+                id: UUID().uuidString,
+                festivalId: festival.id,
+                title: festival.name,
+                location: festival.placeName, // 공연 장소
+                date: startDate,
+                time: festival.dateString,    // 행사일
+                category: .festivalDay,
+                posterURL: URL(string: festival.posterURLString)
+            ))
+        }
+        
+        // catrgory: 예매일
+        for reservation in festival.reservations {
+            if let openDate = reservation.openDateTime {
+                events.append(CalendarModel.Event(
+                    id: UUID().uuidString,
+                    festivalId: festival.id,
+                    title: festival.name,
+                    location: reservation.vendor.name, // 예매처
+                    date: openDate,
+                    time: openDate.toString(dateFormat: .reservationWithWeekday), // 예매일
+                    category: .reservationDay,
+                    posterURL: URL(string: festival.posterURLString)
+                ))
+            }
+        }
+
+        return events
     }
 }

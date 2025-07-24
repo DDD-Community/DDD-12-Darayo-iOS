@@ -84,23 +84,47 @@ public struct EventCard: View {
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 
                 VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: 6) {
-                        Text("예매처")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.grey4)
-                        Text("\(event.location)")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.grey3)
-                            .lineLimit(1)
-                    }
-                    
-                    HStack(spacing: 6) {
-                        Text("예매일시")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.grey4)
-                        Text("\(event.time)")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.gray)
+                    if event.category == .reservationDay {
+                        // catrgory: 예매일
+                        HStack(spacing: 6) {
+                            Text("예매처")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey4)
+                            Text("\(event.location)")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey3)
+                                .lineLimit(1)
+                        }
+
+                        HStack(spacing: 6) {
+                            Text("예매일시")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey4)
+                            Text("\(event.time)")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.gray)
+                        }
+
+                    } else {
+                        // catrgory: 행사일
+                        HStack(spacing: 6) {
+                            Text("장소")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey4)
+                            Text("\(event.location)")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey3)
+                                .lineLimit(1)
+                        }
+
+                        HStack(spacing: 6) {
+                            Text("행사일")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey4)
+                            Text("\(event.time)")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.gray)
+                        }
                     }
                 }
             }
@@ -112,19 +136,6 @@ public struct EventCard: View {
         .background(Color.background2)
         .cornerRadius(4)
     }
-    
-    // MARK: - 포스터 이미지 그림자
-//    private var gradientOverlay: some View {
-//        LinearGradient(
-//            stops: [
-//                .init(color: .black.opacity(0.2), location: 0.0),
-//                .init(color: .black.opacity(0.05), location: 0.15),
-//                .init(color: .clear, location: 0.3)
-//            ],
-//            startPoint: .top,
-//            endPoint: .bottom
-//        )
-//    }
 }
     
     // MARK: - Category 색상 로직
@@ -157,21 +168,3 @@ public struct EventCard: View {
         }
     }
 }
-
-//#Preview {
-//    VStack(spacing: 16) {
-//        // 실제 데이터가 있을 때
-//        EventCard(event: CalendarModel.Event(
-//            title: "페스티벌 A",
-//            location: "인터파크",
-//            date: Date(),
-//            time: "25.06.12 18:00",
-//            category: .festivalDay
-//        ), isLoading: false)
-//        
-//        // 로딩 중일 때
-//        EventCard(event: nil, isLoading: true)
-//    }
-//    .padding()
-//    .background(Color.black)
-//}
