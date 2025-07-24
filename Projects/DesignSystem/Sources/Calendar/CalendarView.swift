@@ -69,42 +69,42 @@ public struct CalendarView: View {
     }
 }
 
-#Preview {
-    CalendarViewPreviewWrapper()
-        .background(Color.black)
-}
-
-private struct CalendarViewPreviewWrapper: View {
-    var body: some View {
-        CalendarView(
-            calendar: CalendarModel(events: dummyEvents),
-            onDateSelected: { date in
-//                print("Selected date:", date)
-            },
-            onMonthChanged: { newMonth in
-//                print("Changed month:", newMonth)
-            }
-        )
-    }
-
-    private var dummyEvents: [CalendarModel.Event] {
-        return [
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "테스트 페스티벌",
-                location: "예스24",
-                date: Date(),
-                time: "25.06.28 18:00",
-                category: .reservationDay
-            ),
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "다음 달 행사",
-                location: "인터파크",
-                date: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
-                time: "25.07.10 19:00",
-                category: .festivalDay
-            )
-        ]
-    }
-}
+//#Preview {
+//    CalendarViewPreviewWrapper()
+//        .background(Color.black)
+//}
+//
+//private struct CalendarViewPreviewWrapper: View {
+//    var body: some View {
+//        CalendarView(
+//            calendar: CalendarModel(events: dummyEvents),
+//            onDateSelected: { date in
+////                print("Selected date:", date)
+//            },
+//            onMonthChanged: { newMonth in
+////                print("Changed month:", newMonth)
+//            }
+//        )
+//    }
+//
+//    private var dummyEvents: [CalendarModel.Event] {
+//        return [
+//            CalendarModel.Event(
+//                id: UUID().uuidString,
+//                title: "테스트 페스티벌",
+//                location: "예스24",
+//                date: Date(),
+//                time: "25.06.28 18:00",
+//                category: .reservationDay
+//            ),
+//            CalendarModel.Event(
+//                id: UUID().uuidString,
+//                title: "다음 달 행사",
+//                location: "인터파크",
+//                date: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
+//                time: "25.07.10 19:00",
+//                category: .festivalDay
+//            )
+//        ]
+//    }
+//}

@@ -9,6 +9,7 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Domain
 
 struct HomeCalendarView: View {
     private let store: StoreOf<HomeFeature>
@@ -62,7 +63,7 @@ private extension HomeCalendarView {
     }
     
     var events: [CalendarModel.Event] {
-        DummyEventData.events
+        makeEvents(from: store.festivals)
     }
     
     var eventsForSelectedDate: [CalendarModel.Event] {
@@ -70,5 +71,20 @@ private extension HomeCalendarView {
         return calendar.events.filter { event in
             Calendar.current.isDate(event.date, inSameDayAs: selectedDate)
         }
+    }
+}
+
+private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
+    festivals.compactMap { festival in
+        guard let startDate = festival.startDate else { return nil }
+        
+        return CalendarModel.Event(
+            id: UUID().uuidString,
+            title: festival.name,
+            location: festival.placeName,
+            date: startDate,
+            time: festival.dateString,
+            category: .festivalDay
+        )
     }
 }

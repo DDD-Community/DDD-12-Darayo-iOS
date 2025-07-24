@@ -123,13 +123,13 @@ public struct EventCard: View {
     }
 }
 
-#Preview {
-    EventCard(event: CalendarModel.Event(
-        title: "페스티벌 A",
-        location: "인터파크",
-        date: Date(),
-        time: "25.06.12 18:00",
-        category: .festivalDay
-    ))
-    .background(Color.black)
-}
+//#Preview {
+//    EventCard(event: CalendarModel.Event(
+//        title: "페스티벌 A",
+//        location: "인터파크",
+//        date: Date(),
+//        time: "25.06.12 18:00",
+//        category: .festivalDay
+//    ))
+//    .background(Color.black)
+//}
