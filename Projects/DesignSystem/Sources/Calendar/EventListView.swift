@@ -12,17 +12,20 @@ public struct EventListView: View {
     let events: [CalendarModel.Event]
     let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
     let title: String
+    let isLoading: Bool
     
     @State private var isSelected: Bool = false
     
     public init(
         events: [CalendarModel.Event],
         allEvents: [CalendarModel.Event],
-        title: String = "좋아요한 페스티벌"
+        title: String = "좋아요한 페스티벌",
+        isLoading: Bool = false
     ) {
         self.events = events
         self.allEvents = allEvents
         self.title = title
+        self.isLoading = isLoading
     }
     
     public var body: some View {
@@ -31,8 +34,14 @@ public struct EventListView: View {
             
             ZStack {
                 LazyVStack(spacing: 14) {
-                    ForEach(events, id: \.id) { event in
-                        EventCard(event: event)
+                    if isLoading {
+                        ForEach(0..<5, id: \.self) { _ in
+                            EventCard(event: nil, isLoading: true)
+                        }
+                    } else {
+                        ForEach(currentEvents, id: \.id) { event in
+                            EventCard(event: event, isLoading: false)
+                        }
                     }
                 }
                 .padding(.horizontal, 16)
@@ -51,6 +60,10 @@ public struct EventListView: View {
         }
         .padding(.bottom, 40)
         .background(Color.background1)
+    }
+    
+    private var currentEvents: [CalendarModel.Event] {
+        isSelected ? allEvents : events
     }
 }
 

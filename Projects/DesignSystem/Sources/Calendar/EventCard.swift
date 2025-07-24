@@ -9,15 +9,30 @@
 import SwiftUI
 
 public struct EventCard: View {
-    let event: CalendarModel.Event
+    let event: CalendarModel.Event?
+    let isLoading: Bool
     
-    public init(event: CalendarModel.Event) {
+    public init(event: CalendarModel.Event?, isLoading: Bool = false) {
         self.event = event
+        self.isLoading = isLoading
     }
     
     public var body: some View {
+        if isLoading {
+            shimmerCard
+        } else if let event {
+            eventCard(event: event)
+        }
+    }
+    
+    private var shimmerCard: some View {
+        ShimmerView()
+            .frame(height: 108)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
+    }
+    
+    private func eventCard(event: CalendarModel.Event) -> some View {
         HStack(spacing: 0) {
-            
             ZStack {
                 if let url = event.posterURL {
                     AsyncImage(url: url) { phase in
@@ -134,12 +149,19 @@ public struct EventCard: View {
 }
 
 //#Preview {
-//    EventCard(event: CalendarModel.Event(
-//        title: "페스티벌 A",
-//        location: "인터파크",
-//        date: Date(),
-//        time: "25.06.12 18:00",
-//        category: .festivalDay
-//    ))
+//    VStack(spacing: 16) {
+//        // 실제 데이터가 있을 때
+//        EventCard(event: CalendarModel.Event(
+//            title: "페스티벌 A",
+//            location: "인터파크",
+//            date: Date(),
+//            time: "25.06.12 18:00",
+//            category: .festivalDay
+//        ), isLoading: false)
+//        
+//        // 로딩 중일 때
+//        EventCard(event: nil, isLoading: true)
+//    }
+//    .padding()
 //    .background(Color.black)
 //}
