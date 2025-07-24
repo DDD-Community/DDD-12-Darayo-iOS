@@ -21,20 +21,9 @@ public struct NotificationSettingView: View {
         VStack(spacing: 0) {
             navigationBar
             
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(store.festivals) { festival in
-                        FestivalNotificationCellView(
-                            festival: festival,
-                            toggleAction: {
-                                store.send(.toggleNotification(id: festival.id))
-                            }
-                        )
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 24)
+            switch store.isLoading {
+            case true: shimmerListView
+            case false: subscribedFestivalListView
             }
         }
         .background(Color.background1.ignoresSafeArea())
@@ -61,6 +50,29 @@ private extension NotificationSettingView {
                     .frame(width: 24, height: 24)
                     .padding(16)
             }
+        }
+    }
+    
+    var shimmerListView: some View {
+        ScrollView([]) {
+            VStack(spacing: 12) {
+                ForEach(0..<20, id: \.self) { _ in
+                    ShimmerView()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 88)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+            }
+            .padding(16)
+        }
+    }
+    
+    var subscribedFestivalListView: some View {
+        ScrollView {
+            SubscribedFestivalListView(festivals: store.festivals) { festival in
+                store.send(.noticiationButtonTapped(festival))
+            }
+            .padding(16)
         }
     }
 }
