@@ -44,6 +44,7 @@ public extension Image {
     static let logo = Self("logo")
     static let logoSplash = Self("logo_splash")
     static let sampleFestival = Self("sample_festival")
+    static let star = Self("star")
 }
 
 public extension UIImage {
@@ -89,4 +90,5 @@ public extension UIImage {
     static let logo = UIImage.named("logo")
     static let logoSplash = UIImage.named("logo_splash")
     static let sampleFestival = UIImage.named("sample_festival")
+    static let star = UIImage.named("star")
 }

@@ -23,7 +23,11 @@ public struct NotificationSettingView: View {
             
             switch store.isLoading {
             case true: shimmerListView
-            case false: subscribedFestivalListView
+            case false:
+                switch store.festivals.isEmpty {
+                case true: emptyView
+                case false: subscribedFestivalListView
+                }
             }
         }
         .background(Color.background1.ignoresSafeArea())
@@ -74,5 +78,15 @@ private extension NotificationSettingView {
             }
             .padding(16)
         }
+    }
+    
+    var emptyView: some View {
+        VStack(spacing: 22) {
+            Image.star
+            Text("알림 설정한 페스티벌이 없어요!")
+                .pretendard(style: .title2)
+                .foregroundStyle(Color.white)
+        }
+        .frame(maxHeight: .infinity)
     }
 }
