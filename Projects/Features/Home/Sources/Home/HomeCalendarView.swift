@@ -52,7 +52,13 @@ private extension HomeCalendarView {
             EventListView(
                 events: eventsForSelectedDate,
                 allEvents: calendar.events,
-                title: "좋아요한 페스티벌"
+                title: "좋아요한 페스티벌",
+                isLoading: store.isLoading,
+                onTap: { event in
+                    if let festival = store.allFestivals.first(where: { $0.id == event.festivalId }) {
+                        store.send(.festivalTapped(festival))
+                    }
+                }
             )
     }
 }
@@ -80,6 +86,7 @@ private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
         
         return CalendarModel.Event(
             id: UUID().uuidString,
+            festivalId: festival.id,
             title: festival.name,
             location: festival.placeName,
             date: startDate,

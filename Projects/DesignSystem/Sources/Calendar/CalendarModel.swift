@@ -19,6 +19,7 @@ public struct CalendarModel {
 extension CalendarModel {
     public struct Event {
         public let id: String
+        public let festivalId: Int
         public let title: String
         public let location: String
         public let date: Date
@@ -28,6 +29,7 @@ extension CalendarModel {
         
         public init(
             id: String = UUID().uuidString,
+            festivalId: Int,
             title: String,
             location: String,
             date: Date,
@@ -36,6 +38,7 @@ extension CalendarModel {
             posterURL: URL? = nil
         ) {
             self.id = id
+            self.festivalId = festivalId
             self.title = title
             self.location = location
             self.date = date
