@@ -1,3 +1,4 @@
+import UIKit
 import SwiftUI
 
 public extension Image {
@@ -43,4 +44,49 @@ public extension Image {
     static let logo = Self("logo")
     static let logoSplash = Self("logo_splash")
     static let sampleFestival = Self("sample_festival")
+}
+
+public extension UIImage {
+    static func named(_ name: String) -> UIImage {
+        return UIImage(named: name, in: Bundle.module, compatibleWith: nil) ?? UIImage()
+    }
+    
+    static let characterSplash = UIImage.named("character_splash")
+    static let iconArrowLeft = UIImage.named("icon_arrow_left")
+    static let iconArtistPlaceholder = UIImage.named("icon_artist_placeholder")
+    static let iconArtistPlaceholderSelected = UIImage.named("icon_artist_placeholder_selected")
+    static let iconBell = UIImage.named("icon_bell")
+    static let iconBus = UIImage.named("icon_bus")
+    static let iconCalendar = UIImage.named("icon_calendar")
+    static let iconCalendarMode = UIImage.named("icon_calendar_mode")
+    static let iconChecked = UIImage.named("icon_checked")
+    static let iconChevronLeft = UIImage.named("icon_chevron_left")
+    static let iconChevronRight = UIImage.named("icon_chevron_right")
+    static let iconClose = UIImage.named("icon_close")
+    static let iconDown = UIImage.named("icon_down")
+    static let iconDownload = UIImage.named("icon_download")
+    static let iconFilter = UIImage.named("icon_filter")
+    static let iconGridMode = UIImage.named("icon_grid_mode")
+    static let iconHeart = UIImage.named("icon_heart")
+    static let iconHeartFill = UIImage.named("icon_heart_fill")
+    static let iconHome = UIImage.named("icon_home")
+    static let iconInstagram = UIImage.named("icon_instagram")
+    static let iconLink = UIImage.named("icon_link")
+    static let iconList = UIImage.named("icon_list")
+    static let iconMyPage = UIImage.named("icon_my_page")
+    static let iconNotification = UIImage.named("icon_notification")
+    static let iconNotificationFill = UIImage.named("icon_notification_fill")
+    static let iconPetalBackground = UIImage.named("icon_petal_background")
+    static let iconPicture = UIImage.named("icon_picture")
+    static let iconPlus = UIImage.named("icon_plus")
+    static let iconSelectedDay = UIImage.named("icon_selectedDay")
+    static let iconShare = UIImage.named("icon_share")
+    static let iconSubway = UIImage.named("icon_subway")
+    static let iconTimetable = UIImage.named("icon_timetable")
+    static let iconTriangle = UIImage.named("icon_triangle")
+    static let iconUnchecked = UIImage.named("icon_unchecked")
+    static let iconWebsite = UIImage.named("icon_website")
+    static let logo = UIImage.named("logo")
+    static let logoSplash = UIImage.named("logo_splash")
+    static let sampleFestival = UIImage.named("sample_festival")
 }

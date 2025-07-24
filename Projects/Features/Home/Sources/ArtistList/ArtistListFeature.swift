@@ -17,21 +17,15 @@ public struct ArtistListFeature {
     @ObservableState
     public struct State {
         var tabIndex: Int = 0
-        var indexToScroll: (Int, Date)?
+        var sectionToScroll: Int?
         var artists: [[Artist]]
         
-        public init() {
-            let count = (1...8).randomElement()!
-            self.artists = (0..<count).map { _ in
-                let count = (1...12).randomElement()!
-                return (0..<count).map { _ in
-                    return Artist(
-                        id: UUID().uuidString,
-                        name: "아티스트명",
-                        performanceDate: nil
-                    )
-                }
+        public init(artists: [Artist]) {
+            self.artists = Dictionary(grouping: artists) { artist in
+                artist.performanceDate ?? Date.distantFuture
             }
+            .sorted { $0.key < $1.key }
+            .map { $0.value }
         }
         
         var totalDays: Int {
@@ -55,7 +49,7 @@ public struct ArtistListFeature {
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .dayButtonTapped(let index):
-                state.indexToScroll = (index, .now)
+                state.sectionToScroll = index
                 return .none
             case .indexChanged(let index):
                 state.tabIndex = index

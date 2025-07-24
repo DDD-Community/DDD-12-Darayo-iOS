@@ -59,9 +59,10 @@ private extension ArtistListView {
     var artistGridListView: some View {
         ArtistGridListView(
             artists: store.artists,
-            indexToScroll: store.indexToScroll
-        ) { index in
-            store.send(.indexChanged(index))
+            sectionToScroll: $store.sectionToScroll
+        ) { section in
+            store.send(.indexChanged(section))
         }
+        .ignoresSafeArea(edges: .bottom)
     }
 }

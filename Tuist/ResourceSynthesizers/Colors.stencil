@@ -1,3 +1,4 @@
+import UIKit
 import SwiftUI
 
 {% if catalogs %}
@@ -12,6 +13,22 @@ public extension Color {
     {% for asset in catalog.assets %}
     {% if asset.type == "color" %}
     static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = Self("{{asset.value}}")
+    {% endif %}
+    {% endfor %}
+    {% endfor %}
+}
+
+public extension UIColor {
+    static func named(_ name: String) -> UIColor {
+        UIColor(named: name, in: .module, compatibleWith: nil) ?? UIColor()
+    }
+    
+    {% for catalog in catalogs %}
+    {% if catalog.name != "Colors" %}
+    {% endif %}
+    {% for asset in catalog.assets %}
+    {% if asset.type == "color" %}
+    static let {{asset.name|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = UIColor.named("{{asset.value}}")
     {% endif %}
     {% endfor %}
     {% endfor %}

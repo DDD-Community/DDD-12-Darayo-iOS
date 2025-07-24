@@ -62,8 +62,8 @@ public struct MainFeature {
                 guard let pathState else { return .none }
                 state.path.append(pathState)
                 return .none
-            case .path(.element(_, .festival(.seeAllButtonTapped))):
-                state.path.append(.artistList(.init()))
+            case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
+                state.path.append(.artistList(.init(artists: artists)))
                 return .none
             case .home: return .none
             case .timetable: return .none
