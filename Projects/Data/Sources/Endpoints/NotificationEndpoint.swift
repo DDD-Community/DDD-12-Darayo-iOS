@@ -10,6 +10,7 @@ enum NotificationEndpoint {
     private enum Path {
         static let registerPushToken = "v1/user/alarm"
         static let fetchSubscribedFestivals = "v1/festival/alarmed"
+        static let notification = "v1/users/push-permission"
         
         static func subscription(festivalID: String) -> String {
             "v1/festival/\(festivalID)/push"
@@ -49,6 +50,23 @@ enum NotificationEndpoint {
         return .init(
             path: Path.subscription(festivalID: festivalID),
             method: .delete
+        )
+    }
+    
+    static var fetchNotificationState: APIEndpoint<Bool> {
+        return .init(
+            path: Path.notification,
+            method: .get
+        )
+    }
+    
+    static func updtateNotificationState(isEnabled: Bool) -> APIEndpoint<String> {
+        let body = NotificationRequest(permissionEnabled: isEnabled)
+        
+        return .init(
+            path: Path.notification,
+            method: .post,
+            body: body
         )
     }
 }

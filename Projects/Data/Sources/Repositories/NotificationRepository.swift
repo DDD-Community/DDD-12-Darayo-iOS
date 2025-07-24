@@ -39,4 +39,15 @@ public struct NotificationRepository: NotificationRepositoryProtocol {
         let endpoint = NotificationEndpoint.unsubscribe(festivalID: festivalID)
         _ = try await networkService.request(endpoint: endpoint)
     }
+    
+    public func fetchNotificationState() async throws -> Bool {
+        let endpoint = NotificationEndpoint.fetchNotificationState
+        let result = try await networkService.request(endpoint: endpoint)
+        return result == true
+    }
+    
+    public func updateNotificationState(isEnabled: Bool) async throws {
+        let endpoint = NotificationEndpoint.updtateNotificationState(isEnabled: isEnabled)
+        _ = try await networkService.request(endpoint: endpoint)
+    }
 }

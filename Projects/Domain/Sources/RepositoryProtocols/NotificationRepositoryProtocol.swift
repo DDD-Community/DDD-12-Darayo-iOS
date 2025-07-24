@@ -15,6 +15,8 @@ public protocol NotificationRepositoryProtocol {
     func fetchSubscriptionInfo(festivalID: String) async throws -> Bool
     func subscribe(festivalID: String) async throws
     func unsubscribe(festivalID: String) async throws
+    func fetchNotificationState() async throws -> Bool
+    func updateNotificationState(isEnabled: Bool) async throws
 }
 
 public enum NotificationRepositoryKey: TestDependencyKey {

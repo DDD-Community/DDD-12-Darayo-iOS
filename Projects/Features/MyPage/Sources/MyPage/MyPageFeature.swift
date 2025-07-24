@@ -13,6 +13,8 @@ import Util
 
 @Reducer
 public struct MyPageFeature {
+    @Dependency(\.notificationUseCase) private var notificationUseCase
+    
     @ObservableState
     public struct State {
         var isAuthorized: Bool = false
@@ -64,24 +66,23 @@ public struct MyPageFeature {
                 switch isAuthorized {
                 case true:
                     return .run { send in
-                        let isOn = await fetchNotificationState()
-                        await send(.notificationStateFetched(isOn))
+                        await send(fetchNotificationState())
                     }
                 case false:
                     state.isNotificationOn = false
                     return .run { send in
-                        await updateNotificationState(isOn: false)
+                        await updateNotificationState(isEnabled: false)
                     }
                 }
-            case .notificationStateFetched(let isOn):
-                state.isNotificationOn = isOn
+            case .notificationStateFetched(let isEnabled):
+                state.isNotificationOn = isEnabled
                 return .none
             case .toggleChanged(let isOn):
                 return .run { send in
                     switch await isAuthorized {
                     case true:
                         await send(.setToggle(isOn))
-                        await updateNotificationState(isOn: isOn)
+                        await updateNotificationState(isEnabled: isOn)
                     case false:
                         await send(.showAlert)
                     }
@@ -109,14 +110,17 @@ private extension MyPageFeature {
         }
     }
     
-    func fetchNotificationState() async -> Bool {
-        // TODO: GET API
-        let isOn = true
-        return isOn
+    func fetchNotificationState() async -> Action {
+        do {
+            let isEnabled = try await notificationUseCase.fetchNotificationState()
+            return .notificationStateFetched(isEnabled)
+        } catch {
+            return .showAlert
+        }
     }
     
-    func updateNotificationState(isOn: Bool) async {
-        // TODO: POST API
+    func updateNotificationState(isEnabled: Bool) async {
+        try? await notificationUseCase.updateNotificationState(isEnabled: isEnabled)
     }
 }
 
