@@ -7,12 +7,12 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 public struct EventListView: View {
     let events: [CalendarModel.Event]
     let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
     let title: String
-    let isLoading: Bool
     let onTap: (CalendarModel.Event) -> Void
     
     @State private var isSelected: Bool = false
@@ -21,13 +21,11 @@ public struct EventListView: View {
         events: [CalendarModel.Event],
         allEvents: [CalendarModel.Event],
         title: String = "좋아요한 페스티벌",
-        isLoading: Bool = false,
         onTap: @escaping (CalendarModel.Event) -> Void
     ) {
         self.events = events
         self.allEvents = allEvents
         self.title = title
-        self.isLoading = isLoading
         self.onTap = onTap
     }
     
@@ -37,17 +35,11 @@ public struct EventListView: View {
             
             ZStack {
                 LazyVStack(spacing: 14) {
-                    if isLoading {
-                        ForEach(0..<5, id: \.self) { _ in
-                            EventCard(event: nil, isLoading: true)
-                        }
-                    } else {
-                        ForEach(currentEvents, id: \.id) { event in
-                            EventCard(event: event, isLoading: false)
-                                .onTapGesture {
-                                    onTap(event)
-                                }
-                        }
+                    ForEach(currentEvents, id: \.id) { event in
+                        EventCard(event: event)
+                            .onTapGesture {
+                                onTap(event)
+                            }
                     }
                 }
                 .padding(.horizontal, 16)

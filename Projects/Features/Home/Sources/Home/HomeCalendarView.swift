@@ -53,7 +53,6 @@ private extension HomeCalendarView {
                 events: eventsForSelectedDate,
                 allEvents: calendar.events,
                 title: "좋아요한 페스티벌",
-                isLoading: store.isLoading,
                 onTap: { event in
                     if let festival = store.allFestivals.first(where: { $0.id == event.festivalId }) {
                         store.send(.festivalTapped(festival))
