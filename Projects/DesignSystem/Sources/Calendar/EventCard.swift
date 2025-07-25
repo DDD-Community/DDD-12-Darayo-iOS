@@ -86,7 +86,7 @@ public struct EventCard: View {
             Spacer()
         }
         .background(Color.background2)
-        .cornerRadius(4)
+        .clipShape(RoundedRectangle(cornerRadius: 4))
     }
 }
     
