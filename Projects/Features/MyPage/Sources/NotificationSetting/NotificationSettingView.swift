@@ -32,6 +32,7 @@ public struct NotificationSettingView: View {
         }
         .background(Color.background1.ignoresSafeArea())
         .navigationBarBackButtonHidden()
+        .animation(.easeInOut(duration: 0.2), value: store.festivals.isEmpty)
         .onAppear {
             store.send(.onAppear)
         }
@@ -78,7 +79,7 @@ private extension NotificationSettingView {
             }
             .padding(16)
         }
-        .animation(.easeOut, value: store.festivals)
+        .animation(.easeInOut, value: store.festivals)
     }
     
     var emptyView: some View {

@@ -34,11 +34,13 @@ struct HomeGridView: View {
                             }
                     }
                 }
+                .animation(.easeInOut(duration: 0.3), value: store.festivals)
                 .renderedIf(shouldShowGridView)
                 
                 emptyView
                     .renderedIf(shouldShowEmptyView)
             }
+            .animation(.easeInOut(duration: 0.3), value: store.festivals.isEmpty)
         }
         .background(Color.background1)
     }
