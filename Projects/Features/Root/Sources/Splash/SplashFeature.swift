@@ -74,7 +74,7 @@ private extension SplashFeature {
             let status = await center.notificationSettings().authorizationStatus
             
             if status == .denied {
-                try? await notificationUseCase.updateNotificationState(isEnabled: false)
+                try? await notificationUseCase.updateNotification(isEnabled: false)
             }
             
             if status != .notDetermined {

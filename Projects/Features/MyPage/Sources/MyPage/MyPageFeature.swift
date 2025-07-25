@@ -71,7 +71,7 @@ public struct MyPageFeature {
                 case false:
                     state.isNotificationOn = false
                     return .run { send in
-                        await updateNotificationState(isEnabled: false)
+                        await updateNotification(isEnabled: false)
                     }
                 }
             case .notificationStateFetched(let isEnabled):
@@ -82,7 +82,7 @@ public struct MyPageFeature {
                     switch await isAuthorized {
                     case true:
                         await send(.setToggle(isOn))
-                        await updateNotificationState(isEnabled: isOn)
+                        await updateNotification(isEnabled: isOn)
                     case false:
                         await send(.showAlert)
                     }
@@ -119,8 +119,8 @@ private extension MyPageFeature {
         }
     }
     
-    func updateNotificationState(isEnabled: Bool) async {
-        try? await notificationUseCase.updateNotificationState(isEnabled: isEnabled)
+    func updateNotification(isEnabled: Bool) async {
+        try? await notificationUseCase.updateNotification(isEnabled: isEnabled)
     }
 }
 

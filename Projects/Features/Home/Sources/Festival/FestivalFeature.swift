@@ -15,6 +15,7 @@ public struct FestivalFeature {
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
+    private enum CancelID { case notification }
     
     @ObservableState
     public struct State {
@@ -49,7 +50,7 @@ public struct FestivalFeature {
     
     public enum Action: BindableAction {
         case onAppear
-        case subscriptionInfoFetched(Bool)
+        case notificationStateFetched(Bool)
         case backButtonTapped
         case notificationButtonTapped
         case heartButtonTapped
@@ -70,9 +71,9 @@ public struct FestivalFeature {
             case .onAppear:
                 let id = state.festival.id
                 return .run { send in
-                    await send(fetchSubscriptionInfo(id: id))
+                    await send(fetchNotificationState(id: id))
                 }
-            case .subscriptionInfoFetched(let isOn):
+            case .notificationStateFetched(let isOn):
                 state.isNotificationOn = isOn
                 return .none
             case .backButtonTapped:
@@ -90,6 +91,7 @@ public struct FestivalFeature {
                 return .run { [state] send in
                     await send(updateNotificaion(state, isEnabled: isEnabled))
                 }
+                .cancellable(id: CancelID.notification, cancelInFlight: true)
             case .seeAllButtonTapped:
                 let artists = state.festival.artists
                 return .send(.navigateToArtistList(artists))
@@ -119,11 +121,11 @@ private extension FestivalFeature {
         }
     }
     
-    func fetchSubscriptionInfo(id: Int) async -> Action {
+    func fetchNotificationState(id: Int) async -> Action {
         let festivalID = String(id)
         do {
-            let isOn = try await notificationUseCase.fetchSubscriptionInfo(festivalID: festivalID)
-            return .subscriptionInfoFetched(isOn)
+            let isOn = try await notificationUseCase.fetchNotificationState(id: festivalID)
+            return .notificationStateFetched(isOn)
         } catch {
             return .showAlert
         }

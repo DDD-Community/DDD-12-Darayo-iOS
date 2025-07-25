@@ -19,8 +19,8 @@ public struct NotificationUseCase {
         try await notificationRepository.fetchSubscribedFestivals()
     }
     
-    public func fetchSubscriptionInfo(festivalID: String) async throws -> Bool {
-        return try await notificationRepository.fetchSubscriptionInfo(festivalID: festivalID)
+    public func fetchNotificationState(id: String) async throws -> Bool {
+        return try await notificationRepository.fetchNotificationState(id: id)
     }
     
     public func updateNotification(id: Int, isEnabled: Bool) async throws {
@@ -34,8 +34,8 @@ public struct NotificationUseCase {
         return try await notificationRepository.fetchNotificationState()
     }
     
-    public func updateNotificationState(isEnabled: Bool) async throws {
-        try await notificationRepository.updateNotificationState(isEnabled: isEnabled)
+    public func updateNotification(isEnabled: Bool) async throws {
+        try await notificationRepository.updateNotification(isEnabled: isEnabled)
     }
 }
 

@@ -12,7 +12,7 @@ enum NotificationEndpoint {
         static let fetchSubscribedFestivals = "v1/festival/alarmed"
         static let notification = "v1/users/push-permission"
         
-        static func subscription(festivalID: String) -> String {
+        static func notification(festivalID: String) -> String {
             "v1/festival/\(festivalID)/push"
         }
     }
@@ -32,23 +32,23 @@ enum NotificationEndpoint {
         )
     }
     
-    static func fetchSubsrciptionInfo(festivalID: String) -> APIEndpoint<Bool> {
+    static func fetchNotificationState(id: String) -> APIEndpoint<Bool> {
         return .init(
-            path: Path.subscription(festivalID: festivalID),
+            path: Path.notification(festivalID: id),
             method: .get
         )
     }
     
     static func subscribe(festivalID: String) -> APIEndpoint<String> {
         return .init(
-            path: Path.subscription(festivalID: festivalID),
+            path: Path.notification(festivalID: festivalID),
             method: .post
         )
     }
     
     static func unsubscribe(festivalID: String) -> APIEndpoint<String> {
         return .init(
-            path: Path.subscription(festivalID: festivalID),
+            path: Path.notification(festivalID: festivalID),
             method: .delete
         )
     }
@@ -60,7 +60,7 @@ enum NotificationEndpoint {
         )
     }
     
-    static func updtateNotificationState(isEnabled: Bool) -> APIEndpoint<String> {
+    static func updateNotification(isEnabled: Bool) -> APIEndpoint<String> {
         let body = NotificationRequest(permissionEnabled: isEnabled)
         
         return .init(

@@ -14,7 +14,7 @@ import Domain
 public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
-    private enum CancelID { case subscription }
+    private enum CancelID { case notification }
     
     enum DisplayMode {
         case grid
@@ -91,6 +91,7 @@ public struct HomeFeature {
                 return .run { [state] send in
                     await send(updateNotificaion(state, id: festival.id))
                 }
+                .cancellable(id: CancelID.notification, cancelInFlight: true)
             case .dateSelected(let date):
                 state.selectedDate = date
                 return .none
