@@ -79,10 +79,11 @@ private extension EventListView {
             isSelected.toggle()
         }) {
             HStack(spacing: 5) {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                let icon: Image = isSelected ? Image.iconChecked : Image.iconUnchecked
+
+                icon
                     .resizable()
-                    .frame(width: 18, height: 18)
-                    .foregroundColor(isSelected ? .white : .grey3)
+                    .frame(width: 24, height: 24)
                 
                 Text(title)
                     .pretendard(style: .body4)
