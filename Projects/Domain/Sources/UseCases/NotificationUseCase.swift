@@ -23,12 +23,11 @@ public struct NotificationUseCase {
         return try await notificationRepository.fetchSubscriptionInfo(festivalID: festivalID)
     }
     
-    public func subscribe(festivalID: String) async throws {
-        try await notificationRepository.subscribe(festivalID: festivalID)
-    }
-    
-    public func unsubscribe(festivalID: String) async throws {
-        try await notificationRepository.unsubscribe(festivalID: festivalID)
+    public func updateNotification(id: Int, isEnabled: Bool) async throws {
+        switch isEnabled {
+        case true: try await notificationRepository.subscribe(id: String(id))
+        case false: try await notificationRepository.unsubscribe(id: String(id))
+        }
     }
     
     public func fetchNotificationState() async throws -> Bool {

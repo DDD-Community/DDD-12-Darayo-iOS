@@ -72,9 +72,8 @@ private extension NotificationSettingFeature {
     }
     
     func unsubscribe(id: Int) async -> Action {
-        let festivalID = String(id)
         try? festivalUseCase.deleteLikedFestival(id: id)
-        try? await notificationUseCase.unsubscribe(festivalID: festivalID)
+        try? await notificationUseCase.updateNotification(id: id, isEnabled: false)
         return .unsubscribed(id)
     }
 }

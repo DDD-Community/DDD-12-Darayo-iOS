@@ -138,12 +138,6 @@ private extension FestivalFeature {
     }
     
     func updateSubscriptionInfo(id: Int, isOn: Bool) async throws {
-        let festivalID = String(id)
-        switch isOn {
-        case true:
-            try await notificationUseCase.subscribe(festivalID: festivalID)
-        case false:
-            try await notificationUseCase.unsubscribe(festivalID: festivalID)
-        }
+        try await notificationUseCase.updateNotification(id: id, isEnabled: isOn)
     }
 }

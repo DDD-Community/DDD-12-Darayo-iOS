@@ -30,13 +30,13 @@ public struct NotificationRepository: NotificationRepositoryProtocol {
         return result == true
     }
     
-    public func subscribe(festivalID: String) async throws {
-        let endpoint = NotificationEndpoint.subscribe(festivalID: festivalID)
+    public func subscribe(id: String) async throws {
+        let endpoint = NotificationEndpoint.subscribe(festivalID: id)
         _ = try await networkService.request(endpoint: endpoint)
     }
     
-    public func unsubscribe(festivalID: String) async throws {
-        let endpoint = NotificationEndpoint.unsubscribe(festivalID: festivalID)
+    public func unsubscribe(id: String) async throws {
+        let endpoint = NotificationEndpoint.unsubscribe(festivalID: id)
         _ = try await networkService.request(endpoint: endpoint)
     }
     
