@@ -9,26 +9,14 @@
 import SwiftUI
 
 public struct EventCard: View {
-    let event: CalendarModel.Event?
-    let isLoading: Bool
+    let event: CalendarModel.Event
     
-    public init(event: CalendarModel.Event?, isLoading: Bool = false) {
+    public init(event: CalendarModel.Event) {
         self.event = event
-        self.isLoading = isLoading
     }
     
     public var body: some View {
-        if isLoading {
-            shimmerCard
-        } else if let event {
-            eventCard(event: event)
-        }
-    }
-    
-    private var shimmerCard: some View {
-        ShimmerView()
-            .frame(height: 108)
-            .clipShape(RoundedRectangle(cornerRadius: 4))
+        eventCard(event: event)
     }
     
     private func eventCard(event: CalendarModel.Event) -> some View {
@@ -69,7 +57,7 @@ public struct EventCard: View {
                         .foregroundColor(event.category.textColor)
                         .frame(width: 47, height: 16)
                         .background(event.category.backgroundColor)
-                        .cornerRadius(16)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     
                     Text(event.title)
                         .pretendard(style: .title3)
