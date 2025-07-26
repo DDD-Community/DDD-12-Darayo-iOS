@@ -50,15 +50,31 @@ private extension HomeCalendarView {
     private var eventListSection: some View {
         EventListView(
             events: eventsForSelectedDate,
-            allEvents: calendar.events,
+            allEvents: filteredLikedEventsForSelectedDate,
             title: "좋아요한 페스티벌",
+            isFiltered: store.isFiltered,
             onTap: { event in
                 if let festival = store.allFestivals.first(where: { $0.id == event.festivalId }) {
                     store.send(.festivalTapped(festival))
                 }
+            },
+            onToggleFilter: {
+                        store.send(.set(\.isFiltered, !store.isFiltered))
             }
         )
     }
+    
+    private var filteredLikedEventsForSelectedDate: [CalendarModel.Event] {
+        guard let selectedDate = store.selectedDate else { return [] }
+
+        let likedFestivals = store.favoriteFestivals
+        let likedEvents = makeEvents(from: likedFestivals)
+
+        return likedEvents.filter { event in
+            Calendar.current.isDate(event.date, inSameDayAs: selectedDate)
+        }
+    }
+
 }
 
 private extension HomeCalendarView {

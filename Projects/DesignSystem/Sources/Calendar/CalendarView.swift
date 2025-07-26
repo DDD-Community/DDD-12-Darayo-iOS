@@ -13,6 +13,8 @@ public struct CalendarView: View {
     let selectedDate: Date?
     let onDateSelected: (Date) -> Void
     let onMonthChanged: (Date) -> Void
+    let onLikedFestivalsRequested: () -> Void
+    let onEventTapped: (CalendarModel.Event) -> Void
     
     @State private var currentMonth: Date = Date()
     
@@ -20,12 +22,16 @@ public struct CalendarView: View {
         calendar: CalendarModel,
         selectedDate: Date?,
         onDateSelected: @escaping (Date) -> Void,
-        onMonthChanged: @escaping (Date) -> Void
+        onMonthChanged: @escaping (Date) -> Void,
+        onLikedFestivalsRequested: @escaping () -> Void = {},
+        onEventTapped: @escaping (CalendarModel.Event) -> Void = { _ in }
     ) {
         self.calendar = calendar
         self.selectedDate = selectedDate
         self.onDateSelected = onDateSelected
         self.onMonthChanged = onMonthChanged
+        self.onLikedFestivalsRequested = onLikedFestivalsRequested
+        self.onEventTapped = onEventTapped
     }
     
     public var body: some View {

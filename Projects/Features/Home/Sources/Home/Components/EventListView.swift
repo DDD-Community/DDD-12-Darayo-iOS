@@ -13,20 +13,26 @@ public struct EventListView: View {
     let events: [CalendarModel.Event]
     let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
     let title: String
+    let isFiltered: Bool // 외부에서 받은 필터 상태
     let onTap: (CalendarModel.Event) -> Void
+    let onToggleFilter: () -> Void // 토글 액션 전달
     
-    @State private var isSelected: Bool = false
+//    @State private var isSelected: Bool = false
     
     public init(
         events: [CalendarModel.Event],
         allEvents: [CalendarModel.Event],
         title: String = "좋아요한 페스티벌",
-        onTap: @escaping (CalendarModel.Event) -> Void
+        isFiltered: Bool,
+        onTap: @escaping (CalendarModel.Event) -> Void,
+        onToggleFilter: @escaping () -> Void = {}
     ) {
         self.events = events
         self.allEvents = allEvents
         self.title = title
+        self.isFiltered = isFiltered
         self.onTap = onTap
+        self.onToggleFilter = onToggleFilter
     }
     
     public var body: some View {
@@ -43,35 +49,34 @@ public struct EventListView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .opacity(isSelected || events.isEmpty ? 0 : 1)
+                .opacity(currentEvents.isEmpty ? 0 : 1)
                 .overlay(
                     Group {
-                        if isSelected || events.isEmpty {
+                        if currentEvents.isEmpty {
                             emptyStateView
                         }
                     }
-                    .animation(.easeInOut(duration: 0.2), value: isSelected)
                 )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .animation(.easeInOut(duration: 0.2), value: isFiltered)
         }
         .padding(.bottom, 40)
         .background(Color.background1)
     }
     
     private var currentEvents: [CalendarModel.Event] {
-        isSelected ? allEvents : events
+        isFiltered ? allEvents : events
     }
 }
 
 private extension EventListView {
     var header: some View {
         Button(action: {
-            isSelected.toggle()
+            onToggleFilter()
         }) {
             HStack(spacing: 5) {
-                let icon: Image = isSelected ? Image.iconChecked : Image.iconUnchecked
+                let icon: Image = isFiltered ? Image.iconChecked : Image.iconUnchecked
 
                 icon
                     .resizable()
@@ -92,11 +97,9 @@ private extension EventListView {
     // MARK: - 안내 멘트 출력
     var emptyStateView: some View {
         VStack(spacing: 10) {
-            Rectangle()
-                .fill(Color.clear)
-                .frame(height: 400)
+            Rectangle().fill(Color.clear).frame(height: 400)
             
-            if isSelected && allEvents.isEmpty {
+            if isFiltered && allEvents.isEmpty {
                 // 좋아요한것 체크 했는데 좋아요 기록이 없음
                 Text("아직 좋아요한 페스티벌이 없어요!")
                     .pretendard(style: .title3)
@@ -115,9 +118,7 @@ private extension EventListView {
                     .multilineTextAlignment(.center)
             }
             
-            Rectangle()
-                .fill(Color.clear)
-                .frame(minHeight: 200)
+            Rectangle().fill(Color.clear).frame(minHeight: 200)
         }
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)
