@@ -10,18 +10,20 @@ import SwiftUI
 
 public struct CalendarView: View {
     let calendar: CalendarModel
+    let selectedDate: Date?
     let onDateSelected: (Date) -> Void
     let onMonthChanged: (Date) -> Void
     
     @State private var currentMonth: Date = Date()
-    @State private var selectedDate: Date? = Date()
     
     public init(
         calendar: CalendarModel,
+        selectedDate: Date?,
         onDateSelected: @escaping (Date) -> Void,
         onMonthChanged: @escaping (Date) -> Void
     ) {
         self.calendar = calendar
+        self.selectedDate = selectedDate
         self.onDateSelected = onDateSelected
         self.onMonthChanged = onMonthChanged
     }
@@ -45,7 +47,6 @@ public struct CalendarView: View {
                 calendar: calendar,
                 dates: calendarDates,
                 onDateSelected: { date in
-                    selectedDate = date
                     onDateSelected(date)
                 }
             )
