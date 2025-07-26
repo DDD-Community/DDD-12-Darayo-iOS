@@ -51,6 +51,7 @@ private extension HomeCalendarView {
         EventListView(
             events: eventsForSelectedDate,
             allEvents: filteredLikedEventsForSelectedDate,
+            totalLikedEvents: makeEvents(from: store.favoriteFestivals),
             title: "좋아요한 페스티벌",
             isFiltered: store.isFiltered,
             onTap: { event in

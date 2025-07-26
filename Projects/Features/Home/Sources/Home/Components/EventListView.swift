@@ -10,18 +10,18 @@ import SwiftUI
 import DesignSystem
 
 public struct EventListView: View {
-    let events: [CalendarModel.Event]
-    let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
+    let events: [CalendarModel.Event] // 선택된 날짜의 전체 페스티벌 이벤트
+    let allEvents: [CalendarModel.Event] // 선택된 날짜의 좋아요한 페스티벌 이벤트
+    let totalLikedEvents: [CalendarModel.Event] // 전체 날짜 기준 좋아요한 모든 페스티벌 이벤트
     let title: String
     let isFiltered: Bool // 외부에서 받은 필터 상태
     let onTap: (CalendarModel.Event) -> Void
     let onToggleFilter: () -> Void // 토글 액션 전달
     
-//    @State private var isSelected: Bool = false
-    
     public init(
         events: [CalendarModel.Event],
         allEvents: [CalendarModel.Event],
+        totalLikedEvents: [CalendarModel.Event],
         title: String = "좋아요한 페스티벌",
         isFiltered: Bool,
         onTap: @escaping (CalendarModel.Event) -> Void,
@@ -29,6 +29,7 @@ public struct EventListView: View {
     ) {
         self.events = events
         self.allEvents = allEvents
+        self.totalLikedEvents = totalLikedEvents
         self.title = title
         self.isFiltered = isFiltered
         self.onTap = onTap
@@ -99,28 +100,35 @@ private extension EventListView {
         VStack(spacing: 10) {
             Rectangle().fill(Color.clear).frame(height: 400)
             
-            if isFiltered && allEvents.isEmpty {
-                // 좋아요한것 체크 했는데 좋아요 기록이 없음
-                Text("아직 좋아요한 페스티벌이 없어요!")
-                    .pretendard(style: .title3)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                
-                Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
-                    .pretendard(style: .body4)
-                    .foregroundColor(.grey3)
-                    .multilineTextAlignment(.center)
+            if isFiltered {
+                if totalLikedEvents.isEmpty {
+                    // 1. 좋아요한 페스티벌이 없음
+                    Text("아직 좋아요한 페스티벌이 없어요!")
+                        .pretendard(style: .title3)
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
+                        .pretendard(style: .body4)
+                        .foregroundColor(.grey3)
+                        .multilineTextAlignment(.center)
+                } else {
+                    // 2. 좋아요한 페스티벌은 있지만 날짜에 해당 없음
+                    Text("선택한 날짜에 좋아요한 페스티벌 일정이 없어요")
+                        .pretendard(style: .title3)
+                        .foregroundColor(.grey4)
+                        .multilineTextAlignment(.center)
+                }
             } else {
-                // 그 외엔 날짜에 일정 없음
+                // 3. 전체 필터 상태에서 해당 날짜에 아무것도 없음
                 Text("선택한 날짜에 페스티벌 일정이 없어요")
                     .pretendard(style: .title3)
                     .foregroundColor(.grey4)
                     .multilineTextAlignment(.center)
             }
-            
+
             Rectangle().fill(Color.clear).frame(minHeight: 200)
         }
-        .frame(maxWidth: .infinity)
-        .frame(maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
