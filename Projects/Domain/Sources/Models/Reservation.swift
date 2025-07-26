@@ -33,16 +33,7 @@ public struct Reservation: Equatable, Hashable {
     }
     
     var vendor: Vendor {
-        let name: String = if urlString.contains("yes24.co") { "예스24" }
-        else if urlString.contains("melon.co") { "멜론" }
-        else if urlString.contains("ticketlink.co") { "티켓링크" }
-        else if urlString.contains("interpark.co") { "인터파크" }
-        else if urlString.contains("kream.co") { "KREAM" }
-        else if urlString.contains("naver.co") { "네이버" }
-        else if urlString.contains("29cm.co") { "29CM" }
-        else { "기타" }
-        
-        return Vendor(name: name, urlString: urlString)
+        return Vendor(urlString: urlString)
     }
 }
 
