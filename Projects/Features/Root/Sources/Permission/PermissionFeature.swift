@@ -44,7 +44,7 @@ private extension PermissionFeature {
     func requestAllAuthorizations() async -> Action {
         do {
             try await requestNotificationAuthorization()
-            await requestPhotoAuthorization()
+            // await requestPhotoAuthorization()
             return .allPermissionsCompleted
         } catch {
             return .showAlert
