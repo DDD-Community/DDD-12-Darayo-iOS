@@ -32,7 +32,7 @@ public struct Reservation: Equatable, Hashable {
         self.remark = remark
     }
     
-    var vendor: Vendor {
+    public var vendor: Vendor {
         let name: String = if urlString.contains("yes24.co") { "예스24" }
         else if urlString.contains("melon.co") { "멜론" }
         else if urlString.contains("ticketlink.co") { "티켓링크" }

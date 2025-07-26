@@ -13,6 +13,8 @@ public enum DateFormat {
     case reservation
     case festivalWithWeekday
     case reservationWithWeekday
+    case eventDate
+    case reservateionDateTime
     
     var value: String {
         switch self {
@@ -22,6 +24,8 @@ public enum DateFormat {
         case .reservation: "yyyy-MM-dd'T'HH:mm:ss"
         case .festivalWithWeekday, .reservationWithWeekday:
             "yyyy. MM. dd (E)"
+        case .eventDate: "yy.MM.dd" //calendarView 행사일 표시
+        case .reservateionDateTime: "yy.MM.dd HH:mm"
         }
     }
 }
