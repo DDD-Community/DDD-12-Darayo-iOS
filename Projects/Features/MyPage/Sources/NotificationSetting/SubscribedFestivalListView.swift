@@ -14,13 +14,16 @@ import Domain
 struct SubscribedFestivalListView: View {
     private let festivals: [Festival]
     private let action: (Festival) -> Void
+    private let notificationAction: (Festival) -> Void
     
     init(
         festivals: [Festival],
-        action: @escaping (Festival) -> Void
+        action: @escaping (Festival) -> Void,
+        notificationAction: @escaping (Festival) -> Void
     ) {
         self.festivals = festivals
         self.action = action
+        self.notificationAction = notificationAction
     }
     
     var body: some View {
@@ -29,6 +32,8 @@ struct SubscribedFestivalListView: View {
                 let festival = festivals[index]
                 festivalView(festival: festival) {
                     action(festival)
+                } notificationAction: {
+                    notificationAction(festival)
                 }
             }
         }
@@ -38,36 +43,39 @@ struct SubscribedFestivalListView: View {
 private extension SubscribedFestivalListView {
     func festivalView(
         festival: Festival,
-        action: @escaping () -> Void
+        action: @escaping () -> Void,
+        notificationAction: @escaping () -> Void
     ) -> some View {
-        HStack(spacing: 0) {
-            imageView(url: festival.posterURL)
-            
-            HStack(spacing: 8) {
-                VStack(spacing: 8) {
-                    Text(festival.name)
-                        .pretendard(style: .title4)
-                        .foregroundStyle(Color.white)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        Button(action: action) {
+            HStack(spacing: 0) {
+                imageView(url: festival.posterURL)
+                
+                HStack(spacing: 8) {
+                    VStack(spacing: 8) {
+                        Text(festival.name)
+                            .pretendard(style: .title4)
+                            .foregroundStyle(Color.white)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        VStack(spacing: 0) {
+                            textInfoView(title: "장소", contents: festival.placeName)
+                            textInfoView(title: "행사일", contents: festival.dateString)
+                        }
+                    }
                     
-                    VStack(spacing: 0) {
-                        textInfoView(title: "장소", contents: festival.placeName)
-                        textInfoView(title: "행사일", contents: festival.dateString)
+                    Button(action: notificationAction) {
+                        Image.iconNotificationFill
+                            .resizable()
+                            .frame(width: 24, height: 24)
                     }
                 }
-                
-                Button(action: action) {
-                    Image.iconNotificationFill
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                }
+                .padding(12)
+                .frame(height: 88)
+                .background(Color.background2)
             }
-            .padding(12)
-            .frame(height: 88)
-            .background(Color.background2)
+            .clipShape(RoundedRectangle(cornerRadius: 4))
         }
-        .clipShape(RoundedRectangle(cornerRadius: 4))
     }
     
     func imageView(url: URL?) -> some View {
