@@ -7,16 +7,20 @@
 //
 
 import Foundation
+import UserNotifications
 import ComposableArchitecture
 import Util
 
 @Reducer
 public struct MyPageFeature {
+    @Dependency(\.notificationUseCase) private var notificationUseCase
+    
     @ObservableState
     public struct State {
-        var isNotificationOn: Bool = true
-        var isLatestVersion: Bool = true
+        var isAuthorized: Bool = false
+        var isNotificationOn: Bool = false
         
+        var isLatestVersion: Bool = true
         var currentVersion: String
         var latestVersion: String
         
@@ -28,6 +32,14 @@ public struct MyPageFeature {
     }
     
     public enum Action: BindableAction {
+        case onAppear
+        case enteredForeground
+        case checkAuthorization
+        case authorizationChecked(Bool)
+        case notificationStateFetched(Bool)
+        case toggleChanged(Bool)
+        case setToggle(Bool)
+        case showAlert
         case menuTapped(Menu)
         case binding(BindingAction<State>)
     }
@@ -39,9 +51,49 @@ public struct MyPageFeature {
 
         Reduce { state, action in
             switch action {
+            case .onAppear, .enteredForeground:
+                return .send(.checkAuthorization)
+            case .checkAuthorization:
+                return .run { send in
+                    let isAuthorized = await isAuthorized
+                    await send(.authorizationChecked(isAuthorized))
+                }
+            case .authorizationChecked(let isAuthorized):
+                let isChanged = state.isAuthorized != isAuthorized
+                state.isAuthorized = isAuthorized
+                guard isChanged else { return .none }
+                
+                switch isAuthorized {
+                case true:
+                    return .run { send in
+                        await send(fetchNotificationState())
+                    }
+                case false:
+                    state.isNotificationOn = false
+                    return .run { send in
+                        await updateNotification(isEnabled: false)
+                    }
+                }
+            case .notificationStateFetched(let isEnabled):
+                state.isNotificationOn = isEnabled
+                return .none
+            case .toggleChanged(let isOn):
+                return .run { send in
+                    switch await isAuthorized {
+                    case true:
+                        await send(.setToggle(isOn))
+                        await updateNotification(isEnabled: isOn)
+                    case false:
+                        await send(.showAlert)
+                    }
+                }
+            case .setToggle(let isOn):
+                state.isNotificationOn = isOn
+                return .none
+            case .showAlert:
+                return .none
             case .menuTapped:
                 return .none
-                
             case .binding:
                 return .none
             }
@@ -49,10 +101,33 @@ public struct MyPageFeature {
     }
 }
 
+private extension MyPageFeature {
+    var isAuthorized: Bool {
+        get async {
+            let center =  UNUserNotificationCenter.current()
+            let status = await center.notificationSettings().authorizationStatus
+            return status == .authorized
+        }
+    }
+    
+    func fetchNotificationState() async -> Action {
+        do {
+            let isEnabled = try await notificationUseCase.fetchNotificationState()
+            return .notificationStateFetched(isEnabled)
+        } catch {
+            return .showAlert
+        }
+    }
+    
+    func updateNotification(isEnabled: Bool) async {
+        try? await notificationUseCase.updateNotification(isEnabled: isEnabled)
+    }
+}
+
 extension MyPageFeature {
     public enum Menu {
-        case favoritesNotification
-        case notificationSetting
+        case notificationSettings
+        case individualNotificationSettings
         case inquiry
         case termsOfService
         case privacyPolicy

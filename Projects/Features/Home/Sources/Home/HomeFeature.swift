@@ -13,6 +13,8 @@ import Domain
 @Reducer
 public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
+    @Dependency(\.notificationUseCase) private var notificationUseCase
+    private enum CancelID { case notification }
     
     enum DisplayMode {
         case grid
@@ -56,6 +58,7 @@ public struct HomeFeature {
         case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
+        case notificationUpdated
         case dateSelected(Date)
         case showAlert
         case binding(BindingAction<State>)
@@ -83,14 +86,16 @@ public struct HomeFeature {
                 let isFavorite = state.likedFestivals.contains(festival.id)
                 return .send(.navigateToFestival(festival, isFavorite))
             case .heartButtonTapped(let festival):
-                let id = festival.id
-                let isLiked = !state.likedFestivals.contains(id)
-                updateLikedFestivals(id: id, isLiked: isLiked)
+                updateLikedFestivals(state, id: festival.id)
                 state.likedFestivals = fetchLikedFestivals()
-                return .none
+                return .run { [state] send in
+                    await send(updateNotificaion(state, id: festival.id))
+                }
+                .cancellable(id: CancelID.notification, cancelInFlight: true)
             case .dateSelected(let date):
                 state.selectedDate = date
                 return .none
+            case .notificationUpdated: return .none
             case .showAlert: return .none
             case .binding: return .none
             case .navigateToFestival: return .none
@@ -110,14 +115,25 @@ private extension HomeFeature {
     }
     
     func fetchLikedFestivals() -> Set<Int> {
-        let likedFestivals = (try? festivalUseCase.fetchLikedFestivals()) ?? []
-        return Set(likedFestivals.map { $0.id })
+        let likedFestivals = try? festivalUseCase.fetchLikedFestivals()
+        return Set(likedFestivals?.map { $0.id } ?? [])
     }
     
-    func updateLikedFestivals(id: Int, isLiked: Bool) {
-        switch isLiked {
-        case true: try? festivalUseCase.addLikedFestival(id: id)
-        case false: try? festivalUseCase.deleteLikedFestival(id: id)
+    func updateLikedFestivals(_ state: State, id: Int) {
+        let isFavorite = state.likedFestivals.contains(id)
+        switch isFavorite {
+        case true: try? festivalUseCase.deleteLikedFestival(id: id)
+        case false: try? festivalUseCase.addLikedFestival(id: id)
+        }
+    }
+    
+    func updateNotificaion(_ state: State, id: Int) async -> Action {
+        do {
+            let isEnabled = state.likedFestivals.contains(id)
+            try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
+            return .notificationUpdated
+        } catch {
+            return .showAlert
         }
     }
 }

@@ -17,4 +17,37 @@ public struct NotificationRepository: NotificationRepositoryProtocol {
         let endpoint = NotificationEndpoint.registerPushToken(token: token)
         _ = try await networkService.request(endpoint: endpoint)
     }
+    
+    public func fetchSubscribedFestivals() async throws -> [Festival] {
+        let endpoint = NotificationEndpoint.fetchSubscribedFestivals
+        let result = try await networkService.request(endpoint: endpoint)
+        return result?.compactMap { $0.toDomain } ?? []
+    }
+    
+    public func fetchNotificationState(id: String) async throws -> Bool {
+        let endpoint = NotificationEndpoint.fetchNotificationState(id: id)
+        let result = try await networkService.request(endpoint: endpoint)
+        return result == true
+    }
+    
+    public func subscribe(id: String) async throws {
+        let endpoint = NotificationEndpoint.subscribe(festivalID: id)
+        _ = try await networkService.request(endpoint: endpoint)
+    }
+    
+    public func unsubscribe(id: String) async throws {
+        let endpoint = NotificationEndpoint.unsubscribe(festivalID: id)
+        _ = try await networkService.request(endpoint: endpoint)
+    }
+    
+    public func fetchNotificationState() async throws -> Bool {
+        let endpoint = NotificationEndpoint.fetchNotificationState
+        let result = try await networkService.request(endpoint: endpoint)
+        return result == true
+    }
+    
+    public func updateNotification(isEnabled: Bool) async throws {
+        let endpoint = NotificationEndpoint.updateNotification(isEnabled: isEnabled)
+        _ = try await networkService.request(endpoint: endpoint)
+    }
 }

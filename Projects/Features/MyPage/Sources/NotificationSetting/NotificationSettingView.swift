@@ -21,24 +21,18 @@ public struct NotificationSettingView: View {
         VStack(spacing: 0) {
             navigationBar
             
-            ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(store.festivals) { festival in
-                        FestivalNotificationCellView(
-                            festival: festival,
-                            toggleAction: {
-                                store.send(.toggleNotification(id: festival.id))
-                            }
-                        )
-                    }
+            switch store.isLoading {
+            case true: shimmerListView
+            case false:
+                switch store.festivals.isEmpty {
+                case true: emptyView
+                case false: subscribedFestivalListView
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 24)
             }
         }
         .background(Color.background1.ignoresSafeArea())
         .navigationBarBackButtonHidden()
+        .animation(.easeInOut(duration: 0.2), value: store.festivals.isEmpty)
         .onAppear {
             store.send(.onAppear)
         }
@@ -62,5 +56,39 @@ private extension NotificationSettingView {
                     .padding(16)
             }
         }
+    }
+    
+    var shimmerListView: some View {
+        ScrollView([]) {
+            VStack(spacing: 12) {
+                ForEach(0..<20, id: \.self) { _ in
+                    ShimmerView()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 88)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+            }
+            .padding(16)
+        }
+    }
+    
+    var subscribedFestivalListView: some View {
+        ScrollView {
+            SubscribedFestivalListView(festivals: store.festivals) { festival in
+                store.send(.noticiationButtonTapped(festival))
+            }
+            .padding(16)
+        }
+        .animation(.easeInOut, value: store.festivals)
+    }
+    
+    var emptyView: some View {
+        VStack(spacing: 22) {
+            Image.star
+            Text("알림 설정한 페스티벌이 없어요!")
+                .pretendard(style: .title2)
+                .foregroundStyle(Color.white)
+        }
+        .frame(maxHeight: .infinity)
     }
 }
