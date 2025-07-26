@@ -14,6 +14,29 @@ public struct NotificationUseCase {
     public func registerPushToken(token: String?) async throws {
         try await notificationRepository.registerPushToken(token: token)
     }
+    
+    public func fetchSubscribedFestivals() async throws -> [Festival] {
+        try await notificationRepository.fetchSubscribedFestivals()
+    }
+    
+    public func fetchNotificationState(id: String) async throws -> Bool {
+        return try await notificationRepository.fetchNotificationState(id: id)
+    }
+    
+    public func updateNotification(id: Int, isEnabled: Bool) async throws {
+        switch isEnabled {
+        case true: try await notificationRepository.subscribe(id: String(id))
+        case false: try await notificationRepository.unsubscribe(id: String(id))
+        }
+    }
+    
+    public func fetchNotificationState() async throws -> Bool {
+        return try await notificationRepository.fetchNotificationState()
+    }
+    
+    public func updateNotification(isEnabled: Bool) async throws {
+        try await notificationRepository.updateNotification(isEnabled: isEnabled)
+    }
 }
 
 private enum NotificationUseCaseKey: DependencyKey {

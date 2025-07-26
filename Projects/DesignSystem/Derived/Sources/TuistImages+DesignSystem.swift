@@ -11,6 +11,7 @@ public extension Image {
     static let iconArtistPlaceholder = Self("icon_artist_placeholder")
     static let iconArtistPlaceholderSelected = Self("icon_artist_placeholder_selected")
     static let iconBell = Self("icon_bell")
+    static let iconBellGray = Self("icon_bell_gray")
     static let iconBus = Self("icon_bus")
     static let iconCalendar = Self("icon_calendar")
     static let iconCalendarMode = Self("icon_calendar_mode")
@@ -44,6 +45,7 @@ public extension Image {
     static let logo = Self("logo")
     static let logoSplash = Self("logo_splash")
     static let sampleFestival = Self("sample_festival")
+    static let star = Self("star")
 }
 
 public extension UIImage {
@@ -56,6 +58,7 @@ public extension UIImage {
     static let iconArtistPlaceholder = UIImage.named("icon_artist_placeholder")
     static let iconArtistPlaceholderSelected = UIImage.named("icon_artist_placeholder_selected")
     static let iconBell = UIImage.named("icon_bell")
+    static let iconBellGray = UIImage.named("icon_bell_gray")
     static let iconBus = UIImage.named("icon_bus")
     static let iconCalendar = UIImage.named("icon_calendar")
     static let iconCalendarMode = UIImage.named("icon_calendar_mode")
@@ -89,4 +92,5 @@ public extension UIImage {
     static let logo = UIImage.named("logo")
     static let logoSplash = UIImage.named("logo_splash")
     static let sampleFestival = UIImage.named("sample_festival")
+    static let star = UIImage.named("star")
 }

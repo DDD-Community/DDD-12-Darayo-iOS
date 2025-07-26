@@ -14,6 +14,8 @@ import Util
 public struct FestivalFeature {
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
+    @Dependency(\.notificationUseCase) private var notificationUseCase
+    private enum CancelID { case notification }
     
     @ObservableState
     public struct State {
@@ -47,10 +49,15 @@ public struct FestivalFeature {
     }
     
     public enum Action: BindableAction {
+        case onAppear
+        case notificationStateFetched(Bool)
         case backButtonTapped
         case notificationButtonTapped
         case heartButtonTapped
+        case updateNotification(Bool)
         case seeAllButtonTapped
+        case showAlert
+        case notificationUpdated
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
     }
@@ -61,21 +68,37 @@ public struct FestivalFeature {
         
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                let id = state.festival.id
+                return .run { send in
+                    await send(fetchNotificationState(id: id))
+                }
+            case .notificationStateFetched(let isOn):
+                state.isNotificationOn = isOn
+                return .none
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .notificationButtonTapped:
                 state.isNotificationOn.toggle()
-                return .none
+                return .send(.updateNotification(state.isNotificationOn))
             case .heartButtonTapped:
-                let id = state.festival.id
-                let isLiked = !state.isFavorite
-                updateLikedFestivals(id: id, isLiked: isLiked)
-                let likedFestivals = fetchLikedFestivals()
-                state.isFavorite = likedFestivals.contains(id)
-                return .none
+                updateLikedFestivals(state)
+                state.isFavorite = checkIsFavorite(state)
+                if state.isFavorite == state.isNotificationOn { return .none }
+                return .send(.updateNotification(state.isFavorite))
+            case .updateNotification(let isEnabled):
+                state.isNotificationOn = isEnabled
+                return .run { [state] send in
+                    await send(updateNotificaion(state, isEnabled: isEnabled))
+                }
+                .cancellable(id: CancelID.notification, cancelInFlight: true)
             case .seeAllButtonTapped:
                 let artists = state.festival.artists
                 return .send(.navigateToArtistList(artists))
+            case .notificationUpdated:
+                return .none
+            case .showAlert:
+                return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
             }
@@ -84,15 +107,37 @@ public struct FestivalFeature {
 }
 
 private extension FestivalFeature {
-    func fetchLikedFestivals() -> Set<Int> {
+    func checkIsFavorite(_ state: State) -> Bool {
         let likedFestivals = (try? festivalUseCase.fetchLikedFestivals()) ?? []
-        return Set(likedFestivals.map { $0.id })
+        return likedFestivals.contains { $0.id == state.festival.id }
     }
     
-    func updateLikedFestivals(id: Int, isLiked: Bool) {
-        switch isLiked {
-        case true: try? festivalUseCase.addLikedFestival(id: id)
-        case false: try? festivalUseCase.deleteLikedFestival(id: id)
+    func updateLikedFestivals(_ state: State) {
+        let id = state.festival.id
+        let isFavorite = state.isFavorite
+        switch isFavorite {
+        case true: try? festivalUseCase.deleteLikedFestival(id: id)
+        case false: try? festivalUseCase.addLikedFestival(id: id)
+        }
+    }
+    
+    func fetchNotificationState(id: Int) async -> Action {
+        let festivalID = String(id)
+        do {
+            let isOn = try await notificationUseCase.fetchNotificationState(id: festivalID)
+            return .notificationStateFetched(isOn)
+        } catch {
+            return .showAlert
+        }
+    }
+    
+    func updateNotificaion(_ state: State, isEnabled: Bool) async -> Action {
+        do {
+            let id = state.festival.id
+            try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
+            return .notificationUpdated
+        } catch {
+            return .showAlert
         }
     }
 }

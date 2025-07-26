@@ -7,28 +7,28 @@
 //
 import Foundation
 import ComposableArchitecture
-
-public struct FestivalNotification: Equatable, Identifiable {
-    public let id: UUID
-    public let name: String
-    public var isNotificationOn: Bool
-}
+import Domain
 
 @Reducer
 public struct NotificationSettingFeature {
-    @Dependency(\.dismiss) var dismiss
+    @Dependency(\.dismiss) private var dismiss
+    @Dependency(\.festivalUseCase) private var festivalUseCase
+    @Dependency(\.notificationUseCase) private var notificationUseCase
     
     @ObservableState
     public struct State: Equatable {
-        public var festivals: [FestivalNotification] = []
-        
+        var festivals: [Festival] = []
+        var isLoading: Bool = true
         public init() {}
     }
     
     public enum Action {
         case onAppear
-        case toggleNotification(id: UUID)
-        case backButtonTapped 
+        case festivalsFestched([Festival])
+        case unsubscribed(Int)
+        case noticiationButtonTapped(Festival)
+        case showAlert
+        case backButtonTapped
     }
     
     public init() {}
@@ -37,23 +37,42 @@ public struct NotificationSettingFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.festivals = [
-                        FestivalNotification(id: UUID(), name: "DDD 밴드 페스티벌", isNotificationOn: true),
-                        FestivalNotification(id: UUID(), name: "한강 썸머 뮤직", isNotificationOn: false),
-                        FestivalNotification(id: UUID(), name: "야외 재즈 나잇", isNotificationOn: true)
-                ]
-                return .none
-                
-            case let .toggleNotification(id):
-                // 해당 id에 맞는 항목의 알림 상태 업데이트
-                if let index = state.festivals.firstIndex(where: { $0.id == id }) {
-                    state.festivals[index].isNotificationOn.toggle()
+                return .run { send in
+                    await send(fetchSubsribedFestivals())
                 }
+            case .festivalsFestched(let festivals):
+                state.festivals = festivals
+                state.isLoading = false
                 return .none
-                
+            case .noticiationButtonTapped(let festival):
+                let id = festival.id
+                return .run { send in
+                    await send(unsubscribe(id: id))
+                }
+            case .unsubscribed(let id):
+                state.festivals.removeAll { $0.id == id }
+                return .none
+            case .showAlert:
+                return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             }
         }
+    }
+}
+
+private extension NotificationSettingFeature {
+    func fetchSubsribedFestivals() async -> Action {
+        do {
+            let festivals = try await notificationUseCase.fetchSubscribedFestivals()
+            return .festivalsFestched(festivals)
+        } catch {
+            return .showAlert
+        }
+    }
+    
+    func unsubscribe(id: Int) async -> Action {
+        try? await notificationUseCase.updateNotification(id: id, isEnabled: false)
+        return .unsubscribed(id)
     }
 }

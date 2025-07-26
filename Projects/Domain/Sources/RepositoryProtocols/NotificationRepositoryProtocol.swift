@@ -11,6 +11,12 @@ import Util
 
 public protocol NotificationRepositoryProtocol {
     func registerPushToken(token: String?) async throws
+    func fetchSubscribedFestivals() async throws -> [Festival]
+    func fetchNotificationState(id: String) async throws -> Bool
+    func subscribe(id: String) async throws
+    func unsubscribe(id: String) async throws
+    func fetchNotificationState() async throws -> Bool
+    func updateNotification(isEnabled: Bool) async throws
 }
 
 public enum NotificationRepositoryKey: TestDependencyKey {

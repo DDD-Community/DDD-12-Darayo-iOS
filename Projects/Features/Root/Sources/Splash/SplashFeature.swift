@@ -15,6 +15,7 @@ import Domain
 @Reducer
 public struct SplashFeature {
     @Dependency(\.authUseCase) private var authUseCase
+    @Dependency(\.notificationUseCase) private var notificationUseCase
     
     public struct State {
         
@@ -71,6 +72,10 @@ private extension SplashFeature {
         get async {
             let center =  UNUserNotificationCenter.current()
             let status = await center.notificationSettings().authorizationStatus
+            
+            if status == .denied {
+                try? await notificationUseCase.updateNotification(isEnabled: false)
+            }
             
             if status != .notDetermined {
                 DispatchQueue.main.async {
