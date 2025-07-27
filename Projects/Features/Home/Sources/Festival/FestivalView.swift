@@ -10,9 +10,11 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import Domain
+import Base
 
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
+    @Environment(\.openURL) private var openURL
     private enum ScrollID { case regulationInfo }
     
     public init(store: StoreOf<FestivalFeature>) {
@@ -50,7 +52,14 @@ public struct FestivalView: View {
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
+        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
         .onAppear { store.send(.onAppear) }
+        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
+            guard !oldValue, newValue else { return }
+            store.send(.binding(.set(\.shouldOpenURL, false)))
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            openURL(url)
+        }
     }
 }
 

@@ -9,13 +9,18 @@
 import ComposableArchitecture
 import Domain
 import Util
+import UserNotifications
+import Base
 
 @Reducer
 public struct FestivalFeature {
+    public enum AlertCase {
+        case authorization
+    }
+    
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
-    private enum CancelID { case notification }
     
     @ObservableState
     public struct State {
@@ -23,6 +28,9 @@ public struct FestivalFeature {
         var isNotificationOn: Bool = false
         var isFavorite: Bool = false
         var isExpanded: Bool = true
+        
+        @Presents var alert: CustomAlert.State?
+        var shouldOpenURL: Bool = false
         
         public init(festival: Festival, isFavorite: Bool) {
             self.festival = festival
@@ -56,10 +64,11 @@ public struct FestivalFeature {
         case heartButtonTapped
         case updateNotification(Bool)
         case seeAllButtonTapped
-        case showAlert
-        case notificationUpdated
+        case showAlert(AlertCase?)
+        case notificationUpdated(Bool)
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
+        case alert(PresentationAction<CustomAlert.Action>)
     }
     
     public init() {}
@@ -79,34 +88,54 @@ public struct FestivalFeature {
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .notificationButtonTapped:
-                state.isNotificationOn.toggle()
-                return .send(.updateNotification(state.isNotificationOn))
+                return .send(.updateNotification(!state.isNotificationOn))
             case .heartButtonTapped:
                 updateLikedFestivals(state)
                 state.isFavorite = checkIsFavorite(state)
                 if state.isFavorite == state.isNotificationOn { return .none }
                 return .send(.updateNotification(state.isFavorite))
             case .updateNotification(let isEnabled):
-                state.isNotificationOn = isEnabled
                 return .run { [state] send in
-                    await send(updateNotificaion(state, isEnabled: isEnabled))
+                    let isAuthorized = await isAuthorized
+                    let shouldShowAlert = !isAuthorized && isEnabled
+                    switch shouldShowAlert {
+                    case true: await send(.showAlert(.authorization))
+                    case false: await send(updateNotificaion(state, isEnabled: isEnabled))
+                    }
                 }
-                .cancellable(id: CancelID.notification, cancelInFlight: true)
             case .seeAllButtonTapped:
                 let artists = state.festival.artists
                 return .send(.navigateToArtistList(artists))
-            case .notificationUpdated:
+            case .notificationUpdated(let isEnabled):
+                state.isNotificationOn = isEnabled
                 return .none
-            case .showAlert:
+            case .showAlert(let alertCase):
+                guard let alertCase else { return .none }
+                state.alert = .init(alertCase: alertCase)
+                return .none
+            case .alert(.presented(.buttonTapped)):
+                state.shouldOpenURL = true
                 return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
+            case .alert: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }
 
 private extension FestivalFeature {
+    var isAuthorized: Bool {
+        get async {
+            let center =  UNUserNotificationCenter.current()
+            let status = await center.notificationSettings().authorizationStatus
+            return status == .authorized
+        }
+    }
+    
     func checkIsFavorite(_ state: State) -> Bool {
         let likedFestivals = (try? festivalUseCase.fetchLikedFestivals()) ?? []
         return likedFestivals.contains { $0.id == state.festival.id }
@@ -127,7 +156,7 @@ private extension FestivalFeature {
             let isOn = try await notificationUseCase.fetchNotificationState(id: festivalID)
             return .notificationStateFetched(isOn)
         } catch {
-            return .showAlert
+            return .showAlert(nil)
         }
     }
     
@@ -135,9 +164,22 @@ private extension FestivalFeature {
         do {
             let id = state.festival.id
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
-            return .notificationUpdated
+            return .notificationUpdated(isEnabled)
         } catch {
-            return .showAlert
+            return .showAlert(nil)
+        }
+    }
+}
+
+private extension CustomAlert.State {
+    init(alertCase: FestivalFeature.AlertCase) {
+        switch alertCase {
+        case .authorization:
+            self = .init(
+                title: "알림 권한이 없어요!",
+                message: "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요",
+                buttonTitle: "권한 설정하기"
+            )
         }
     }
 }
