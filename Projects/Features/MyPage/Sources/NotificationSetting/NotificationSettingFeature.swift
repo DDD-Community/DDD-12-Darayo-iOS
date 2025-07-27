@@ -26,9 +26,11 @@ public struct NotificationSettingFeature {
         case onAppear
         case festivalsFestched([Festival])
         case unsubscribed(Int)
+        case festivalTapped(Festival)
         case noticiationButtonTapped(Festival)
         case showAlert
         case backButtonTapped
+        case navigateToFestival(Festival, Bool)
     }
     
     public init() {}
@@ -44,6 +46,10 @@ public struct NotificationSettingFeature {
                 state.festivals = festivals
                 state.isLoading = false
                 return .none
+            case .festivalTapped(let festival):
+                let likedFestivals = fetchLikedFestivals()
+                let isFavorite = likedFestivals.contains(festival.id)
+                return .send(.navigateToFestival(festival, isFavorite))
             case .noticiationButtonTapped(let festival):
                 let id = festival.id
                 return .run { send in
@@ -56,6 +62,8 @@ public struct NotificationSettingFeature {
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
+            case .navigateToFestival:
+                return .none
             }
         }
     }
@@ -74,5 +82,10 @@ private extension NotificationSettingFeature {
     func unsubscribe(id: Int) async -> Action {
         try? await notificationUseCase.updateNotification(id: id, isEnabled: false)
         return .unsubscribed(id)
+    }
+    
+    func fetchLikedFestivals() -> Set<Int> {
+        let likedFestivals = try? festivalUseCase.fetchLikedFestivals()
+        return Set(likedFestivals?.map { $0.id } ?? [])
     }
 }
