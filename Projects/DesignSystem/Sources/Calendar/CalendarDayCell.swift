@@ -91,17 +91,3 @@ struct CalendarDayCell: View {
         }
     }
 }
-
-#Preview {
-    CalendarDayCell(
-        date: Date(), // 오늘 날짜
-        currentMonth: Date(), // 현재 월
-        selectedDate: Date(), // 선택된 날짜도 오늘
-        hasEvent: true, // 이벤트 있음
-        onDateSelected: { date in
-            print("Selected: \(date)")
-        }
-    )
-    .padding()
-    .background(Color.black)
-}

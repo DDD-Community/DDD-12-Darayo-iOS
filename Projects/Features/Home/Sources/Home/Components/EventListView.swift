@@ -7,22 +7,26 @@
 //
 
 import SwiftUI
+import DesignSystem
 
 public struct EventListView: View {
     let events: [CalendarModel.Event]
     let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
     let title: String
+    let onTap: (CalendarModel.Event) -> Void
     
     @State private var isSelected: Bool = false
     
     public init(
         events: [CalendarModel.Event],
         allEvents: [CalendarModel.Event],
-        title: String = "좋아요한 페스티벌"
+        title: String = "좋아요한 페스티벌",
+        onTap: @escaping (CalendarModel.Event) -> Void
     ) {
         self.events = events
         self.allEvents = allEvents
         self.title = title
+        self.onTap = onTap
     }
     
     public var body: some View {
@@ -31,8 +35,11 @@ public struct EventListView: View {
             
             ZStack {
                 LazyVStack(spacing: 14) {
-                    ForEach(events, id: \.id) { event in
+                    ForEach(currentEvents, id: \.id) { event in
                         EventCard(event: event)
+                            .onTapGesture {
+                                onTap(event)
+                            }
                     }
                 }
                 .padding(.horizontal, 16)
@@ -52,6 +59,10 @@ public struct EventListView: View {
         .padding(.bottom, 40)
         .background(Color.background1)
     }
+    
+    private var currentEvents: [CalendarModel.Event] {
+        isSelected ? allEvents : events
+    }
 }
 
 private extension EventListView {
@@ -60,10 +71,11 @@ private extension EventListView {
             isSelected.toggle()
         }) {
             HStack(spacing: 5) {
-                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                let icon: Image = isSelected ? Image.iconChecked : Image.iconUnchecked
+
+                icon
                     .resizable()
-                    .frame(width: 18, height: 18)
-                    .foregroundColor(isSelected ? .white : .grey3)
+                    .frame(width: 24, height: 24)
                 
                 Text(title)
                     .pretendard(style: .body4)
@@ -80,7 +92,9 @@ private extension EventListView {
     // MARK: - 안내 멘트 출력
     var emptyStateView: some View {
         VStack(spacing: 10) {
-            Spacer(minLength: 80)
+            Rectangle()
+                .fill(Color.clear)
+                .frame(height: 400)
             
             if isSelected && allEvents.isEmpty {
                 // 좋아요한것 체크 했는데 좋아요 기록이 없음
@@ -101,7 +115,9 @@ private extension EventListView {
                     .multilineTextAlignment(.center)
             }
             
-            Spacer()
+            Rectangle()
+                .fill(Color.clear)
+                .frame(minHeight: 200)
         }
         .frame(maxWidth: .infinity)
         .frame(maxHeight: .infinity)

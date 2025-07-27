@@ -19,26 +19,35 @@ public struct CalendarModel {
 extension CalendarModel {
     public struct Event {
         public let id: String
+        public let festivalId: Int
         public let title: String
         public let location: String
         public let date: Date
+        public let endDate: Date?
         public let time: String
         public let category: EventCategory
+        public let posterURL: URL?
         
         public init(
             id: String = UUID().uuidString,
+            festivalId: Int,
             title: String,
             location: String,
             date: Date,
+            endDate: Date? = nil,
             time: String,
-            category: EventCategory
+            category: EventCategory,
+            posterURL: URL? = nil
         ) {
             self.id = id
+            self.festivalId = festivalId
             self.title = title
             self.location = location
             self.date = date
+            self.endDate = endDate
             self.time = time
             self.category = category
+            self.posterURL = posterURL
         }
     }
 }

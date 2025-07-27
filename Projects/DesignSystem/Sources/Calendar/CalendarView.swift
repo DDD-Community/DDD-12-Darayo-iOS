@@ -10,18 +10,20 @@ import SwiftUI
 
 public struct CalendarView: View {
     let calendar: CalendarModel
+    let selectedDate: Date?
     let onDateSelected: (Date) -> Void
     let onMonthChanged: (Date) -> Void
     
     @State private var currentMonth: Date = Date()
-    @State private var selectedDate: Date? = Date()
     
     public init(
         calendar: CalendarModel,
+        selectedDate: Date?,
         onDateSelected: @escaping (Date) -> Void,
         onMonthChanged: @escaping (Date) -> Void
     ) {
         self.calendar = calendar
+        self.selectedDate = selectedDate
         self.onDateSelected = onDateSelected
         self.onMonthChanged = onMonthChanged
     }
@@ -45,7 +47,6 @@ public struct CalendarView: View {
                 calendar: calendar,
                 dates: calendarDates,
                 onDateSelected: { date in
-                    selectedDate = date
                     onDateSelected(date)
                 }
             )
@@ -66,45 +67,5 @@ public struct CalendarView: View {
     private func nextMonth() {
         currentMonth = Foundation.Calendar.current.date(byAdding: .month, value: 1, to: currentMonth) ?? currentMonth
         onMonthChanged(currentMonth)
-    }
-}
-
-#Preview {
-    CalendarViewPreviewWrapper()
-        .background(Color.black)
-}
-
-private struct CalendarViewPreviewWrapper: View {
-    var body: some View {
-        CalendarView(
-            calendar: CalendarModel(events: dummyEvents),
-            onDateSelected: { date in
-//                print("Selected date:", date)
-            },
-            onMonthChanged: { newMonth in
-//                print("Changed month:", newMonth)
-            }
-        )
-    }
-
-    private var dummyEvents: [CalendarModel.Event] {
-        return [
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "테스트 페스티벌",
-                location: "예스24",
-                date: Date(),
-                time: "25.06.28 18:00",
-                category: .reservationDay
-            ),
-            CalendarModel.Event(
-                id: UUID().uuidString,
-                title: "다음 달 행사",
-                location: "인터파크",
-                date: Calendar.current.date(byAdding: .month, value: 1, to: Date())!,
-                time: "25.07.10 19:00",
-                category: .festivalDay
-            )
-        ]
     }
 }

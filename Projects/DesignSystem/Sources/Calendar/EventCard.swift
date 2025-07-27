@@ -16,30 +16,48 @@ public struct EventCard: View {
     }
     
     public var body: some View {
+        eventCard(event: event)
+    }
+    
+    private func eventCard(event: CalendarModel.Event) -> some View {
         HStack(spacing: 0) {
-            
             ZStack {
-                Image.sampleFestival
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 108, height: 108)
-                    .overlay(gradientOverlay)
+                if let url = event.posterURL {
+                    AsyncImage(url: url) { phase in
+                        if let image = phase.image {
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } else {
+                            Color.grey4
+                        }
+                    }
+                } else {
+                    Color.grey4
+                }
+                
+                LinearGradient(
+                    gradient: .init(
+                        colors: [
+                            .black.opacity(0.5),
+                            .black.opacity(0)
+                        ]
+                    ),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
             }
             .frame(width: 108, height: 108)
+            .clipped()
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
-                    HStack(alignment: .center) {
-                        Text(event.category.label)
-                            .pretendard(style: .caption2)
-                            .foregroundColor(event.category.textColor)
-                            .padding(.horizontal, 8)
-                            .frame(width: 47, height: 16)
-                            .background(event.category.backgroundColor)
-                            .cornerRadius(16)
-                        
-                        Spacer()
-                    }
+                    Text(event.category.label)
+                        .pretendard(style: .caption2)
+                        .foregroundColor(event.category.textColor)
+                        .frame(width: 47, height: 16)
+                        .background(event.category.backgroundColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     
                     Text(event.title)
                         .pretendard(style: .title3)
@@ -48,26 +66,7 @@ public struct EventCard: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .topLeading)
                 
-                VStack(alignment: .leading, spacing: 0) {
-                    HStack(spacing: 6) {
-                        Text("예매처")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.grey4)
-                        Text("\(event.location)")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.grey3)
-                            .lineLimit(1)
-                    }
-                    
-                    HStack(spacing: 6) {
-                        Text("예매일시")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.grey4)
-                        Text("\(event.time)")
-                            .pretendard(style: .body4)
-                            .foregroundColor(.gray)
-                    }
-                }
+                infoSection(for: event)
             }
             .padding(.horizontal, 12)
             .frame(maxWidth: .infinity, alignment: .top)
@@ -75,20 +74,7 @@ public struct EventCard: View {
             Spacer()
         }
         .background(Color.background2)
-        .cornerRadius(4)
-    }
-    
-    // MARK: - 포스터 이미지 그림자
-    private var gradientOverlay: some View {
-        LinearGradient(
-            stops: [
-                .init(color: .black.opacity(0.2), location: 0.0),
-                .init(color: .black.opacity(0.05), location: 0.15),
-                .init(color: .clear, location: 0.3)
-            ],
-            startPoint: .top,
-            endPoint: .bottom
-        )
+        .clipShape(RoundedRectangle(cornerRadius: 4))
     }
 }
     
@@ -123,13 +109,27 @@ public struct EventCard: View {
     }
 }
 
-#Preview {
-    EventCard(event: CalendarModel.Event(
-        title: "페스티벌 A",
-        location: "인터파크",
-        date: Date(),
-        time: "25.06.12 18:00",
-        category: .festivalDay
-    ))
-    .background(Color.black)
+@ViewBuilder
+private func infoSection(for event: CalendarModel.Event) -> some View {
+    VStack(alignment: .leading, spacing: 0) {
+        infoRow(label: event.category == .reservationDay ? "예매처" : "장소",
+                value: event.location)
+
+        infoRow(label: event.category == .reservationDay ? "예매일시" : "행사일",
+                value: event.time)
+    }
 }
+
+private func infoRow(label: String, value: String) -> some View {
+    HStack(spacing: 6) {
+        Text(label)
+            .pretendard(style: .body4)
+            .foregroundColor(.grey4)
+
+        Text(value)
+            .pretendard(style: .body4)
+            .foregroundColor(.grey3)
+            .lineLimit(1)
+    }
+}
+
