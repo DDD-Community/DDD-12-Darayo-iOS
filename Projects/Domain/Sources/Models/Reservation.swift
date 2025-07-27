@@ -32,7 +32,7 @@ public struct Reservation: Equatable, Hashable {
         self.remark = remark
     }
     
-    var vendor: Vendor {
+    public var vendor: Vendor {
         return Vendor(urlString: urlString)
     }
 }
