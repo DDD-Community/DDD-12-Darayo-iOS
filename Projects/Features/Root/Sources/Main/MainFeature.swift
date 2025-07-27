@@ -12,6 +12,7 @@ import Home
 import Timetable
 import MyPage
 import Util
+import Base
 
 @Reducer
 public struct MainFeature {
@@ -23,6 +24,9 @@ public struct MainFeature {
         var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
+        
+        @Presents var alert: CustomAlert.State?
+        var shouldOpenURL: Bool = false
     }
     
     public enum Action: BindableAction {
@@ -31,6 +35,7 @@ public struct MainFeature {
         case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
+        case alert(PresentationAction<CustomAlert.Action>)
     }
     
     public init() {}
@@ -53,6 +58,12 @@ public struct MainFeature {
             switch action {
             case let .home(.navigateToFestival(festival, isFavorite)):
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
+                return .none
+            case .myPage(.showAlert):
+                state.alert = .authorization
+                return .none
+            case .alert(.presented(.buttonTapped)):
+                state.shouldOpenURL = true
                 return .none
             case .myPage(.menuTapped(.inquiry)):
                 state.url = URL(string: Constant.URL.inquiry)
@@ -79,9 +90,13 @@ public struct MainFeature {
             case .myPage: return .none
             case .binding: return .none
             case .path: return .none
+            case .alert: return .none
             }
         }
         .forEach(\.path, action: \.path)
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
+        }
     }
 }
 
@@ -120,4 +135,12 @@ extension MainFeature {
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
     }
+}
+
+private extension CustomAlert.State {
+    static let authorization: Self = .init(
+        title: "알림 권한이 없어요!",
+        message: "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요",
+        buttonTitle: "권한 설정하기"
+    )
 }
