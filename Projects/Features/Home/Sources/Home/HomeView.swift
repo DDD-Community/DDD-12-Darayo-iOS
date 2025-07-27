@@ -30,7 +30,9 @@ public struct HomeView: View {
         }
         .background(Color.background1)
         .onAppear {
-            store.send(.dateSelected(Date()))
+            if store.selectedDate == nil {
+                store.send(.dateSelected(Date()))
+            }
             store.send(.onAppear)
         }
     }
