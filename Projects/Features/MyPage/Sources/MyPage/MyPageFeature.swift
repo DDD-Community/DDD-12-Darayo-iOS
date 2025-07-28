@@ -10,6 +10,7 @@ import Foundation
 import UserNotifications
 import ComposableArchitecture
 import Util
+import UIKit
 
 @Reducer
 public struct MyPageFeature {
@@ -17,7 +18,7 @@ public struct MyPageFeature {
     
     @ObservableState
     public struct State {
-        var isAuthorized: Bool = true
+        var isAuthorized: Bool = false
         var isNotificationOn: Bool = false
         
         var isLatestVersion: Bool = true
@@ -119,6 +120,9 @@ private extension MyPageFeature {
     
     func updateNotification(isEnabled: Bool) async {
         try? await notificationUseCase.updateNotification(isEnabled: isEnabled)
+        DispatchQueue.main.async {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
     }
 }
 
