@@ -127,6 +127,7 @@ private extension MyPageView {
             )
             divider
             menuButton(menu: .individualNotificationSettings)
+                .renderedIf(store.isAuthorized)
         }
     }
     

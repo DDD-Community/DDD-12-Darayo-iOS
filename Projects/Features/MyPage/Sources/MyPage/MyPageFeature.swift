@@ -17,7 +17,7 @@ public struct MyPageFeature {
     
     @ObservableState
     public struct State {
-        var isAuthorized: Bool = false
+        var isAuthorized: Bool = true
         var isNotificationOn: Bool = false
         
         var isLatestVersion: Bool = true
