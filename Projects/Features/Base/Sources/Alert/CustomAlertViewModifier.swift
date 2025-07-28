@@ -36,6 +36,7 @@ struct CustomAlertViewModifier: ViewModifier {
                 
                 Color.background1
                     .opacity(0.2)
+                    .ignoresSafeArea()
             
                 customAlertView(store: store)
             }
