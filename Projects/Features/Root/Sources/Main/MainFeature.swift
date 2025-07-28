@@ -6,13 +6,14 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import ComposableArchitecture
 import Home
 import Timetable
 import MyPage
 import Util
 import Base
+import UserNotifications
 
 @Reducer
 public struct MainFeature {
@@ -30,6 +31,7 @@ public struct MainFeature {
     }
     
     public enum Action: BindableAction {
+        case enteredForeground
         case home(HomeFeature.Action)
         // case timetable(TimetableFeature.Action)
         case myPage(MyPageFeature.Action)
@@ -56,6 +58,8 @@ public struct MainFeature {
         
         Reduce { state, action in
             switch action {
+            case .enteredForeground:
+                return .run { _ in await checkNotification() }
             case let .home(.navigateToFestival(festival, isFavorite)):
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
@@ -101,6 +105,16 @@ public struct MainFeature {
 }
 
 private extension MainFeature {
+    func checkNotification() async {
+        let center =  UNUserNotificationCenter.current()
+        let status = await center.notificationSettings().authorizationStatus
+        guard status == .authorized else { return }
+        
+        await MainActor.run {
+            UIApplication.shared.registerForRemoteNotifications()
+        }
+    }
+    
     func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
         return switch menu {
         case .individualNotificationSettings: .notificationSetting(.init())

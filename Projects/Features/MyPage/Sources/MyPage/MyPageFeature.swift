@@ -10,7 +10,6 @@ import Foundation
 import UserNotifications
 import ComposableArchitecture
 import Util
-import UIKit
 
 @Reducer
 public struct MyPageFeature {
@@ -120,9 +119,6 @@ private extension MyPageFeature {
     
     func updateNotification(isEnabled: Bool) async {
         try? await notificationUseCase.updateNotification(isEnabled: isEnabled)
-        DispatchQueue.main.async {
-            UIApplication.shared.registerForRemoteNotifications()
-        }
     }
 }
 
