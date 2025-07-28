@@ -15,6 +15,7 @@ import Base
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
     @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
     private enum ScrollID { case regulationInfo }
     
     public init(store: StoreOf<FestivalFeature>) {
@@ -52,13 +53,27 @@ public struct FestivalView: View {
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
+        .customAlert($store.scope(state: \.alert, action: \.alert), icon: alertIcon)
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
             store.send(.binding(.set(\.shouldOpenURL, false)))
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
             openURL(url)
+        }
+        .onChange(of: scenePhase) { oldValue, _ in
+            guard oldValue == .background else { return }
+            store.send(.enteredForeground)
+        }
+    }
+}
+
+private extension FestivalView {
+    var alertIcon: Image? {
+        return switch store.alert?.alertCase {
+        case .authorization: .iconBellGray
+        case .like: .iconHeartGray
+        case .none: nil
         }
     }
 }
@@ -164,5 +179,38 @@ private extension FestivalView {
         .buttonStyle(.festibee)
         .padding(.horizontal, 16)
         .padding(.bottom, 8)
+    }
+}
+
+private extension FestivalFeature.AlertCase {
+    var title: String {
+        switch self {
+        case .authorization: "알림 권한이 없어요!"
+        case .like: "좋아요가 설정되었어요!"
+        }
+    }
+    
+    var message: String {
+        "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요"
+    }
+    
+    var buttonTitle: String {
+        "권한 설정하기"
+    }
+}
+
+extension CustomAlert.State {
+    init(alertCase: FestivalFeature.AlertCase) {
+        self = .init(
+            title: alertCase.title,
+            message: alertCase.message,
+            buttonTitle: alertCase.buttonTitle
+        )
+    }
+    
+    var alertCase: FestivalFeature.AlertCase? {
+        return FestivalFeature.AlertCase.allCases.first {
+            self == .init(alertCase: $0)
+        }
     }
 }
