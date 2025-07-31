@@ -7,7 +7,9 @@
 //
 
 import Foundation
+import DesignSystem
 import Util
+import SwiftUICore
 
 public struct Festival: Equatable, Hashable {
     public let id: Int
@@ -85,5 +87,68 @@ public extension Festival {
     
     var vendors: [Vendor] {
         reservations.map { $0.vendor }
+    }
+}
+
+public struct CalendarEvent {
+    public let id: String
+    public let festivalId: Int
+    public let title: String
+    public let location: String
+    public let date: Date
+    public let endDate: Date?
+    public let time: String
+    public let category: EventCategory
+    public let posterURL: URL?
+    
+    public init(
+        id: String = UUID().uuidString,
+        festivalId: Int,
+        title: String,
+        location: String,
+        date: Date,
+        endDate: Date? = nil,
+        time: String,
+        category: EventCategory,
+        posterURL: URL? = nil
+    ) {
+        self.id = id
+        self.festivalId = festivalId
+        self.title = title
+        self.location = location
+        self.date = date
+        self.endDate = endDate
+        self.time = time
+        self.category = category
+        self.posterURL = posterURL
+    }
+}
+
+public enum EventCategory {
+    case reservationDay
+    case festivalDay
+    
+    public var label: String {
+        switch self {
+        case .reservationDay:
+            return "예매일"
+        case .festivalDay:
+            return "행사일"
+        }
+    }
+    
+    public var textColor: Color {
+        switch self {
+        case .reservationDay:
+            return .point3
+        case .festivalDay:
+            return .point1
+        }
+    }
+    
+    public var backgroundColor: Color {
+        switch self {
+        default: Color.grey6
+        }
     }
 }
