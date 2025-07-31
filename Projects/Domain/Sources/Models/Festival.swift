@@ -152,3 +152,52 @@ public enum EventCategory {
         }
     }
 }
+
+// Festival -> CalendarEvent 변환 헬퍼
+public extension Festival {
+    func toCalendarEvents() -> [CalendarEvent] {
+        var events: [CalendarEvent] = []
+        
+        // category: 예매일
+        if let openDate = reservations.first?.openDateTime {
+            let vendorNames = reservations
+                .compactMap { $0.vendor.name }
+                .joined(separator: " · ")
+            
+            events.append(CalendarEvent(
+                id: UUID().uuidString,
+                festivalId: id,
+                title: name,
+                location: vendorNames,
+                date: openDate,
+                time: openDate.toString(dateFormat: .reservateionDateTime),
+                category: .reservationDay,
+                posterURL: URL(string: posterURLString)
+            ))
+        }
+        
+        // category: 행사일
+        if let startDate = startDate, let endDate = endDate {
+            var currentDate = startDate
+            let calendar = Calendar.current
+            
+            while currentDate <= endDate {
+                events.append(CalendarEvent(
+                    id: UUID().uuidString,
+                    festivalId: id,
+                    title: name,
+                    location: placeName,
+                    date: currentDate,
+                    endDate: endDate,
+                    time: "\(startDate.toString(dateFormat: .eventDate)) - \(endDate.toString(dateFormat: .eventDate))",
+                    category: .festivalDay,
+                    posterURL: URL(string: posterURLString)
+                ))
+                guard let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+                currentDate = nextDay
+            }
+        }
+        
+        return events
+    }
+}
