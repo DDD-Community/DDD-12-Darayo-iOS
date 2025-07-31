@@ -9,9 +9,9 @@
 import SwiftUI
 import DesignSystem
 
-public struct EventListView: View {
-    let events: [CalendarModel.Event] // 선택된 날짜의 전체 페스티벌 이벤트
-    let allEvents: [CalendarModel.Event] // 선택된 날짜의 좋아요한 페스티벌 이벤트
+struct EventListView: View {
+    let allEventsOfSelectedDate: [CalendarModel.Event] // 선택된 날짜의 전체 페스티벌 이벤트
+    let likedEventsOfSelectedDate: [CalendarModel.Event] // 선택된 날짜의 좋아요한 페스티벌 이벤트
     let totalLikedEvents: [CalendarModel.Event] // 전체 날짜 기준 좋아요한 모든 페스티벌 이벤트
     let title: String
     let isFiltered: Bool // 외부에서 받은 필터 상태
@@ -27,8 +27,8 @@ public struct EventListView: View {
         onTap: @escaping (CalendarModel.Event) -> Void,
         onToggleFilter: @escaping () -> Void = {}
     ) {
-        self.events = events
-        self.allEvents = allEvents
+        self.allEventsOfSelectedDate = events
+        self.likedEventsOfSelectedDate = allEvents
         self.totalLikedEvents = totalLikedEvents
         self.title = title
         self.isFiltered = isFiltered
@@ -67,7 +67,7 @@ public struct EventListView: View {
     }
     
     private var currentEvents: [CalendarModel.Event] {
-        isFiltered ? allEvents : events
+        isFiltered ? likedEventsOfSelectedDate : allEventsOfSelectedDate
     }
 }
 
