@@ -9,24 +9,31 @@
 import SwiftUI
 import DesignSystem
 
-public struct EventListView: View {
-    let events: [CalendarModel.Event]
-    let allEvents: [CalendarModel.Event] // 전체 좋아요 한 페스티벌
+struct EventListView: View {
+    let allEventsOfSelectedDate: [CalendarModel.Event] // 선택된 날짜의 전체 페스티벌 이벤트
+    let likedEventsOfSelectedDate: [CalendarModel.Event] // 선택된 날짜의 좋아요한 페스티벌 이벤트
+    let totalLikedEvents: [CalendarModel.Event] // 전체 날짜 기준 좋아요한 모든 페스티벌 이벤트
     let title: String
+    let isFiltered: Bool // 외부에서 받은 필터 상태
     let onTap: (CalendarModel.Event) -> Void
-    
-    @State private var isSelected: Bool = false
+    let onToggleFilter: () -> Void // 토글 액션 전달
     
     public init(
         events: [CalendarModel.Event],
         allEvents: [CalendarModel.Event],
+        totalLikedEvents: [CalendarModel.Event],
         title: String = "좋아요한 페스티벌",
-        onTap: @escaping (CalendarModel.Event) -> Void
+        isFiltered: Bool,
+        onTap: @escaping (CalendarModel.Event) -> Void,
+        onToggleFilter: @escaping () -> Void = {}
     ) {
-        self.events = events
-        self.allEvents = allEvents
+        self.allEventsOfSelectedDate = events
+        self.likedEventsOfSelectedDate = allEvents
+        self.totalLikedEvents = totalLikedEvents
         self.title = title
+        self.isFiltered = isFiltered
         self.onTap = onTap
+        self.onToggleFilter = onToggleFilter
     }
     
     public var body: some View {
@@ -43,36 +50,35 @@ public struct EventListView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .opacity(isSelected || events.isEmpty ? 0 : 1)
+                .opacity(currentEvents.isEmpty ? 0 : 1)
                 .overlay(
                     Group {
-                        if isSelected || events.isEmpty {
+                        if currentEvents.isEmpty {
                             emptyStateView
                         }
                     }
-                    .animation(.easeInOut(duration: 0.2), value: isSelected)
                 )
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .frame(maxWidth: .infinity, alignment: .top)
+            .animation(.easeInOut(duration: 0.2), value: isFiltered)
         }
         .padding(.bottom, 40)
         .background(Color.background1)
     }
     
     private var currentEvents: [CalendarModel.Event] {
-        isSelected ? allEvents : events
+        isFiltered ? likedEventsOfSelectedDate : allEventsOfSelectedDate
     }
 }
 
 private extension EventListView {
     var header: some View {
         Button(action: {
-            isSelected.toggle()
+            onToggleFilter()
         }) {
             HStack(spacing: 5) {
-                let icon: Image = isSelected ? Image.iconChecked : Image.iconUnchecked
-
+                let icon: Image = isFiltered ? Image.iconChecked : Image.iconUnchecked
+                
                 icon
                     .resizable()
                     .frame(width: 24, height: 24)
@@ -91,35 +97,38 @@ private extension EventListView {
     
     // MARK: - 안내 멘트 출력
     var emptyStateView: some View {
-        VStack(spacing: 10) {
-            Rectangle()
-                .fill(Color.clear)
-                .frame(height: 400)
-            
-            if isSelected && allEvents.isEmpty {
-                // 좋아요한것 체크 했는데 좋아요 기록이 없음
-                Text("아직 좋아요한 페스티벌이 없어요!")
-                    .pretendard(style: .title3)
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                
-                Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
-                    .pretendard(style: .body4)
-                    .foregroundColor(.grey3)
-                    .multilineTextAlignment(.center)
-            } else {
-                // 그 외엔 날짜에 일정 없음
-                Text("선택한 날짜에 페스티벌 일정이 없어요")
-                    .pretendard(style: .title3)
-                    .foregroundColor(.grey4)
-                    .multilineTextAlignment(.center)
+        ZStack {
+            GeometryReader { geometry in
+                VStack(spacing: 10) {
+                    if isFiltered {
+                        if totalLikedEvents.isEmpty {
+                            Text("아직 좋아요한 페스티벌이 없어요!")
+                                .pretendard(style: .title3)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                            
+                            Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey3)
+                                .multilineTextAlignment(.center)
+                        } else {
+                            Text("선택한 날짜에 좋아요한 페스티벌 일정이 없어요")
+                                .pretendard(style: .title3)
+                                .foregroundColor(.grey4)
+                                .multilineTextAlignment(.center)
+                        }
+                    } else {
+                        Text("선택한 날짜에 페스티벌 일정이 없어요")
+                            .pretendard(style: .title3)
+                            .foregroundColor(.grey4)
+                            .multilineTextAlignment(.center)
+                    }
+                }
+                .position(x: geometry.size.width / 2,
+                          y: geometry.size.height * 0.8)
             }
-            
-            Rectangle()
-                .fill(Color.clear)
-                .frame(minHeight: 200)
         }
+        .frame(height: 300)
         .frame(maxWidth: .infinity)
-        .frame(maxHeight: .infinity)
     }
 }
