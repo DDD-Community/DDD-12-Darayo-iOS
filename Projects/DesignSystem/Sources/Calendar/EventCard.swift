@@ -7,11 +7,12 @@
 //
 
 import SwiftUI
+import Domain
 
 public struct EventCard: View {
-    let event: CalendarModel.Event
+    let event: CalendarEvent
     
-    public init(event: CalendarModel.Event) {
+    public init(event: CalendarEvent) {
         self.event = event
     }
     
@@ -19,7 +20,7 @@ public struct EventCard: View {
         eventCard(event: event)
     }
     
-    private func eventCard(event: CalendarModel.Event) -> some View {
+    private func eventCard(event: CalendarEvent) -> some View {
         HStack(spacing: 0) {
             ZStack {
                 if let url = event.posterURL {
@@ -54,9 +55,9 @@ public struct EventCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(event.category.label)
                         .pretendard(style: .caption2)
-                        .foregroundColor(event.category.textColor)
+                        .foregroundColor(textColor(for: event.category))
                         .frame(width: 47, height: 16)
-                        .background(event.category.backgroundColor)
+                        .background(backgroundColor(for: event.category))
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     
                     Text(event.title)
@@ -76,41 +77,24 @@ public struct EventCard: View {
         .background(Color.background2)
         .clipShape(RoundedRectangle(cornerRadius: 4))
     }
-}
     
     // MARK: - Category 색상 로직
-
-    public enum EventCategory {
-        case reservationDay
-        case festivalDay
-        
-        public var label: String {
-            switch self {
-            case .reservationDay:
-                return "예매일"
-            case .festivalDay:
-                return "행사일"
-            }
+    private func textColor(for category: EventCategory) -> Color {
+        switch category {
+        case .reservationDay:
+            return .point3
+        case .festivalDay:
+            return .point1
         }
+    }
         
-        public var textColor: Color {
-            switch self {
-            case .reservationDay:
-                return .point3
-            case .festivalDay:
-                return .point1
-            }
-        }
-        
-        public var backgroundColor: Color {
-            switch self {
-            default: Color.grey6
-        }
+    private func backgroundColor(for category: EventCategory) -> Color {
+        return .grey6
     }
 }
 
 @ViewBuilder
-private func infoSection(for event: CalendarModel.Event) -> some View {
+private func infoSection(for event: CalendarEvent) -> some View {
     VStack(alignment: .leading, spacing: 0) {
         infoRow(label: event.category == .reservationDay ? "예매처" : "장소",
                 value: event.location)

@@ -7,9 +7,7 @@
 //
 
 import Foundation
-import DesignSystem
 import Util
-import SwiftUICore
 
 public struct Festival: Equatable, Hashable {
     public let id: Int
@@ -136,21 +134,6 @@ public enum EventCategory {
             return "행사일"
         }
     }
-    
-    public var textColor: Color {
-        switch self {
-        case .reservationDay:
-            return .point3
-        case .festivalDay:
-            return .point1
-        }
-    }
-    
-    public var backgroundColor: Color {
-        switch self {
-        default: Color.grey6
-        }
-    }
 }
 
 // Festival -> CalendarEvent 변환 헬퍼
@@ -200,4 +183,8 @@ public extension Festival {
         
         return events
     }
+}
+
+public func makeCalendarEvents(from festivals: [Festival]) -> [CalendarEvent] {
+    festivals.flatMap { $0.toCalendarEvents() }
 }
