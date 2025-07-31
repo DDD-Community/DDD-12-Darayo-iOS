@@ -59,7 +59,7 @@ struct EventListView: View {
                     }
                 )
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, alignment: .top)
             .animation(.easeInOut(duration: 0.2), value: isFiltered)
         }
         .padding(.bottom, 40)
@@ -78,7 +78,7 @@ private extension EventListView {
         }) {
             HStack(spacing: 5) {
                 let icon: Image = isFiltered ? Image.iconChecked : Image.iconUnchecked
-
+                
                 icon
                     .resizable()
                     .frame(width: 24, height: 24)
@@ -97,38 +97,38 @@ private extension EventListView {
     
     // MARK: - 안내 멘트 출력
     var emptyStateView: some View {
-        VStack(spacing: 10) {
-            Rectangle().fill(Color.clear).frame(height: 400)
-            
-            if isFiltered {
-                if totalLikedEvents.isEmpty {
-                    // 1. 좋아요한 페스티벌이 없음
-                    Text("아직 좋아요한 페스티벌이 없어요!")
-                        .pretendard(style: .title3)
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
-                        .pretendard(style: .body4)
-                        .foregroundColor(.grey3)
-                        .multilineTextAlignment(.center)
-                } else {
-                    // 2. 좋아요한 페스티벌은 있지만 날짜에 해당 없음
-                    Text("선택한 날짜에 좋아요한 페스티벌 일정이 없어요")
-                        .pretendard(style: .title3)
-                        .foregroundColor(.grey4)
-                        .multilineTextAlignment(.center)
+        ZStack {
+            GeometryReader { geometry in
+                VStack(spacing: 10) {
+                    if isFiltered {
+                        if totalLikedEvents.isEmpty {
+                            Text("아직 좋아요한 페스티벌이 없어요!")
+                                .pretendard(style: .title3)
+                                .foregroundColor(.white)
+                                .multilineTextAlignment(.center)
+                            
+                            Text("관심있는 페스티벌을 좋아요하고,\n소식을 받아보세요 :)")
+                                .pretendard(style: .body4)
+                                .foregroundColor(.grey3)
+                                .multilineTextAlignment(.center)
+                        } else {
+                            Text("선택한 날짜에 좋아요한 페스티벌 일정이 없어요")
+                                .pretendard(style: .title3)
+                                .foregroundColor(.grey4)
+                                .multilineTextAlignment(.center)
+                        }
+                    } else {
+                        Text("선택한 날짜에 페스티벌 일정이 없어요")
+                            .pretendard(style: .title3)
+                            .foregroundColor(.grey4)
+                            .multilineTextAlignment(.center)
+                    }
                 }
-            } else {
-                // 3. 전체 필터 상태에서 해당 날짜에 아무것도 없음
-                Text("선택한 날짜에 페스티벌 일정이 없어요")
-                    .pretendard(style: .title3)
-                    .foregroundColor(.grey4)
-                    .multilineTextAlignment(.center)
+                .position(x: geometry.size.width / 2,
+                          y: geometry.size.height * 0.8)
             }
-
-            Rectangle().fill(Color.clear).frame(minHeight: 200)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .frame(height: 300)
+        .frame(maxWidth: .infinity)
     }
 }
