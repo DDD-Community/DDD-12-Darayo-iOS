@@ -64,7 +64,8 @@ private extension SplashFeature {
     
     var isAutorizationNotDetermined: Bool {
         get async {
-            await isNotificationAuthroizationNotDetermined || isPhotoAuthroizationNotDetermined
+            // await isNotificationAuthroizationNotDetermined || isPhotoAuthroizationNotDetermined
+            await isNotificationAuthroizationNotDetermined
         }
     }
     

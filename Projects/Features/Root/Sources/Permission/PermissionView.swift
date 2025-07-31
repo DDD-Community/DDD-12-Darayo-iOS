@@ -55,11 +55,11 @@ private extension PermissionView {
                     message: "공연 및 예매 일자 등 페스티벌 관련 소식 알림"
                 )
                 
-                permissionInfoView(
-                    icon: Image.iconPicture,
-                    title: "사진",
-                    message: "타임테이블 이미지 저장"
-                )
+//                permissionInfoView(
+//                    icon: Image.iconPicture,
+//                    title: "사진",
+//                    message: "타임테이블 이미지 저장"
+//                )
             }
         }
         .padding(.vertical, 24)

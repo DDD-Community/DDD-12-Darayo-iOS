@@ -75,6 +75,8 @@ private extension NotificationSettingView {
     var subscribedFestivalListView: some View {
         ScrollView {
             SubscribedFestivalListView(festivals: store.festivals) { festival in
+                store.send(.festivalTapped(festival))
+            } notificationAction: { festival in
                 store.send(.noticiationButtonTapped(festival))
             }
             .padding(16)

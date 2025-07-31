@@ -10,9 +10,12 @@ import UIKit
 import ComposableArchitecture
 import Photos
 import UserNotifications
+import Domain
 
 @Reducer
 public struct PermissionFeature {
+    @Dependency(\.notificationUseCase) private var notificationUseCase
+    
     public struct State {
         
     }
@@ -44,7 +47,7 @@ private extension PermissionFeature {
     func requestAllAuthorizations() async -> Action {
         do {
             try await requestNotificationAuthorization()
-            await requestPhotoAuthorization()
+            // await requestPhotoAuthorization()
             return .allPermissionsCompleted
         } catch {
             return .showAlert
@@ -56,7 +59,9 @@ private extension PermissionFeature {
             .current()
             .requestAuthorization(options: [.alert, .badge, .sound])
         
+        try await notificationUseCase.updateNotification(isEnabled: isGranted)
         guard isGranted else { return }
+        
         DispatchQueue.main.async {
             UIApplication.shared.registerForRemoteNotifications()
         }

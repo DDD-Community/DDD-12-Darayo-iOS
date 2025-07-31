@@ -79,7 +79,7 @@ private extension TicketInfoView {
                     UIApplication.shared.open(url)
                 } label: {
                     HStack(spacing: 6) {
-                        Text("\(vendor.name) 티켓")
+                        Text("\(vendor.name)")
                             .pretendard(style: .body0)
                             .foregroundStyle(Color.white)
                         
