@@ -9,12 +9,12 @@
 import Foundation
 import ComposableArchitecture
 import Domain
+import UserNotifications
 
 @Reducer
 public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
-    private enum CancelID { case notification }
     
     enum DisplayMode {
         case grid
@@ -58,7 +58,6 @@ public struct HomeFeature {
         case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
-        case notificationUpdated
         case dateSelected(Date)
         case showAlert
         case binding(BindingAction<State>)
@@ -89,13 +88,11 @@ public struct HomeFeature {
                 updateLikedFestivals(state, id: festival.id)
                 state.likedFestivals = fetchLikedFestivals()
                 return .run { [state] send in
-                    await send(updateNotificaion(state, id: festival.id))
+                    await updateNotificaion(state, send, id: festival.id)
                 }
-                .cancellable(id: CancelID.notification, cancelInFlight: true)
             case .dateSelected(let date):
                 state.selectedDate = date
                 return .none
-            case .notificationUpdated: return .none
             case .showAlert: return .none
             case .binding: return .none
             case .navigateToFestival: return .none
@@ -127,13 +124,19 @@ private extension HomeFeature {
         }
     }
     
-    func updateNotificaion(_ state: State, id: Int) async -> Action {
-        do {
-            let isEnabled = state.likedFestivals.contains(id)
-            try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
-            return .notificationUpdated
-        } catch {
-            return .showAlert
+    func updateNotificaion(_ state: State, _ send: Send<Action>, id: Int) async {
+        let isAuthorized = await isAuthorized
+        let isEnabled = state.likedFestivals.contains(id)
+        
+        guard isAuthorized || !isEnabled else { return }
+        try? await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
+    }
+    
+    var isAuthorized: Bool {
+        get async {
+            let center =  UNUserNotificationCenter.current()
+            let status = await center.notificationSettings().authorizationStatus
+            return status == .authorized
         }
     }
 }

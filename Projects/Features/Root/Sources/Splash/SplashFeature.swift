@@ -78,8 +78,8 @@ private extension SplashFeature {
                 try? await notificationUseCase.updateNotification(isEnabled: false)
             }
             
-            if status != .notDetermined {
-                DispatchQueue.main.async {
+            if status == .authorized {
+                await MainActor.run {
                     UIApplication.shared.registerForRemoteNotifications()
                 }
             }

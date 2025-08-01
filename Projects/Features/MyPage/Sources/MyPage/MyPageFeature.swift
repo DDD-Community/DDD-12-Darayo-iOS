@@ -9,7 +9,6 @@
 import Foundation
 import UserNotifications
 import ComposableArchitecture
-import Base
 import Util
 
 @Reducer
@@ -24,9 +23,6 @@ public struct MyPageFeature {
         var isLatestVersion: Bool = true
         var currentVersion: String
         var latestVersion: String
-        
-        @Presents var alert: CustomAlert.State?
-        var shouldOpenURL: Bool = false
         
         public init() {
             let appVersion = Bundle.appVersion
@@ -46,7 +42,6 @@ public struct MyPageFeature {
         case showAlert
         case menuTapped(Menu)
         case binding(BindingAction<State>)
-        case alert(PresentationAction<CustomAlert.Action>)
     }
     
     public init() {}
@@ -96,18 +91,10 @@ public struct MyPageFeature {
                 state.isNotificationOn = isOn
                 return .none
             case .showAlert:
-                state.alert = .authorization
-                return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
                 return .none
             case .menuTapped: return .none
             case .binding: return .none
-            case .alert: return .none
             }
-        }
-        .ifLet(\.$alert, action: \.alert) {
-            CustomAlert()
         }
     }
 }
@@ -143,12 +130,4 @@ extension MyPageFeature {
         case termsOfService
         case privacyPolicy
     }
-}
-
-private extension CustomAlert.State {
-    static let authorization: Self = .init(
-        title: "알림 권한이 없어요!",
-        message: "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요",
-        buttonTitle: "권한 설정하기"
-    )
 }

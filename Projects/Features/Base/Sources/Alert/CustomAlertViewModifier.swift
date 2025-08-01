@@ -26,31 +26,38 @@ struct CustomAlertViewModifier: ViewModifier {
     }
     
     func body(content: Content) -> some View {
-        ZStack {
-            content
-            
-            if let store = item.wrappedValue {
-                Color.background1
-                    .opacity(0.4)
-                    .ignoresSafeArea()
-                    .blur(radius: 10)
+        switch item.wrappedValue {
+        case .none: content
+        case .some(let store):
+            ZStack {
+                content
+                    .blur(radius: 4)
+                    .allowsHitTesting(false)
                 
-                CustomAlertView(
-                    icon: icon,
-                    title: store.title,
-                    message: store.message,
-                    buttonTitle: store.buttonTitle,
-                    action: {
-                        store.send(.buttonTapped)
-                        onDismiss()
-                    },
-                    closeAction: {
-                        store.send(.closeButtonTapped)
-                        onDismiss()
-                    }
-                )
+                Color.background1
+                    .opacity(0.2)
+                    .ignoresSafeArea()
+            
+                customAlertView(store: store)
             }
         }
+    }
+    
+    private func customAlertView(store: StoreOf<CustomAlert>) -> some View {
+        CustomAlertView(
+            icon: icon,
+            title: store.title,
+            message: store.message,
+            buttonTitle: store.buttonTitle,
+            action: {
+                store.send(.buttonTapped)
+                onDismiss()
+            },
+            closeAction: {
+                store.send(.closeButtonTapped)
+                onDismiss()
+            }
+        )
     }
 }
 

@@ -12,9 +12,12 @@ import DesignSystem
 import Home
 import Timetable
 import MyPage
+import Base
 
 public struct MainView: View {
     @Bindable private var store: StoreOf<MainFeature>
+    @Environment(\.openURL) private var openURL
+    @Environment(\.scenePhase) private var scenePhase
     
     public init(store: StoreOf<MainFeature>) {
         UITabBar.appearance().isHidden = true
@@ -36,6 +39,17 @@ public struct MainView: View {
             }
         }
         .safari(url: $store.url)
+        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
+        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
+            guard !oldValue, newValue else { return }
+            store.send(.binding(.set(\.shouldOpenURL, false)))
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            openURL(url)
+        }
+        .onChange(of: scenePhase) { oldValue, newValue in
+            guard oldValue == .background else { return }
+            store.send(.enteredForeground)
+        }
     }
 }
 

@@ -24,6 +24,7 @@ public enum VendorType: CaseIterable {
     case wemakeprice
     case naver
     case coupang
+    case coupangplay
     case kream
     case musinsa
     case twentyninecm
@@ -48,7 +49,8 @@ public enum VendorType: CaseIterable {
         case .interpark: "interpark.co"
         case .wemakeprice: "wemakeprice.co"
         case .naver: "naver.co"
-        case .coupang: "couapngplay.co"
+        case .coupang: "coupang.co"
+        case .coupangplay: "couapngplay.co"
         case .kream: "kream.co"
         case .musinsa: "musinsa.co"
         case .twentyninecm: "29cm.co"
@@ -69,6 +71,7 @@ public enum VendorType: CaseIterable {
         case .wemakeprice: "위메프"
         case .naver: "네이버"
         case .coupang: "쿠팡"
+        case .coupangplay: "쿠팡플레이"
         case .kream: "크림"
         case .musinsa: "무신사"
         case .twentyninecm: "29CM"
