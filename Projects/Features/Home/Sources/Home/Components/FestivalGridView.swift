@@ -109,19 +109,9 @@ private extension FestivalGridView {
     
     func imageView(url: URL?) -> some View {
         ZStack {
-            if let url {
-                AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else {
-                        Color.grey3
-                    }
-                }
+            ImageView(url, placeholder: .placeholder2)
                 .frame(height: 110)
                 .clipped()
-            }
             
             LinearGradient(
                 gradient: .init(

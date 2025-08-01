@@ -80,19 +80,9 @@ private extension SubscribedFestivalListView {
     
     func imageView(url: URL?) -> some View {
         ZStack {
-            if let url {
-                AsyncImage(url: url) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                    } else {
-                        Color.grey3
-                    }
-                }
+            ImageView(url, placeholder: .placeholder3)
                 .frame(width: 108, height: 88)
                 .clipped()
-            }
             
             LinearGradient(
                 gradient: .init(

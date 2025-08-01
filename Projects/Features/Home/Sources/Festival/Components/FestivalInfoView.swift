@@ -28,12 +28,19 @@ struct FestivalInfoView: View {
     }
     
     var body: some View {
-        ZStack {
-            imageView
-            gradient
+        ZStack(alignment: .bottom) {
+            GeometryReader { proxy in
+                let width = proxy.size.width
+                let height = proxy.size.height
+                
+                ZStack {
+                    ImageView(posterURL, placeholder: .placeholder1)
+                    gradient
+                }
+                .frame(width: width, height: height)
+            }
             
             VStack(spacing: 9) {
-                Spacer()
                 titleView
                 VStack(spacing: 4) {
                     itemInfoView(title: "행사장소", contents: place)
@@ -44,28 +51,11 @@ struct FestivalInfoView: View {
             .padding(.vertical, 16)
         }
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .frame(minHeight: 190)
     }
 }
 
 private extension FestivalInfoView {
-    var imageView: some View {
-        Group {
-            if let posterURL {
-                AsyncImage(url: posterURL) { phase in
-                    if let image = phase.image {
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-                        ShimmerView()
-                    }
-                }
-                .frame(height: 190)
-                .clipped()
-            }
-        }
-    }
-    
     var gradient: some View {
         LinearGradient(
             stops: [

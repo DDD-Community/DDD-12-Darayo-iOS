@@ -22,19 +22,10 @@ public struct EventCard: View {
     private func eventCard(event: CalendarModel.Event) -> some View {
         HStack(spacing: 0) {
             ZStack {
-                if let url = event.posterURL {
-                    AsyncImage(url: url) { phase in
-                        if let image = phase.image {
-                            image
-                                .resizable()
-                                .scaledToFill()
-                        } else {
-                            Color.grey4
-                        }
-                    }
-                } else {
-                    Color.grey4
-                }
+                ImageView(
+                    event.posterURL,
+                    placeholder: .placeholder3
+                )
                 
                 LinearGradient(
                     gradient: .init(
