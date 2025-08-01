@@ -60,7 +60,7 @@ public struct CustomAlertView: View {
         }
         .padding(16)
         .frame(maxWidth: 300)
-        .background(Color.background2)
+        .background(Color.grey6)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

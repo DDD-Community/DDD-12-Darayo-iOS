@@ -9,12 +9,10 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
-import Base
 
 public struct MyPageView: View {
     @Bindable private var store: StoreOf<MyPageFeature>
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.openURL) private var openURL
     
     public init(store: StoreOf<MyPageFeature>) {
         self.store = store
@@ -34,16 +32,9 @@ public struct MyPageView: View {
         }
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
             store.send(.enteredForeground)
-        }
-        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
-            guard !oldValue, newValue else { return }
-            store.send(.binding(.set(\.shouldOpenURL, false)))
-            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-            openURL(url)
         }
     }
 }
@@ -136,6 +127,7 @@ private extension MyPageView {
             )
             divider
             menuButton(menu: .individualNotificationSettings)
+                .renderedIf(store.isAuthorized)
         }
     }
     

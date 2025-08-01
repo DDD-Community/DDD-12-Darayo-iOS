@@ -62,7 +62,7 @@ private extension PermissionFeature {
         try await notificationUseCase.updateNotification(isEnabled: isGranted)
         guard isGranted else { return }
         
-        DispatchQueue.main.async {
+        await MainActor.run {
             UIApplication.shared.registerForRemoteNotifications()
         }
     }

@@ -11,7 +11,7 @@ import ComposableArchitecture
 @Reducer
 public struct CustomAlert {
     @ObservableState
-    public struct State {        
+    public struct State: Equatable {        
         let title: String
         let message: String?
         let buttonTitle: String

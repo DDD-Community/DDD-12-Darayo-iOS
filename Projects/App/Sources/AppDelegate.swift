@@ -22,7 +22,6 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         UNUserNotificationCenter.current().delegate = self
         Messaging.messaging().delegate = self
         UNUserNotificationCenter.current().setBadgeCount(0)
-        application.registerForRemoteNotifications()
         return true
     }
     
