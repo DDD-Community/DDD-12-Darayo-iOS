@@ -30,6 +30,7 @@ public struct MyPageView: View {
                 .padding(.bottom, 24)
             }
         }
+        .animation(.easeInOut, value: store.isNotificationOn)
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
         .onChange(of: scenePhase) { oldValue, _ in
@@ -125,9 +126,12 @@ private extension MyPageView {
                     store.send(.toggleChanged(isOn))
                 }
             )
-            divider
-            menuButton(menu: .individualNotificationSettings)
-                .renderedIf(store.isAuthorized)
+            
+            VStack(spacing: 0) {
+                divider
+                menuButton(menu: .individualNotificationSettings)
+            }
+            .renderedIf(store.isNotificationOn)
         }
     }
     

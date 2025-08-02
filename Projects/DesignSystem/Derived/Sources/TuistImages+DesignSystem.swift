@@ -45,6 +45,9 @@ public extension Image {
     static let iconWebsite = Self("icon_website")
     static let logo = Self("logo")
     static let logoSplash = Self("logo_splash")
+    static let placeholder1 = Self("placeholder1")
+    static let placeholder2 = Self("placeholder2")
+    static let placeholder3 = Self("placeholder3")
     static let sampleFestival = Self("sample_festival")
     static let star = Self("star")
 }
@@ -93,6 +96,9 @@ public extension UIImage {
     static let iconWebsite = UIImage.named("icon_website")
     static let logo = UIImage.named("logo")
     static let logoSplash = UIImage.named("logo_splash")
+    static let placeholder1 = UIImage.named("placeholder1")
+    static let placeholder2 = UIImage.named("placeholder2")
+    static let placeholder3 = UIImage.named("placeholder3")
     static let sampleFestival = UIImage.named("sample_festival")
     static let star = UIImage.named("star")
 }
