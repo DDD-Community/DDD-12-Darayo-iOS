@@ -31,7 +31,7 @@ public struct MainView: View {
            mainView
         } destination: { store in
             switch store.case {
-            case .festival(let store): FestivalView(store: store)
+            case .festival(let store): NewFestivalView(store: store)
             case .artistList(let store): ArtistListView(store: store)
             case .notificationSetting(let store): NotificationSettingView(store: store)
             case .termsOfService(let store): TermsOfServiceView(store: store)
