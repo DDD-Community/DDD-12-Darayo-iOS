@@ -59,7 +59,7 @@ private extension MainView {
         switch tab {
         case .home: Image.iconHome
         // case .timetable: Image.iconTimetable
-        case .myPage: Image.iconMyPage
+        case .calendar: Image.iconCalendar
         }
     }
 }
@@ -79,15 +79,20 @@ private extension MainView {
     }
     
     func tabView(bottomPadding: CGFloat) -> some View {
-        TabView(selection: $store.currentTab) {
+        let selection = Binding<MainFeature.Tab>(
+                get: { store.currentTab },
+                set: { store.send(.binding(.set(\.currentTab, $0))) }
+            )
+        
+        return TabView(selection: $store.currentTab) {
             HomeView(store: store.scope(state: \.home, action: \.home))
                 .tag(MainFeature.Tab.home)
             
 //            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
 //                .tag(MainFeature.Tab.timetable)
             
-            MyPageView(store: store.scope(state: \.myPage, action: \.myPage))
-                .tag(MainFeature.Tab.myPage)
+            HomeCalendarView(store: store.scope(state: \.home, action: \.home))
+                .tag(MainFeature.Tab.calendar)
         }
         .padding(.bottom, bottomPadding)
         .ignoresSafeArea(edges: .bottom)

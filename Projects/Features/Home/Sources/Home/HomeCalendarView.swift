@@ -11,24 +11,28 @@ import ComposableArchitecture
 import DesignSystem
 import Domain
 
-struct HomeCalendarView: View {
-    private let store: StoreOf<HomeFeature>
+public struct HomeCalendarView: View {
+    @Bindable private var store: StoreOf<HomeFeature>
     
-    init(store: StoreOf<HomeFeature>) {
+    public init(store: StoreOf<HomeFeature>) {
         self.store = store
     }
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             Color.background1.ignoresSafeArea()
-            ScrollView {
-                VStack(spacing: 0) {
-                    calendarSection
-                        .padding(.top, 16)
-                    
-                    eventListSection
-                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                        .padding(.top, 20)
+            VStack(spacing: 0) {
+                navigationBar
+                
+                ScrollView {
+                    VStack(spacing: 0) {
+                        calendarSection
+                            .padding(.top, 16)
+                        
+                        eventListSection
+                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                            .padding(.top, 20)
+                    }
                 }
             }
         }
@@ -36,7 +40,25 @@ struct HomeCalendarView: View {
 }
 
 private extension HomeCalendarView {
-    private var calendarSection: some View {
+    var navigationBar: some View {
+        HStack {
+            Image.logo
+            Spacer()
+            Button {
+                store.send(.myPageButtonTapped)
+            } label: {
+                Image.iconMyPage
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(Color.grey4)
+            }
+        }
+        .padding(.vertical, 10)
+        .padding(.horizontal, 16)
+    }
+    
+    var calendarSection: some View {
         CalendarView(
             calendarEvents: calendarEvents,
             selectedDate: store.selectedDate,
@@ -47,7 +69,7 @@ private extension HomeCalendarView {
         )
     }
     
-    private var eventListSection: some View {
+    var eventListSection: some View {
         EventListView(
             events: eventsForSelectedDate,
             allEvents: filteredLikedEventsForSelectedDate,
@@ -65,7 +87,7 @@ private extension HomeCalendarView {
         )
     }
     
-    private var filteredLikedEventsForSelectedDate: [CalendarEvent] {
+    var filteredLikedEventsForSelectedDate: [CalendarEvent] {
         guard let selectedDate = store.selectedDate else { return [] }
 
         let likedFestivals = store.favoriteFestivals

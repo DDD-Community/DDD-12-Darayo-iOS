@@ -133,13 +133,13 @@ extension MainFeature {
     public enum Tab: CaseIterable {
         case home
         // case timetable
-        case myPage
+        case calendar
         
         var name: String {
             switch self {
             case .home: "홈"
             // case .timetable: "타임테이블"
-            case .myPage: "MY"
+            case .calendar: "캘린더"
             }
         }
     }
