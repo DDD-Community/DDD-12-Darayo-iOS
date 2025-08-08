@@ -24,11 +24,9 @@ public struct ImageView: View {
         AsyncImage(url: url) { image in
             image
                 .resizable()
-                .scaledToFill()
         } placeholder: {
             placeholder
                 .resizable()
-                .scaledToFill()
         }
     }
 }

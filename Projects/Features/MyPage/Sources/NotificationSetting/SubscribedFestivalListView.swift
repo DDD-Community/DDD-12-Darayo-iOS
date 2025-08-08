@@ -81,6 +81,7 @@ private extension SubscribedFestivalListView {
     func imageView(url: URL?) -> some View {
         ZStack {
             ImageView(url, placeholder: .placeholder3)
+                .scaledToFill()
                 .frame(width: 108, height: 88)
                 .clipped()
             
