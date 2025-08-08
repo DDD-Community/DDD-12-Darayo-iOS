@@ -19,9 +19,6 @@ struct HomeGridView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            favoritesButton(isFiltered: $store.isFiltered)
-                .padding(.bottom, 10)
-            
             ZStack {
                 ZStack {
                     switch store.isFiltered {
@@ -73,29 +70,6 @@ private extension HomeGridView {
             .padding(.bottom, 24)
         }
         .id(store.isFiltered)
-    }
-    
-    func favoritesButton(isFiltered: Binding<Bool>) -> some View {
-        let icon: Image = switch isFiltered.wrappedValue {
-        case true: Image.iconChecked
-        case false: Image.iconUnchecked
-        }
-        
-        return Button {
-            isFiltered.wrappedValue.toggle()
-        } label: {
-            HStack(spacing: 2) {
-                icon
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                
-                Text("좋아요한 페스티벌")
-                    .pretendard(style: .body4)
-                    .foregroundStyle(Color.grey3)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.leading, 16)
     }
     
     var emptyView: some View {
