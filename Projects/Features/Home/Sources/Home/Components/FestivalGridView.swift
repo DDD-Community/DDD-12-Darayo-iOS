@@ -48,7 +48,7 @@ private extension FestivalGridView {
     var gridView: some View {
         LazyVGrid(columns: columns, spacing: 16) {
             ForEach(0..<festivals.count, id: \.self) { index in
-                ZStack(alignment: .topLeading) {
+                ZStack(alignment: .topTrailing) {
                     festivalCardView(festival: festivals[index])
                     heartButton(isFavorite: isFavorite[index]) {
                         heartButtonTapped(festivals[index])
@@ -140,7 +140,7 @@ private extension FestivalGridView {
                 .resizable()
                 .frame(width: 28, height: 28)
         }
-        .padding(.leading, 12)
+        .padding(.trailing, 12)
         .padding(.top, 12)
     }
 }
