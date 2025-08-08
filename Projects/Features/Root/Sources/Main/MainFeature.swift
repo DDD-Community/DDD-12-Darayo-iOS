@@ -63,6 +63,9 @@ public struct MainFeature {
             case let .home(.navigateToFestival(festival, isFavorite)):
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
+            case .home(.navigateToMyPage):
+                state.path.append(.myPage(.init()))
+                return .none
             case .myPage(.showAlert):
                 state.alert = .authorization
                 return .none
@@ -148,6 +151,7 @@ extension MainFeature {
         case notificationSetting(NotificationSettingFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
+        case myPage(MyPageFeature)
     }
 }
 

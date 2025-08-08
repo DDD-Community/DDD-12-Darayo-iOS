@@ -62,6 +62,8 @@ public struct HomeFeature {
         case showAlert
         case binding(BindingAction<State>)
         case navigateToFestival(Festival, Bool)
+        case myPageButtonTapped
+        case navigateToMyPage
     }
     
     public init() {}
@@ -96,6 +98,9 @@ public struct HomeFeature {
             case .showAlert: return .none
             case .binding: return .none
             case .navigateToFestival: return .none
+            case .myPageButtonTapped:
+                return .send(.navigateToMyPage)
+            case .navigateToMyPage: return .none
             }
         }
     }

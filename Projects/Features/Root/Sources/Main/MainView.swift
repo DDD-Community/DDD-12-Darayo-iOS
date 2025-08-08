@@ -36,6 +36,7 @@ public struct MainView: View {
             case .notificationSetting(let store): NotificationSettingView(store: store)
             case .termsOfService(let store): TermsOfServiceView(store: store)
             case .privacyPolicy(let store): PrivacyPolicyView(store: store)
+            case .myPage(let store): MyPageView(store: store)
             }
         }
         .safari(url: $store.url)
