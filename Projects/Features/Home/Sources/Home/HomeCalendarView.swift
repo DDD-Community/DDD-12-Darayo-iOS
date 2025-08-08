@@ -38,7 +38,7 @@ struct HomeCalendarView: View {
 private extension HomeCalendarView {
     private var calendarSection: some View {
         CalendarView(
-            calendar: calendar,
+            calendarEvents: calendarEvents,
             selectedDate: store.selectedDate,
             onDateSelected: { date in
                 store.send(.dateSelected(date))
@@ -51,7 +51,7 @@ private extension HomeCalendarView {
         EventListView(
             events: eventsForSelectedDate,
             allEvents: filteredLikedEventsForSelectedDate,
-            totalLikedEvents: makeEvents(from: store.favoriteFestivals),
+            totalLikedEvents: makeCalendarEvents(from: store.favoriteFestivals),
             title: "좋아요한 페스티벌",
             isFiltered: store.isFiltered,
             onTap: { event in
@@ -65,11 +65,11 @@ private extension HomeCalendarView {
         )
     }
     
-    private var filteredLikedEventsForSelectedDate: [CalendarModel.Event] {
+    private var filteredLikedEventsForSelectedDate: [CalendarEvent] {
         guard let selectedDate = store.selectedDate else { return [] }
 
         let likedFestivals = store.favoriteFestivals
-        let likedEvents = makeEvents(from: likedFestivals)
+        let likedEvents = makeCalendarEvents(from: likedFestivals)
 
         return likedEvents.filter { event in
             Calendar.current.isDate(event.date, inSameDayAs: selectedDate)
@@ -79,70 +79,18 @@ private extension HomeCalendarView {
 }
 
 private extension HomeCalendarView {
-    var calendar: CalendarModel {
-        CalendarModel(events: events)
+    var calendarEvents: [CalendarEvent] {
+        makeCalendarEvents(from: store.festivals)
     }
     
-    var events: [CalendarModel.Event] {
-        makeEvents(from: store.festivals)
-    }
-    
-    var eventsForSelectedDate: [CalendarModel.Event] {
+    var eventsForSelectedDate: [CalendarEvent] {
         guard let selectedDate = store.selectedDate else {
             return []
         }
         
-        let currentEvents = makeEvents(from: store.festivals)
+        let currentEvents = makeCalendarEvents(from: store.festivals)
         return currentEvents.filter { event in
             Calendar.current.isDate(event.date, inSameDayAs: selectedDate)
         }
-    }
-}
-
-private func makeEvents(from festivals: [Festival]) -> [CalendarModel.Event] {
-    festivals.flatMap { festival in
-        var events: [CalendarModel.Event] = []
-        
-        // category: 예매일
-        if let openDate = festival.reservations.first?.openDateTime {
-            let vendorNames = festival.reservations
-                .compactMap { $0.vendor.name }
-                .joined(separator: " · ")
-            
-            events.append(CalendarModel.Event(
-                id: UUID().uuidString,
-                festivalId: festival.id,
-                title: festival.name,
-                location: vendorNames,
-                date: openDate,
-                time: openDate.toString(dateFormat: .reservateionDateTime),
-                category: .reservationDay,
-                posterURL: URL(string: festival.posterURLString)
-            ))
-        }
-        
-        // category: 행사일
-        if let startDate = festival.startDate, let endDate = festival.endDate {
-            var currentDate = startDate
-            let calendar = Calendar.current
-            
-            while currentDate <= endDate {
-                events.append(CalendarModel.Event(
-                    id: UUID().uuidString,
-                    festivalId: festival.id,
-                    title: festival.name,
-                    location: festival.placeName,
-                    date: currentDate,
-                    endDate: endDate,
-                    time: "\(startDate.toString(dateFormat: .eventDate)) - \(endDate.toString(dateFormat: .eventDate))",
-                    category: .festivalDay,
-                    posterURL: URL(string: festival.posterURLString)
-                ))
-                guard let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
-                currentDate = nextDay
-            }
-        }
-        
-        return events
     }
 }
