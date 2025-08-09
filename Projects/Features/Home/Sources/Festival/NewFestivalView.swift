@@ -28,7 +28,8 @@ public struct NewFestivalView: View {
                     
                     VStack(spacing: 12) {
                         festivalInfoView
-                        Spacer().frame(height: 700)
+                        ticketInfoView
+                        artistInfoView
                     }
                     .padding(.horizontal, 16)
                 }
@@ -140,5 +141,18 @@ private extension NewFestivalView {
             urlInfos: store.festival.urlInfos
         )
         .padding(.vertical, 8)
+    }
+    
+    var ticketInfoView: some View {
+        NewTicketInfoView(
+            vendors: store.festival.vendors,
+            purchaseDates: store.purchaseDates
+        )
+    }
+    
+    var artistInfoView: some View {
+        ArtistInfoView(artists: store.festival.artists) {
+            store.send(.seeAllButtonTapped)
+        }
     }
 }
