@@ -28,7 +28,7 @@ struct ArtistInfoView: View {
             case true:
                 EmptyInfoView(title: "아티스트")
             case false:
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     HStack {
                         titleView
                         Spacer()

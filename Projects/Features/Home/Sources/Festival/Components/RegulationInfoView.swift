@@ -36,12 +36,7 @@ struct RegulationInfoView: View {
                 EmptyInfoView(title: "반입 규정")
             case false:
                 VStack(spacing: 0) {
-                    HStack {
-                        titleView
-                        Spacer()
-                        button
-                    }
-                    
+                    headerView
                     descriptionView
                         .renderedIf(isExpanded)
                 }
@@ -53,25 +48,27 @@ struct RegulationInfoView: View {
 }
 
 private extension RegulationInfoView {
-    var titleView: some View {
-        Text("반입 규정")
-            .pretendard(style: .body3)
-            .foregroundStyle(Color.point1)
-            .padding(.leading, 16)
-    }
-    
-    var button: some View {
+    var headerView: some View {
         Button {
             isExpanded.toggle()
         } label: {
-            Image.iconTriangle
-                .renderingMode(.template)
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(Color.grey3)
-                .rotationEffect(.degrees(isExpanded ? 0 : 180))
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
+            HStack {
+                Text("반입 규정")
+                    .pretendard(style: .body3)
+                    .foregroundStyle(Color.point1)
+                    .padding(.leading, 16)
+                
+                Spacer()
+                
+                Image.iconTriangle
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(Color.grey3)
+                    .rotationEffect(.degrees(isExpanded ? 0 : 180))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+            }
         }
     }
     
