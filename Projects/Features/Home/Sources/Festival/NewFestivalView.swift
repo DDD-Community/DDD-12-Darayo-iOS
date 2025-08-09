@@ -23,20 +23,16 @@ public struct NewFestivalView: View {
         ZStack(alignment: .top) {
             imageView
             
-            GeometryReader { geometryProxy in
-                ScrollViewReader { proxy in
-                    let bottomInset = geometryProxy.safeAreaInsets.bottom
-                    let bottomPadding: CGFloat = bottomInset > 0 ? 0 : 16
-                    scrollView(bottomPadding: bottomPadding)
-                        .onChange(of: store.isExpanded) { _, isExpanded in
-                            guard isExpanded else { return }
-                            withAnimation {
-                                proxy.scrollTo(ScrollID.regulationInfo, anchor: .top)
-                            }
+            ScrollViewReader { proxy in
+                scrollView
+                    .onChange(of: store.isExpanded) { _, isExpanded in
+                        guard isExpanded else { return }
+                        withAnimation {
+                            proxy.scrollTo(ScrollID.regulationInfo, anchor: .top)
                         }
-                }
-                .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
+                    }
             }
+            .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
                 
             navigationBar
         }
@@ -46,7 +42,7 @@ public struct NewFestivalView: View {
 }
 
 private extension NewFestivalView {
-    func scrollView(bottomPadding: CGFloat) -> some View {
+    var scrollView: some View {
         OffsetScrollView(scrollOffset: $scrollOffset) {
             VStack(spacing: 0) {
                 Color.clear
@@ -64,10 +60,11 @@ private extension NewFestivalView {
                         }
                         
                     regulationInfoView
+                    updateInfoView
                 }
                 .padding(.horizontal, 16)
             }
-            .padding(.bottom, )
+            .padding(.bottom, 16)
         }
     }
     
@@ -196,5 +193,28 @@ private extension NewFestivalView {
             regulation: store.festival.regulation,
             isExpanded: $store.isExpanded
         )
+    }
+    
+    var updateInfoView: some View {
+        VStack(spacing: 4) {
+            sentenceView("업데이트 일자 : 2025. 06. 15")
+            sentenceView("자세한 내용은 공식 사이트 참조")
+        }
+        .padding(.top, 4)
+    }
+    
+    func sentenceView(_ sentence: String) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            Text("•")
+                .pretendard(style: .caption2)
+                .foregroundStyle(Color.grey5)
+                .padding(.horizontal, 8)
+            
+            Text(sentence)
+                .pretendard(style: .caption2)
+                .foregroundStyle(Color.grey5)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
