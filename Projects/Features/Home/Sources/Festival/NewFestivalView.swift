@@ -24,20 +24,19 @@ public struct NewFestivalView: View {
             OffsetScrollView(scrollOffset: $scrollOffset) {
                 VStack(spacing: 0) {
                     Color.clear
-                        .frame(height: 356)
+                        .frame(height: 256)
                     
-                    Color.background2
-                        .frame(height: 1000)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
+                    VStack(spacing: 12) {
+                        festivalInfoView
+                        Spacer().frame(height: 700)
+                    }
+                    .padding(.horizontal, 16)
                 }
             }
             navigationBar
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
-        //.overlay(Text("\(scrollOffset)"))
     }
 }
 
@@ -73,7 +72,7 @@ private extension NewFestivalView {
     }
     
     var navigationBar: some View {
-        let opacity = min(max(0, scrollOffset - 256.0), 56.0) / 56.0
+        let opacity = min(max(0, scrollOffset - 144.0), 56.0) / 56.0
         return HStack(spacing: 20) {
             backButton
             Spacer()
@@ -131,5 +130,15 @@ private extension NewFestivalView {
                 .foregroundStyle(Color.white)
                 .padding(.vertical, 16)
         }
+    }
+    
+    var festivalInfoView: some View {
+        NewFestivalInfoView(
+            title: store.festival.name,
+            place: store.festival.placeName,
+            dateString: store.dateString,
+            urlInfos: store.festival.urlInfos
+        )
+        .padding(.vertical, 8)
     }
 }
