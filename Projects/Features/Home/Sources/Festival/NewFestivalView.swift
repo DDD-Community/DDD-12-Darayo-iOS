@@ -11,8 +11,9 @@ import ComposableArchitecture
 import DesignSystem
 
 public struct NewFestivalView: View {
-    private let store: StoreOf<FestivalFeature>
+    @Bindable private var store: StoreOf<FestivalFeature>
     @State private var scrollOffset: CGFloat = 0.0
+    private enum ScrollID { case regulationInfo }
     
     public init(store: StoreOf<FestivalFeature>) {
         self.store = store
@@ -21,20 +22,22 @@ public struct NewFestivalView: View {
     public var body: some View {
         ZStack(alignment: .top) {
             imageView
-            OffsetScrollView(scrollOffset: $scrollOffset) {
-                VStack(spacing: 0) {
-                    Color.clear
-                        .frame(height: 256)
-                    
-                    VStack(spacing: 12) {
-                        festivalInfoView
-                        ticketInfoView
-                        artistInfoView
-                        transportationInfoView
-                    }
-                    .padding(.horizontal, 16)
+            
+            GeometryReader { geometryProxy in
+                ScrollViewReader { proxy in
+                    let bottomInset = geometryProxy.safeAreaInsets.bottom
+                    let bottomPadding: CGFloat = bottomInset > 0 ? 0 : 16
+                    scrollView(bottomPadding: bottomPadding)
+                        .onChange(of: store.isExpanded) { _, isExpanded in
+                            guard isExpanded else { return }
+                            withAnimation {
+                                proxy.scrollTo(ScrollID.regulationInfo, anchor: .top)
+                            }
+                        }
                 }
+                .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
             }
+                
             navigationBar
         }
         .navigationBarBackButtonHidden()
@@ -43,6 +46,31 @@ public struct NewFestivalView: View {
 }
 
 private extension NewFestivalView {
+    func scrollView(bottomPadding: CGFloat) -> some View {
+        OffsetScrollView(scrollOffset: $scrollOffset) {
+            VStack(spacing: 0) {
+                Color.clear
+                    .frame(height: 256)
+                
+                VStack(spacing: 12) {
+                    festivalInfoView
+                    ticketInfoView
+                    artistInfoView
+                    transportationInfoView
+                        .overlay(alignment: .bottom) {
+                            Color.clear
+                                .frame(height: 56)
+                                .id(ScrollID.regulationInfo)
+                        }
+                        
+                    regulationInfoView
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.bottom, )
+        }
+    }
+    
     var imageView: some View {
         GeometryReader { proxy in
             let inset = proxy.safeAreaInsets.top
@@ -160,6 +188,13 @@ private extension NewFestivalView {
     var transportationInfoView: some View {
         TransportationInfoView(
             transportationInfo: store.festival.transportationInfo
+        )
+    }
+    
+    var regulationInfoView: some View {
+        RegulationInfoView(
+            regulation: store.festival.regulation,
+            isExpanded: $store.isExpanded
         )
     }
 }
