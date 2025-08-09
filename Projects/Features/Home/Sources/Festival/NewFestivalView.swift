@@ -30,6 +30,7 @@ public struct NewFestivalView: View {
                         festivalInfoView
                         ticketInfoView
                         artistInfoView
+                        transportationInfoView
                     }
                     .padding(.horizontal, 16)
                 }
@@ -154,5 +155,11 @@ private extension NewFestivalView {
         ArtistInfoView(artists: store.festival.artists) {
             store.send(.seeAllButtonTapped)
         }
+    }
+    
+    var transportationInfoView: some View {
+        TransportationInfoView(
+            transportationInfo: store.festival.transportationInfo
+        )
     }
 }

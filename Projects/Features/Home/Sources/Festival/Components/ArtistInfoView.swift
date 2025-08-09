@@ -23,24 +23,27 @@ struct ArtistInfoView: View {
     }
     
     var body: some View {
-        VStack(spacing: artists.isEmpty ? 0 : 12) {
-            HStack {
-                titleView
-                Spacer()
-                seeAllButton
-            }
-            .padding(.horizontal, 16)
-            
+        Group {
             switch artists.isEmpty {
-            case true: emptyView
-            case false: artistListView
+            case true:
+                EmptyInfoView(title: "아티스트")
+            case false:
+                VStack(spacing: 12) {
+                    HStack {
+                        titleView
+                        Spacer()
+                        seeAllButton
+                    }
+                    .padding(.horizontal, 16)
+                    
+                    artistListView
+                }
+                .padding(.top, 12)
+                .padding(.bottom, 16)
+                .background(Color.background2)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            
         }
-        .padding(.top, 12)
-        .padding(.bottom, artists.isEmpty ? 12 : 16)
-        .background(Color.background2)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
@@ -56,22 +59,6 @@ private extension ArtistInfoView {
             Text("전체보기 >")
                 .pretendard(style: .caption1)
                 .foregroundStyle(Color.grey3)
-        }
-        .renderedIf(!artists.isEmpty)
-    }
-    
-    var emptyView: some View {
-        VStack(spacing: 4) {
-            Image.star
-                .renderingMode(.template)
-                .resizable()
-                .frame(width: 25, height: 25)
-                .foregroundStyle(Color.grey5)
-            
-            Text("아직 등록된 정보가 없어요")
-                .pretendard(style: .body5)
-                .foregroundStyle(Color.grey4)
-                .frame(maxWidth: .infinity)
         }
     }
     

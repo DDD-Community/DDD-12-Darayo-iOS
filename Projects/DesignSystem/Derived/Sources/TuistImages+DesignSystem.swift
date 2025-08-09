@@ -6,7 +6,6 @@ public extension Image {
         self.init(name, bundle: Bundle.module)
     }
     
-    static let characterSplash = Self("character_splash")
     static let iconArrowLeft = Self("icon_arrow_left")
     static let iconArtistPlaceholder = Self("icon_artist_placeholder")
     static let iconArtistPlaceholderSelected = Self("icon_artist_placeholder_selected")
@@ -38,6 +37,7 @@ public extension Image {
     static let iconPlus = Self("icon_plus")
     static let iconSelectedDay = Self("icon_selectedDay")
     static let iconShare = Self("icon_share")
+    static let iconStarGrey = Self("icon_star_grey")
     static let iconSubway = Self("icon_subway")
     static let iconTimetable = Self("icon_timetable")
     static let iconTriangle = Self("icon_triangle")
@@ -57,7 +57,6 @@ public extension UIImage {
         return UIImage(named: name, in: Bundle.module, compatibleWith: nil) ?? UIImage()
     }
     
-    static let characterSplash = UIImage.named("character_splash")
     static let iconArrowLeft = UIImage.named("icon_arrow_left")
     static let iconArtistPlaceholder = UIImage.named("icon_artist_placeholder")
     static let iconArtistPlaceholderSelected = UIImage.named("icon_artist_placeholder_selected")
@@ -89,6 +88,7 @@ public extension UIImage {
     static let iconPlus = UIImage.named("icon_plus")
     static let iconSelectedDay = UIImage.named("icon_selectedDay")
     static let iconShare = UIImage.named("icon_share")
+    static let iconStarGrey = UIImage.named("icon_star_grey")
     static let iconSubway = UIImage.named("icon_subway")
     static let iconTimetable = UIImage.named("icon_timetable")
     static let iconTriangle = UIImage.named("icon_triangle")
