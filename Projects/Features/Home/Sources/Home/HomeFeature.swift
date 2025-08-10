@@ -24,7 +24,6 @@ public struct HomeFeature {
     @ObservableState
     public struct State {
         var displayMode: DisplayMode = .grid
-        var isFiltered: Bool = false
         var allFestivals: [Festival] = []
         var likedFestivals: Set<Int> = .init()
         var selectedDate: Date?
@@ -33,10 +32,7 @@ public struct HomeFeature {
         public init() {}
         
         var festivals: [Festival] {
-            switch isFiltered {
-            case true: favoriteFestivals
-            case false: allFestivals
-            }
+            allFestivals
         }
         
         var favoriteFestivals: [Festival] {
@@ -58,7 +54,7 @@ public struct HomeFeature {
         case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
-        case dateSelected(Date)
+        case myPageButtonTapped
         case showAlert
         case binding(BindingAction<State>)
         case navigateToFestival(Festival, Bool)
@@ -90,9 +86,7 @@ public struct HomeFeature {
                 return .run { [state] send in
                     await updateNotificaion(state, send, id: festival.id)
                 }
-            case .dateSelected(let date):
-                state.selectedDate = date
-                return .none
+            case .myPageButtonTapped: return .none
             case .showAlert: return .none
             case .binding: return .none
             case .navigateToFestival: return .none

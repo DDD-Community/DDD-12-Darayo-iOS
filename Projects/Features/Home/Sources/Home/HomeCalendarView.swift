@@ -41,7 +41,7 @@ private extension HomeCalendarView {
             calendar: calendar,
             selectedDate: store.selectedDate,
             onDateSelected: { date in
-                store.send(.dateSelected(date))
+                // store.send(.dateSelected(date))
             },
             onMonthChanged: { _ in }
         )
@@ -53,14 +53,14 @@ private extension HomeCalendarView {
             allEvents: filteredLikedEventsForSelectedDate,
             totalLikedEvents: makeEvents(from: store.favoriteFestivals),
             title: "좋아요한 페스티벌",
-            isFiltered: store.isFiltered,
+            isFiltered: false,
             onTap: { event in
                 if let festival = store.allFestivals.first(where: { $0.id == event.festivalId }) {
                     store.send(.festivalTapped(festival))
                 }
             },
             onToggleFilter: {
-                        store.send(.set(\.isFiltered, !store.isFiltered))
+                // store.send(.set(\.isFiltered, !store.isFiltered))
             }
         )
     }

@@ -57,8 +57,6 @@ private extension MainView {
     func icon(tab: MainFeature.Tab) -> Image {
         switch tab {
         case .home: Image.iconHome
-        // case .timetable: Image.iconTimetable
-        case .myPage: Image.iconMyPage
         }
     }
 }
@@ -81,12 +79,6 @@ private extension MainView {
         TabView(selection: $store.currentTab) {
             HomeView(store: store.scope(state: \.home, action: \.home))
                 .tag(MainFeature.Tab.home)
-            
-//            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
-//                .tag(MainFeature.Tab.timetable)
-            
-            MyPageView(store: store.scope(state: \.myPage, action: \.myPage))
-                .tag(MainFeature.Tab.myPage)
         }
         .padding(.bottom, bottomPadding)
         .ignoresSafeArea(edges: .bottom)
