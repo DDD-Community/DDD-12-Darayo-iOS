@@ -33,7 +33,6 @@ public struct MyPageView: View {
             }
         }
         .navigationBarBackButtonHidden()
-        .animation(.easeInOut, value: store.isNotificationOn)
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
         .onChange(of: scenePhase) { oldValue, _ in
@@ -174,8 +173,15 @@ private extension MyPageView {
             }
             .layoutPriority(1)
             
-            Toggle("", isOn: $store.isNotificationOn)
-                .tint(Color.point1)
+            Toggle(
+                "",
+                isOn: Binding {
+                    store.isNotificationOn
+                } set: { isOn in
+                    store.send(.toggleChanged(isOn))
+                }
+            )
+            .tint(Color.point1)
         }
         .frame(height: 64)
         .padding(.horizontal, 16)
