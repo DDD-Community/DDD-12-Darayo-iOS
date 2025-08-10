@@ -59,7 +59,6 @@ private extension MyPageView {
                 .pretendard(style: .title2)
                 .foregroundStyle(Color.white)
                 .frame(maxWidth: .infinity)
-                .frame(height: 44)
             
             Button {
                 store.send(.backButtonTapped)
@@ -69,8 +68,7 @@ private extension MyPageView {
                     .resizable()
                     .frame(width: 24, height: 24)
                     .foregroundStyle(Color.white)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
+                    .padding(16)
             }
         }
     }
@@ -94,7 +92,7 @@ private extension MyPageView {
             }
         }
         .padding(.horizontal, 16)
-        .padding(.top, 32)
+        .padding(.top, 20)
         .padding(.bottom, 24)
     }
     

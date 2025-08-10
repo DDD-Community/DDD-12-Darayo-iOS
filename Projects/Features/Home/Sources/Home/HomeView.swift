@@ -35,6 +35,7 @@ private extension HomeView {
                 .aspectRatio(contentMode: .fit)
                 .frame(width: 106)
                 .padding(.leading, 16)
+            
             Spacer()
             myPageButton
         }
@@ -49,8 +50,7 @@ private extension HomeView {
                 .resizable()
                 .frame(width: 24, height: 24)
                 .foregroundStyle(Color.grey4)
-                .padding(.vertical, 10)
-                .padding(.trailing, 16)
+                .padding(16)
         }
     }
 }

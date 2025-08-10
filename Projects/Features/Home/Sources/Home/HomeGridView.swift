@@ -18,20 +18,18 @@ struct HomeGridView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                festivalGridView
-                    .refreshable {
-                        store.send(.onRefresh)
-                    }
-                    .animation(.easeInOut(duration: 0.3), value: store.festivals)
-                    .renderedIf(shouldShowGridView)
-                
-                emptyView
-                    .renderedIf(shouldShowEmptyView)
-            }
-            .animation(.easeInOut(duration: 0.3), value: store.festivals.isEmpty)
+        ZStack {
+            festivalGridView
+                .refreshable {
+                    store.send(.onRefresh)
+                }
+                .animation(.easeInOut(duration: 0.3), value: store.festivals)
+                .renderedIf(shouldShowGridView)
+            
+            emptyView
+                .renderedIf(shouldShowEmptyView)
         }
+        .animation(.easeInOut(duration: 0.3), value: store.festivals.isEmpty)
         .background(Color.background1)
     }
 }
