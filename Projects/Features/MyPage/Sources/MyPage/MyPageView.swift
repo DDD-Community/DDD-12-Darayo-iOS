@@ -88,7 +88,7 @@ private extension MyPageView {
                 count: 8,
                 title: "알림 설정한 페스티벌"
             ) {
-                
+                store.send(.subscribedFestivalsButtonTapped)
             }
         }
         .padding(.horizontal, 16)

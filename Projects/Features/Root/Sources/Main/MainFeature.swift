@@ -54,11 +54,14 @@ public struct MainFeature {
             case .home(.myPageButtonTapped):
                 state.path.append(.myPage(.init()))
                 return .none
+            case .alert(.presented(.buttonTapped)):
+                state.shouldOpenURL = true
+                return .none
             case .path(.element(_, .myPage(.showAlert))):
                 state.alert = .authorization
                 return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
+            case .path(.element(_, .myPage(.subscribedFestivalsButtonTapped))):
+                state.path.append(.subscribedFestivals(.init()))
                 return .none
             case .path(.element(_, .myPage(.menuTapped(.inquiry)))):
                 state.url = URL(string: Constant.URL.inquiry)
@@ -71,7 +74,7 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
-            case .path(.element(_, .notificationSetting(let action))):
+            case .path(.element(_, .subscribedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):
                     state.path.append(.festival(.init(
@@ -129,7 +132,7 @@ extension MainFeature {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
         case myPage(MyPageFeature)
-        case notificationSetting(NotificationSettingFeature)
+        case subscribedFestivals(SubscribedFestivalsFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
     }

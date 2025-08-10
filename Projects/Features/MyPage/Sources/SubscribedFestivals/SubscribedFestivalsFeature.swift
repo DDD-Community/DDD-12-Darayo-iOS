@@ -1,5 +1,5 @@
 //
-//  NotificationSettingFeature.swift
+//  SubscribedFestivalsFeature.swift
 //  MyPage
 //
 //  Created by 이정원 on 7/5/25.
@@ -10,7 +10,7 @@ import ComposableArchitecture
 import Domain
 
 @Reducer
-public struct NotificationSettingFeature {
+public struct SubscribedFestivalsFeature {
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
@@ -69,7 +69,7 @@ public struct NotificationSettingFeature {
     }
 }
 
-private extension NotificationSettingFeature {
+private extension SubscribedFestivalsFeature {
     func fetchSubsribedFestivals() async -> Action {
         do {
             let festivals = try await notificationUseCase.fetchSubscribedFestivals()

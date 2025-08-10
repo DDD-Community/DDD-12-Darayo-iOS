@@ -1,5 +1,5 @@
 //
-//  SubscribedFestivalListView.swift
+//  FestivalListView.swift
 //  MyPage
 //
 //  Created by 이정원 on 7/24/25.
@@ -11,36 +11,81 @@ import ComposableArchitecture
 import DesignSystem
 import Domain
 
-struct SubscribedFestivalListView: View {
+struct FestivalListView: View {
     private let festivals: [Festival]
+    private let isLoading: Bool
     private let action: (Festival) -> Void
-    private let notificationAction: (Festival) -> Void
+    private let deleteAction: (Festival) -> Void
     
     init(
         festivals: [Festival],
+        isLoading: Bool,
         action: @escaping (Festival) -> Void,
-        notificationAction: @escaping (Festival) -> Void
+        deleteAction: @escaping (Festival) -> Void
     ) {
         self.festivals = festivals
+        self.isLoading = isLoading
         self.action = action
-        self.notificationAction = notificationAction
+        self.deleteAction = deleteAction
     }
     
     var body: some View {
-        VStack(spacing: 12) {
-            ForEach(0..<festivals.count, id: \.self) { index in
-                let festival = festivals[index]
-                festivalView(festival: festival) {
-                    action(festival)
-                } notificationAction: {
-                    notificationAction(festival)
+        Group {
+            switch isLoading {
+            case true: shimmerListView
+            case false:
+                switch festivals.isEmpty {
+                case true: emptyView
+                case false: festivalListView
                 }
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: festivals.isEmpty)
     }
 }
 
-private extension SubscribedFestivalListView {
+private extension FestivalListView {
+    var shimmerListView: some View {
+        ScrollView([]) {
+            VStack(spacing: 12) {
+                ForEach(0..<20, id: \.self) { _ in
+                    ShimmerView()
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 88)
+                        .clipShape(RoundedRectangle(cornerRadius: 4))
+                }
+            }
+            .padding(16)
+        }
+    }
+    
+    var emptyView: some View {
+        VStack(spacing: 22) {
+            Image.star
+            Text("알림 설정한 페스티벌이 없어요!")
+                .pretendard(style: .title2)
+                .foregroundStyle(Color.white)
+        }
+        .frame(maxHeight: .infinity)
+    }
+    
+    var festivalListView: some View {
+        ScrollView {
+            VStack(spacing: 12) {
+                ForEach(0..<festivals.count, id: \.self) { index in
+                    let festival = festivals[index]
+                    festivalView(festival: festival) {
+                        action(festival)
+                    } notificationAction: {
+                        deleteAction(festival)
+                    }
+                }
+            }
+            .padding(16)
+        }
+        .animation(.easeInOut, value: festivals)
+    }
+    
     func festivalView(
         festival: Festival,
         action: @escaping () -> Void,

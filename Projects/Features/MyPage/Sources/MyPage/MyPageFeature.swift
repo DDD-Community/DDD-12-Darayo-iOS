@@ -40,6 +40,7 @@ public struct MyPageFeature {
         case notificationStateFetched(Bool)
         case toggleChanged(Bool)
         case setToggle(Bool)
+        case subscribedFestivalsButtonTapped
         case showAlert
         case menuTapped(Menu)
         case backButtonTapped
@@ -92,10 +93,12 @@ public struct MyPageFeature {
             case .setToggle(let isOn):
                 state.isNotificationOn = isOn
                 return .none
+            
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .showAlert:
                 return .none
+            case .subscribedFestivalsButtonTapped: return .none
             case .menuTapped: return .none
             case .binding: return .none
             }
