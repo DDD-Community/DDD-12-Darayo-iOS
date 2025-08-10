@@ -127,9 +127,7 @@ private extension MyPageFeature {
 }
 
 extension MyPageFeature {
-    public enum Menu {
-        case notificationSettings
-        case individualNotificationSettings
+    public enum Menu: CaseIterable {
         case inquiry
         case termsOfService
         case privacyPolicy

@@ -115,10 +115,8 @@ private extension MainFeature {
     
     func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
         return switch menu {
-        case .individualNotificationSettings: .notificationSetting(.init())
         case .termsOfService: .termsOfService(.init())
         case .privacyPolicy: .privacyPolicy(.init())
-        case .notificationSettings: nil
         case .inquiry: nil
         }
     }
