@@ -14,6 +14,7 @@ import Util
 @Reducer
 public struct MyPageFeature {
     @Dependency(\.notificationUseCase) private var notificationUseCase
+    @Dependency(\.dismiss) private var dismiss
     
     @ObservableState
     public struct State {
@@ -41,6 +42,7 @@ public struct MyPageFeature {
         case setToggle(Bool)
         case showAlert
         case menuTapped(Menu)
+        case backButtonTapped
         case binding(BindingAction<State>)
     }
     
@@ -90,6 +92,8 @@ public struct MyPageFeature {
             case .setToggle(let isOn):
                 state.isNotificationOn = isOn
                 return .none
+            case .backButtonTapped:
+                return .run { _ in await dismiss() }
             case .showAlert:
                 return .none
             case .menuTapped: return .none

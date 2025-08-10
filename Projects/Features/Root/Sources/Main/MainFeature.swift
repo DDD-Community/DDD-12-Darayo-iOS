@@ -48,10 +48,6 @@ public struct MainFeature {
             HomeFeature()
         }
         
-//        Scope(state: \.timetable, action: \.timetable) {
-//            TimetableFeature()
-//        }
-        
         Scope(state: \.myPage, action: \.myPage) {
             MyPageFeature()
         }
@@ -62,6 +58,9 @@ public struct MainFeature {
                 return .run { _ in await checkNotification() }
             case let .home(.navigateToFestival(festival, isFavorite)):
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
+                return .none
+            case .home(.myPageButtonTapped):
+                state.path.append(.myPage(.init()))
                 return .none
             case .myPage(.showAlert):
                 state.alert = .authorization
@@ -90,7 +89,6 @@ public struct MainFeature {
                 default: return .none
                 }
             case .home: return .none
-            // case .timetable: return .none
             case .myPage: return .none
             case .binding: return .none
             case .path: return .none
@@ -141,6 +139,7 @@ extension MainFeature {
     public enum Path {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
+        case myPage(MyPageFeature)
         case notificationSetting(NotificationSettingFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)

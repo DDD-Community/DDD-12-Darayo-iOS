@@ -33,6 +33,7 @@ public struct MainView: View {
             switch store.case {
             case .festival(let store): FestivalView(store: store)
             case .artistList(let store): ArtistListView(store: store)
+            case .myPage(let store): MyPageView(store: store)
             case .notificationSetting(let store): NotificationSettingView(store: store)
             case .termsOfService(let store): TermsOfServiceView(store: store)
             case .privacyPolicy(let store): PrivacyPolicyView(store: store)

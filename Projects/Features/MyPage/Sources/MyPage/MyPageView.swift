@@ -19,17 +19,17 @@ public struct MyPageView: View {
     }
     
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             navigationBar
             ScrollView {
                 VStack(spacing: 0) {
-                    versionInfoView
-                    notificationSection
-                    appInfoSection
+                    Color.mint
+                        .frame(height: 800)
                 }
                 .padding(.bottom, 24)
             }
         }
+        .navigationBarBackButtonHidden()
         .animation(.easeInOut, value: store.isNotificationOn)
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
@@ -54,11 +54,25 @@ private extension MyPageView {
 
 private extension MyPageView {
     var navigationBar: some View {
-        Text("MY")
-            .pretendard(style: .title2)
-            .foregroundStyle(Color.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 55)
+        ZStack(alignment: .leading) {
+            Text("MY")
+                .pretendard(style: .title2)
+                .foregroundStyle(Color.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: 44)
+            
+            Button {
+                store.send(.backButtonTapped)
+            } label: {
+                Image.iconArrowLeft
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(Color.white)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+            }
+        }
     }
     
     var versionInfoView: some View {
