@@ -72,8 +72,13 @@ private extension FestivalListView {
     
     var emptyView: some View {
         VStack(spacing: 22) {
+            let text = switch type {
+            case .liked: "좋아요한"
+            case .subscribed: "알림 설정한"
+            }
+            
             Image.star
-            Text("알림 설정한 페스티벌이 없어요!")
+            Text("\(text) 페스티벌이 없어요!")
                 .pretendard(style: .title2)
                 .foregroundStyle(Color.white)
         }
