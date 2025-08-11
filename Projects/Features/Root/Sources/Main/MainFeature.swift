@@ -60,6 +60,9 @@ public struct MainFeature {
             case .path(.element(_, .myPage(.showAlert))):
                 state.alert = .authorization
                 return .none
+            case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
+                state.path.append(.likedFestivals(.init()))
+                return .none
             case .path(.element(_, .myPage(.subscribedFestivalsButtonTapped))):
                 state.path.append(.subscribedFestivals(.init()))
                 return .none
@@ -74,6 +77,15 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
+            case .path(.element(_, .likedFestivals(let action))):
+                switch action {
+                case .navigateToFestival(let festival, let isFavorite):
+                    state.path.append(.festival(.init(
+                        festival: festival, isFavorite: isFavorite
+                    )))
+                    return .none
+                default: return .none
+                }
             case .path(.element(_, .subscribedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):
@@ -132,6 +144,7 @@ extension MainFeature {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
         case myPage(MyPageFeature)
+        case likedFestivals(LikedFestivalsFeature)
         case subscribedFestivals(SubscribedFestivalsFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)

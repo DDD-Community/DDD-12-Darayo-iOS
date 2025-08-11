@@ -9,15 +9,21 @@
 import Foundation
 import UserNotifications
 import ComposableArchitecture
+import Domain
 import Util
 
 @Reducer
 public struct MyPageFeature {
     @Dependency(\.notificationUseCase) private var notificationUseCase
+    @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.dismiss) private var dismiss
     
     @ObservableState
     public struct State {
+        var likedFestivals: [LikedFestival] = []
+        var subscribedFestivals: [Festival] = []
+        var isLoading: Bool = false
+        
         var isAuthorized: Bool = false
         var isNotificationOn: Bool = false
         
@@ -38,8 +44,12 @@ public struct MyPageFeature {
         case checkAuthorization
         case authorizationChecked(Bool)
         case notificationStateFetched(Bool)
+        case likedFestivalsFetched([LikedFestival])
+        case subscribedFestivalsFetched([Festival])
+        case allFetched
         case toggleChanged(Bool)
         case setToggle(Bool)
+        case likedFestivalsButtonTapped
         case subscribedFestivalsButtonTapped
         case showAlert
         case menuTapped(Menu)
@@ -54,7 +64,13 @@ public struct MyPageFeature {
 
         Reduce { state, action in
             switch action {
-            case .onAppear, .enteredForeground:
+            case .onAppear:
+                state.isLoading = true
+                return .merge([
+                    .send(.checkAuthorization),
+                    .run { send in await fetchAll(send) }
+                ])
+            case .enteredForeground:
                 return .send(.checkAuthorization)
             case .checkAuthorization:
                 return .run { send in
@@ -80,6 +96,15 @@ public struct MyPageFeature {
             case .notificationStateFetched(let isEnabled):
                 state.isNotificationOn = isEnabled
                 return .none
+            case .likedFestivalsFetched(let festivals):
+                state.likedFestivals = festivals
+                return .none
+            case .subscribedFestivalsFetched(let festivals):
+                state.subscribedFestivals = festivals
+                return .none
+            case .allFetched:
+                state.isLoading = false
+                return .none
             case .toggleChanged(let isOn):
                 return .run { send in
                     switch await isAuthorized {
@@ -98,6 +123,7 @@ public struct MyPageFeature {
                 return .run { _ in await dismiss() }
             case .showAlert:
                 return .none
+            case .likedFestivalsButtonTapped: return .none
             case .subscribedFestivalsButtonTapped: return .none
             case .menuTapped: return .none
             case .binding: return .none
@@ -107,6 +133,19 @@ public struct MyPageFeature {
 }
 
 private extension MyPageFeature {
+    func fetchAll(_ send: Send<Action>) async {
+        do {
+            let likedFestivals = try festivalUseCase.fetchLikedFestivals()
+            async let subscribedFestivals = notificationUseCase.fetchSubscribedFestivals()
+            
+            await send(.likedFestivalsFetched(likedFestivals))
+            try await send(.subscribedFestivalsFetched(subscribedFestivals))
+            await send(.allFetched)
+        } catch {
+            await send(.showAlert)
+        }
+    }
+    
     var isAuthorized: Bool {
         get async {
             let center =  UNUserNotificationCenter.current()

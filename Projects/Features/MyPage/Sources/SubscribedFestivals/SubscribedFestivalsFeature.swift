@@ -24,7 +24,7 @@ public struct SubscribedFestivalsFeature {
     
     public enum Action {
         case onAppear
-        case festivalsFestched([Festival])
+        case festivalsFetched([Festival])
         case unsubscribed(Int)
         case festivalTapped(Festival)
         case noticiationButtonTapped(Festival)
@@ -42,7 +42,7 @@ public struct SubscribedFestivalsFeature {
                 return .run { send in
                     await send(fetchSubsribedFestivals())
                 }
-            case .festivalsFestched(let festivals):
+            case .festivalsFetched(let festivals):
                 state.festivals = festivals
                 state.isLoading = false
                 return .none
@@ -59,6 +59,7 @@ public struct SubscribedFestivalsFeature {
                 state.festivals.removeAll { $0.id == id }
                 return .none
             case .showAlert:
+                state.isLoading = false
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
@@ -73,7 +74,7 @@ private extension SubscribedFestivalsFeature {
     func fetchSubsribedFestivals() async -> Action {
         do {
             let festivals = try await notificationUseCase.fetchSubscribedFestivals()
-            return .festivalsFestched(festivals)
+            return .festivalsFetched(festivals)
         } catch {
             return .showAlert
         }

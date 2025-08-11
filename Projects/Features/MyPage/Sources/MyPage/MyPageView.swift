@@ -77,15 +77,15 @@ private extension MyPageView {
         HStack(spacing: 9) {
             festivalListButton(
                 image: Image.iconHeart,
-                count: 5,
+                count: store.likedFestivals.count,
                 title: "좋아요한 페스티벌"
             ) {
-                
+                store.send(.likedFestivalsButtonTapped)
             }
             
             festivalListButton(
                 image: Image.iconNotification,
-                count: 8,
+                count: store.subscribedFestivals.count,
                 title: "알림 설정한 페스티벌"
             ) {
                 store.send(.subscribedFestivalsButtonTapped)
@@ -100,6 +100,7 @@ private extension MyPageView {
         VStack(spacing: 0) {
             menuTitleView("알림")
             notificationToggleView
+            divider
         }
     }
     
