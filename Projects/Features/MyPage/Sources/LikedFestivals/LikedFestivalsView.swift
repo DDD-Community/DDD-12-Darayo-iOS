@@ -19,17 +19,20 @@ public struct LikedFestivalsView: View {
     
     public var body: some View {
         FestivalListView(
+            type: .liked,
             festivals: store.festivals,
+            isOn: store.isFavorite,
             isLoading: store.isLoading
         ) { festival in
             store.send(.festivalTapped(festival))
-        } deleteAction: { _ in
-            
+        } iconAction: { festival in
+            store.send(.likeButtonTapped(festival))
         }
         .navigation(title: "좋아요한 페스티벌 목록") {
             store.send(.backButtonTapped)
         }
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
+        .refreshable { store.send(.onAppear) }
     }
 }

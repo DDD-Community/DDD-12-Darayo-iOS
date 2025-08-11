@@ -18,6 +18,7 @@ public struct LikedFestivalsFeature {
     @ObservableState
     public struct State {
         var festivals: [Festival] = []
+        var isFavorite: [Bool] = []
         var isLoading: Bool = true
         public init() {}
     }
@@ -28,6 +29,7 @@ public struct LikedFestivalsFeature {
         case showAlert
         case backButtonTapped
         case festivalTapped(Festival)
+        case likeButtonTapped(Festival)
         case navigateToFestival(Festival, Bool)
     }
     
@@ -42,6 +44,7 @@ public struct LikedFestivalsFeature {
                 }
             case .festivalsFetched(let festivals):
                 state.festivals = festivals
+                state.isFavorite = festivals.map { _ in true }
                 state.isLoading = false
                 return .none
             case .festivalTapped(let festival):
@@ -51,6 +54,13 @@ public struct LikedFestivalsFeature {
                 } catch {
                     return .send(.showAlert)
                 }
+            case .likeButtonTapped(let festival):
+                let index = state.festivals.firstIndex { $0 == festival }
+                guard let index else { return .none }
+                let isFavorite = state.isFavorite[index]
+                updateLikedFestivals(festival.id, isFavorite: isFavorite)
+                state.isFavorite[index].toggle()
+                return .none
             case .showAlert:
                 state.isLoading = false
                 return .none
@@ -71,6 +81,13 @@ private extension LikedFestivalsFeature {
             return .festivalsFetched(likedFestivals)
         } catch {
             return .showAlert
+        }
+    }
+    
+    func updateLikedFestivals(_ id: Int, isFavorite: Bool) {
+        switch isFavorite {
+        case true: try? festivalUseCase.deleteLikedFestival(id: id)
+        case false: try? festivalUseCase.addLikedFestival(id: id)
         }
     }
 }

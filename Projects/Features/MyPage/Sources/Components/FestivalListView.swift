@@ -12,21 +12,32 @@ import DesignSystem
 import Domain
 
 struct FestivalListView: View {
+    enum ListType {
+        case liked
+        case subscribed
+    }
+    
+    private let type: ListType
     private let festivals: [Festival]
+    private let isOn: [Bool]
     private let isLoading: Bool
     private let action: (Festival) -> Void
-    private let deleteAction: (Festival) -> Void
+    private let iconAction: (Festival) -> Void
     
     init(
+        type: ListType,
         festivals: [Festival],
+        isOn: [Bool],
         isLoading: Bool,
         action: @escaping (Festival) -> Void,
-        deleteAction: @escaping (Festival) -> Void
+        iconAction: @escaping (Festival) -> Void
     ) {
+        self.type = type
         self.festivals = festivals
+        self.isOn = isOn
         self.isLoading = isLoading
         self.action = action
-        self.deleteAction = deleteAction
+        self.iconAction = iconAction
     }
     
     var body: some View {
@@ -74,10 +85,14 @@ private extension FestivalListView {
             VStack(spacing: 12) {
                 ForEach(0..<festivals.count, id: \.self) { index in
                     let festival = festivals[index]
-                    festivalView(festival: festival) {
+                    let isOn = isOn[index]
+                    festivalView(
+                        festival: festival,
+                        isOn: isOn
+                    ) {
                         action(festival)
                     } notificationAction: {
-                        deleteAction(festival)
+                        iconAction(festival)
                     }
                 }
             }
@@ -88,6 +103,7 @@ private extension FestivalListView {
     
     func festivalView(
         festival: Festival,
+        isOn: Bool,
         action: @escaping () -> Void,
         notificationAction: @escaping () -> Void
     ) -> some View {
@@ -110,7 +126,14 @@ private extension FestivalListView {
                     }
                     
                     Button(action: notificationAction) {
-                        Image.iconNotificationFill
+                        let image: Image = switch (type, isOn) {
+                        case (.liked, true): .iconHeartFill
+                        case (.liked, false): .iconHeart
+                        case (.subscribed, true): .iconNotificationFill
+                        case (.subscribed, false): .iconNotification
+                        }
+                        
+                        image
                             .resizable()
                             .frame(width: 24, height: 24)
                     }
