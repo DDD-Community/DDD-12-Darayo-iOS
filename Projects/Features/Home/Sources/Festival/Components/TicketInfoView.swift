@@ -54,7 +54,7 @@ private extension TicketInfoView {
             .renderedIf(!vendors.isEmpty)
             
             Text("미정")
-                .pretendard(style: .body5)
+                .pretendard(style: .body4)
                 .foregroundStyle(Color.grey4)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .renderedIf(vendors.isEmpty)
@@ -106,7 +106,7 @@ private extension TicketInfoView {
             .renderedIf(!purchaseDates.isEmpty)
             
             Text("미정")
-                .pretendard(style: .body5)
+                .pretendard(style: .body4)
                 .foregroundStyle(Color.grey4)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .renderedIf(purchaseDates.isEmpty)

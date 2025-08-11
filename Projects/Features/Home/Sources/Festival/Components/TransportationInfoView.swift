@@ -71,12 +71,12 @@ private extension TransportationInfoView {
     func sentenceView(_ sentence: String) -> some View {
         HStack(alignment: .top, spacing: 0) {
             Text("•")
-                .pretendard(style: .body5)
+                .pretendard(style: .body4)
                 .foregroundStyle(Color.grey1)
                 .padding(.horizontal, 8)
             
             Text(sentence)
-                .pretendard(style: .body5)
+                .pretendard(style: .body4)
                 .foregroundStyle(Color.grey1)
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)

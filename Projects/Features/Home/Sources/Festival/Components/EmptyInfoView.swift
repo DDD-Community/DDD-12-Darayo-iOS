@@ -31,7 +31,7 @@ struct EmptyInfoView: View {
                     .foregroundStyle(Color.grey5)
                 
                 Text("아직 등록된 정보가 없어요")
-                    .pretendard(style: .body5)
+                    .pretendard(style: .body4)
                     .foregroundStyle(Color.grey4)
                     .frame(maxWidth: .infinity)
             }
