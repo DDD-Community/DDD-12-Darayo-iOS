@@ -49,7 +49,6 @@ public extension Image {
     static let placeholder2 = Self("placeholder2")
     static let placeholder3 = Self("placeholder3")
     static let sampleFestival = Self("sample_festival")
-    static let segmentedControlBackground = Self("segmentedControl_Background")
     static let star = Self("star")
 }
 
@@ -101,6 +100,5 @@ public extension UIImage {
     static let placeholder2 = UIImage.named("placeholder2")
     static let placeholder3 = UIImage.named("placeholder3")
     static let sampleFestival = UIImage.named("sample_festival")
-    static let segmentedControlBackground = UIImage.named("segmentedControl_Background")
     static let star = UIImage.named("star")
 }
