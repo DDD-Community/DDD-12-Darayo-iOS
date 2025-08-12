@@ -16,15 +16,15 @@ public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
-    enum DisplayMode {
-        case grid
-        case calendar
+    public enum CalendarType {
+        case ticketing  // 예매일
+        case event      // 행사일
     }
     
     @ObservableState
     public struct State {
-        var displayMode: DisplayMode = .grid
         var isFiltered: Bool = false
+        var calendarType: CalendarType = .event
         var allFestivals: [Festival] = []
         var likedFestivals: Set<Int> = .init()
         var selectedDate: Date?
@@ -64,6 +64,7 @@ public struct HomeFeature {
         case navigateToFestival(Festival, Bool)
         case myPageButtonTapped
         case navigateToMyPage
+        case calendarTypeChanged(CalendarType)
     }
     
     public init() {}
@@ -94,6 +95,11 @@ public struct HomeFeature {
                 }
             case .dateSelected(let date):
                 state.selectedDate = date
+                return .none
+            case .calendarTypeChanged(let type):
+                state.calendarType = type
+                // 캘린더 타입이 변경되면 선택된 날짜 초기화
+                state.selectedDate = nil
                 return .none
             case .showAlert: return .none
             case .binding: return .none
