@@ -13,6 +13,7 @@ import Domain
 
 public struct HomeCalendarView: View {
     @Bindable private var store: StoreOf<HomeFeature>
+    @State private var selectedMode = 0
     
     public init(store: StoreOf<HomeFeature>) {
         self.store = store
@@ -23,6 +24,8 @@ public struct HomeCalendarView: View {
             Color.background1.ignoresSafeArea()
             VStack(spacing: 0) {
                 navigationBar
+                
+                CalendarSegmentedControl(selectedMode: $selectedMode)
                 
                 ScrollView {
                     VStack(spacing: 0) {
