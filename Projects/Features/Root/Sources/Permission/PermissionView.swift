@@ -23,6 +23,7 @@ public struct PermissionView: View {
             permissionView
             Spacer()
             infoTextView
+            button
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 22)
@@ -104,5 +105,14 @@ private extension PermissionView {
                 .foregroundStyle(Color.white)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+    }
+    
+    var button: some View {
+        Button("권한 설정하기") {
+            store.send(.buttonTapped)
+        }
+        .buttonStyle(.festibee)
+        .padding(.top, 18)
+        .padding(.bottom, 22)
     }
 }
