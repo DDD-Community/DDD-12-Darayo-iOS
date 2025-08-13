@@ -15,6 +15,9 @@ struct CalendarDayCell: View {
     let hasEvent: Bool
     let onDateSelected: (Date) -> Void
     
+    private let underlineWidth: CGFloat = 10
+    private let underlineHeight: CGFloat = 1.5
+    
     private var dayNumber: Int {
         Calendar.current.component(.day, from: date)
     }
@@ -30,6 +33,10 @@ struct CalendarDayCell: View {
     
     private var isCurrentMonth: Bool {
         Calendar.current.isDate(date, equalTo: currentMonth, toGranularity: .month)
+    }
+    
+    private var isEnabled: Bool {
+        return hasEvent && isCurrentMonth
     }
     
     var body: some View {
@@ -48,26 +55,26 @@ struct CalendarDayCell: View {
                 Text("\(dayNumber)")
                     .pretendard(style: .body3)
                     .foregroundColor(textColor)
-                    .padding(.top, 11)
+                    .padding(.top, 8)
                 
-                // 이벤트 dot(고정)
+                Spacer(minLength: 0)
+                
+                // 언더라인
                 if hasEvent && isCurrentMonth {
-                    Circle()
-                        .fill(dotColor)
-                        .frame(width: 4, height: 4)
-                        .offset(y: -2)
-                    
+                    Rectangle()
+                        .fill(underlineColor)
+                        .frame(width: underlineWidth, height: underlineHeight)
+                        .padding(.bottom, 10)
                 } else {
                     Spacer()
-                        .frame(width: 4, height: 4)
+                        .frame(height: 10)
                 }
-                Spacer()
             }
         }
         .frame(width: 36, height: 36 , alignment: .top)
         .contentShape(Rectangle())
         .onTapGesture {
-            if isCurrentMonth {
+            if isEnabled {
                 onDateSelected(date)
             }
         }
@@ -75,7 +82,9 @@ struct CalendarDayCell: View {
     
     private var textColor: Color {
         if !isCurrentMonth {
-            return .grey5
+            return .grey4
+        } else if !hasEvent {
+            return .grey4
         } else if isSelected {
             return .black
         } else {
@@ -83,11 +92,7 @@ struct CalendarDayCell: View {
         }
     }
     
-    private var dotColor: Color {
-        if isSelected {
-            return .black
-        } else {
-            return .point1
-        }
+    private var underlineColor: Color {
+        isSelected ? .black : .point1
     }
 }

@@ -57,28 +57,5 @@ struct MonthNavigationView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .center)
-//        .padding(.horizontal, 15)
-    }
-}
-
-#Preview {
-    MonthNavigationViewPreviewWrapper()
-        .padding()
-        .background(Color.black) // 배경 설정
-}
-
-private struct MonthNavigationViewPreviewWrapper: View {
-    @State private var currentMonth = Date()
-
-    var body: some View {
-        MonthNavigationView(
-            currentMonth: currentMonth,
-            onPreviousMonth: {
-                currentMonth = Calendar.current.date(byAdding: .month, value: -1, to: currentMonth) ?? currentMonth
-            },
-            onNextMonth: {
-                currentMonth = Calendar.current.date(byAdding: .month, value: 1, to: currentMonth) ?? currentMonth
-            }
-        )
     }
 }
