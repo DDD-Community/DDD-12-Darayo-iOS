@@ -21,41 +21,54 @@ struct MonthNavigationView: View {
     }()
     
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
             Button(action: onPreviousMonth) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.background2)
-                        .frame(width: 24, height: 24)
-                    
-                    Image(systemName: "chevron.left")
-                        .resizable()
-                        .frame(width: 7.43, height: 13)
-                        .foregroundColor(.white)
-                }
+                Image.iconChevronLeft
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.white)
             }
-            
-            Spacer()
+            .buttonStyle(.plain)
+            .pressEffect()
             
             Text(dateFormatter.string(from: currentMonth))
                 .pretendard(style: .title3)
                 .foregroundColor(.white)
             
-            Spacer()
-            
             Button(action: onNextMonth) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.background2)
-                        .frame(width: 24, height: 24)
-                    
-                    Image(systemName: "chevron.right")
-                        .resizable()
-                        .frame(width: 7.43, height: 13)
-                        .foregroundColor(.white)
-                }
+                Image.iconChevronRight
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.white)
             }
+            .buttonStyle(.plain)
+            .pressEffect()
         }
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+}
+
+// MARK: - 눌림 효과
+private extension View {
+    func pressEffect(scale: CGFloat = 0.92, opacity: Double = 0.7) -> some View {
+        modifier(PressEffect(scale: scale, opacity: opacity))
+    }
+}
+
+private struct PressEffect: ViewModifier {
+    @State private var isPressed = false
+    let scale: CGFloat
+    let opacity: Double
+    
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPressed ? scale : 1)
+            .opacity(isPressed ? opacity : 1)
+            .animation(.easeOut(duration: 0.12), value: isPressed)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in if !isPressed { isPressed = true } }
+                    .onEnded { _ in isPressed = false }
+            )
     }
 }
