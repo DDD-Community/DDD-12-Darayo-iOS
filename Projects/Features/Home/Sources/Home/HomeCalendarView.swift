@@ -30,7 +30,7 @@ public struct HomeCalendarView: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         calendarSection
-                            .padding(.top, 16)
+                            .padding(.top, 5)
                         
                         eventListSection
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)

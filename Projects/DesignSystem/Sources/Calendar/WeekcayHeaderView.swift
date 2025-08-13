@@ -12,12 +12,12 @@ struct WeekdayHeaderView: View {
     private let weekdaySymbols = ["월", "화", "수", "목", "금", "토", "일"]
     
     var body: some View {
-        HStack(spacing: 0) {
+        LazyVGrid(columns: CalendarLayout.columns, spacing: 0) {
             ForEach(weekdaySymbols, id: \.self) { weekday in
                 Text(weekday)
                     .pretendard(style: .body4)
                     .foregroundColor(.grey3)
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .center)
             }
         }
     }
