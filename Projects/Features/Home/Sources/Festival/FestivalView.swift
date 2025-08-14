@@ -98,11 +98,17 @@ private extension FestivalView {
         GeometryReader { proxy in
             let inset = proxy.safeAreaInsets.top
             
-            ImageView(
-                store.festival.posterURL,
-                placeholder: .placeholder1
-            )
-            .scaledToFit()
+            AsyncImage(url: store.festival.posterURL) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+            } placeholder: {
+                let width = proxy.size.width
+                Image.placeholder1
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: width, height: width * 1.2)
+            }
             .padding(.top, inset - 100)
             .overlay(alignment: .top) {
                 VStack(spacing: 0) {
