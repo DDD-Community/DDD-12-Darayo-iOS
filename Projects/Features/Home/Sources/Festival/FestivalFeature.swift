@@ -99,20 +99,14 @@ public struct FestivalFeature {
             case .notificationButtonTapped:
                 let isEnabled = !state.isNotificationOn
                 
-                guard state.isAuthorized || !isEnabled else {
+                if !state.isAuthorized, isEnabled {
                     return .send(.showAlert(.authorization))
                 }
                 return .send(.updateNotification(isEnabled))
             case .heartButtonTapped:
                 updateLikedFestivals(state)
                 state.isFavorite = checkIsFavorite(state)
-                if state.isFavorite == state.isNotificationOn { return .none }
-                let isEnabled = !state.isNotificationOn
-                
-                guard state.isAuthorized || !isEnabled else {
-                    return .send(.showAlert(.like))
-                }
-                return .send(.updateNotification(state.isFavorite))
+                return .none
             case .updateNotification(let isEnabled):
                 return .run { [state] send in
                     await send(updateNotificaion(state, isEnabled: isEnabled))

@@ -66,7 +66,6 @@ private extension FestivalView {
     }
 }
 
-
 private extension FestivalView {
     var scrollView: some View {
         OffsetScrollView(scrollOffset: $scrollOffset) {

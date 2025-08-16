@@ -7,6 +7,8 @@
 //
 import Foundation
 import ComposableArchitecture
+import UserNotifications
+import Base
 import Domain
 
 @Reducer
@@ -15,28 +17,38 @@ public struct SubscribedFestivalsFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
+    public enum AlertCase: CaseIterable {
+        case authorization
+    }
+    
     @ObservableState
     public struct State: Equatable {
         var festivals: [Festival] = []
         var isEnabled: [Bool] = []
         var isLoading: Bool = true
+        var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert.State?
         public init() {}
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
         case onAppear
         case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case noticiationButtonTapped(Festival)
         case notificationUpdated(Int)
-        case showAlert
+        case showAlert(AlertCase?)
         case backButtonTapped
         case navigateToFestival(Festival, Bool)
+        case binding(BindingAction<State>)
+        case alert(PresentationAction<CustomAlert.Action>)
     }
     
     public init() {}
     
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -57,21 +69,31 @@ public struct SubscribedFestivalsFeature {
                 guard let index else { return .none }
                 let isEnabled = state.isEnabled[index]
                 return .run { send in
-                    await send(updateNotificaion(festival.id, isEnabled: isEnabled))
+                    await send(updateNotificaion(festival.id, isEnabled: !isEnabled))
                 }
             case .notificationUpdated(let id):
                 let index = state.festivals.firstIndex { $0.id == id }
                 guard let index else { return .none }
                 state.isEnabled[index].toggle()
                 return .none
-            case .showAlert:
+            case .showAlert(let alertCase):
                 state.isLoading = false
+                guard let alertCase else { return .none }
+                state.alert = .init(alertCase: alertCase)
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             case .navigateToFestival:
                 return .none
+            case .alert(.presented(.buttonTapped)):
+                state.shouldOpenURL = true
+                return .none
+            case .alert: return .none
+            case .binding: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }
@@ -82,21 +104,34 @@ private extension SubscribedFestivalsFeature {
             let festivals = try await notificationUseCase.fetchSubscribedFestivals()
             return .festivalsFetched(festivals)
         } catch {
-            return .showAlert
+            return .showAlert(nil)
         }
     }
     
     func updateNotificaion(_ id: Int, isEnabled: Bool) async -> Action {
         do {
-            try await notificationUseCase.updateNotification(id: id, isEnabled: !isEnabled)
+            let isAuthorized = await isAuthorized
+            if !isAuthorized, isEnabled {
+                return .showAlert(.authorization)
+            }
+            
+            try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
             return .notificationUpdated(id)
         } catch {
-            return .showAlert
+            return .showAlert(nil)
         }
     }
     
     func fetchLikedFestivals() -> Set<Int> {
         let likedFestivals = try? festivalUseCase.fetchLikedFestivals()
         return Set(likedFestivals?.map { $0.id } ?? [])
+    }
+    
+    var isAuthorized: Bool {
+        get async {
+            let center =  UNUserNotificationCenter.current()
+            let status = await center.notificationSettings().authorizationStatus
+            return status == .authorized
+        }
     }
 }
