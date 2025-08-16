@@ -9,6 +9,7 @@
 import SwiftUI
 import DesignSystem
 import Domain
+import Kingfisher
 
 struct ArtistInfoView: View {
     private let artists: [Artist]
@@ -76,9 +77,15 @@ private extension ArtistInfoView {
     
     func artistView(artist: Artist) -> some View {
         VStack(spacing: 6) {
-            Image.iconArtistPlaceholder
+            KFImage(artist.imageURL(100))
+                .placeholder {
+                    Image.iconArtistPlaceholder
+                        .resizable()
+                        .frame(width: 56, height: 56)
+                }
                 .resizable()
                 .frame(width: 56, height: 56)
+                .clipShape(RoundedRectangle(cornerRadius: 28))
             
             Text(artist.name)
                 .pretendard(style: .body3)

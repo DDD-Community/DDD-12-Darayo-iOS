@@ -35,9 +35,12 @@ public struct NetworkService: NetworkServiceProtocol {
                 let response: ResponseWrapper<R> = try data.decode()
                 return response.result
             default:
-                let response: ResponseWrapper<R> = try data.decode()
-                message = response.error
-                throw NetworkError(type: .init(statusCode: statusCode))
+                let response: ResponseWrapper<R>? = try? data.decode()
+                message = response?.error
+                throw NetworkError(
+                    type: .init(statusCode: statusCode),
+                    message: message
+                )
             }
         } catch {
             let base = networkError(error)

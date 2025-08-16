@@ -59,6 +59,7 @@ public enum ExternalModule: Sendable {
     case dependencies
     case firebaseCore
     case firebaseMessaging
+    case kingfisher
     
     public var name: String {
         "\(self)".capitalized

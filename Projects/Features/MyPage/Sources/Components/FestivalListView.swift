@@ -10,6 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import Domain
+import Kingfisher
 
 struct FestivalListView: View {
     enum ListType {
@@ -153,11 +154,17 @@ private extension FestivalListView {
     
     func imageView(url: URL?) -> some View {
         ZStack {
-            ImageView(url, placeholder: .placeholder3)
-                .scaledToFill()
+            KFImage(url)
+                .placeholder {
+                    Image.placeholder3
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                }
+                .resizable()
+                .aspectRatio(contentMode: .fill)
                 .frame(width: 108, height: 88)
                 .clipped()
-            
+                
             LinearGradient(
                 gradient: .init(
                     colors: [
