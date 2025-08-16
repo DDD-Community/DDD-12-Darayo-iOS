@@ -8,6 +8,7 @@
 
 import SwiftUI
 import Domain
+import DesignSystem
 
 public struct EventCard: View {
     let event: CalendarEvent

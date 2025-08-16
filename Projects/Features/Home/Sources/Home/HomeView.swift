@@ -24,8 +24,9 @@ public struct HomeView: View {
                 HomeGridView(store: store)
                     .opacity(opacity(.grid))
                 
-                HomeCalendarView(store: store)
-                    .opacity(opacity(.calendar))
+                CalendarScreen(
+                    store: store.scope(state: \.calendar, action: \.calendar)
+                ).opacity(opacity(.calendar))
             }
         }
         .background(Color.background1)
