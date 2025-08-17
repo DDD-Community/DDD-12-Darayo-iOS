@@ -83,9 +83,7 @@ public struct HomeFeature {
             case .heartButtonTapped(let festival):
                 updateLikedFestivals(state, id: festival.id)
                 state.likedFestivals = fetchLikedFestivals()
-                return .run { [state] send in
-                    await updateNotificaion(state, send, id: festival.id)
-                }
+                return .none
             case .myPageButtonTapped: return .none
             case .showAlert: return .none
             case .binding: return .none
@@ -115,22 +113,6 @@ private extension HomeFeature {
         switch isFavorite {
         case true: try? festivalUseCase.deleteLikedFestival(id: id)
         case false: try? festivalUseCase.addLikedFestival(id: id)
-        }
-    }
-    
-    func updateNotificaion(_ state: State, _ send: Send<Action>, id: Int) async {
-        let isAuthorized = await isAuthorized
-        let isEnabled = state.likedFestivals.contains(id)
-        
-        guard isAuthorized || !isEnabled else { return }
-        try? await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
-    }
-    
-    var isAuthorized: Bool {
-        get async {
-            let center =  UNUserNotificationCenter.current()
-            let status = await center.notificationSettings().authorizationStatus
-            return status == .authorized
         }
     }
 }
