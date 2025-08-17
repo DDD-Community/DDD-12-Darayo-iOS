@@ -14,9 +14,12 @@ import MyPage
 import Util
 import Base
 import UserNotifications
+import Domain
 
 @Reducer
 public struct MainFeature {
+    @Dependency(\.festivalUseCase) private var festivalUseCase
+    
     @ObservableState
     public struct State {
         var currentTab: Tab = .home
@@ -29,11 +32,16 @@ public struct MainFeature {
     }
     
     public enum Action: BindableAction {
+        case onAppear
+        case checkNotification
+        case subscribeNotification
         case enteredForeground
         case home(HomeFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
         case alert(PresentationAction<CustomAlert.Action>)
+        case navigateToFestival(Festival, Bool)
+        case showAlert
     }
     
     public init() {}
@@ -46,6 +54,27 @@ public struct MainFeature {
         
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                return .merge([
+                    .send(.checkNotification),
+                    .send(.subscribeNotification)
+                ])
+            case .checkNotification:
+                let id = UserDefaults.festivalID
+                guard let id else { return .none }
+                UserDefaults.festivalID = nil
+                return .run { send in
+                    await send(fetchFestival(id: id))
+                }
+            case .subscribeNotification:
+                return .run { send in
+                    let stream = NotificationCenter.default.publisher(for: .festivalID).values
+                    for await notification in stream {
+                        let id = notification.object as? Int
+                        guard let id else { return }
+                        await send(fetchFestival(id: id))
+                    }
+                }
             case .enteredForeground:
                 return .run { _ in await checkNotification() }
             case let .home(.navigateToFestival(festival, isFavorite)):
@@ -95,6 +124,14 @@ public struct MainFeature {
                     return .none
                 default: return .none
                 }
+            case .showAlert:
+                return .none
+            case .navigateToFestival(let festival, let isFavorite):
+                UserDefaults.festivalID = nil
+                state.path.append(.festival(.init(
+                    festival: festival, isFavorite: isFavorite
+                )))
+                return .none
             case .home: return .none
             case .binding: return .none
             case .path: return .none
@@ -124,6 +161,17 @@ private extension MainFeature {
         case .termsOfService: .termsOfService(.init())
         case .privacyPolicy: .privacyPolicy(.init())
         case .inquiry: nil
+        }
+    }
+    
+    func fetchFestival(id: Int) async -> Action {
+        do {
+            let ids = try Set(festivalUseCase.fetchLikedFestivals().map { $0.id })
+            let isFavorite = ids.contains(id)
+            let festival = try await festivalUseCase.fetchFestival(id: id)
+            return .navigateToFestival(festival, isFavorite)
+        } catch {
+            return .showAlert
         }
     }
 }
