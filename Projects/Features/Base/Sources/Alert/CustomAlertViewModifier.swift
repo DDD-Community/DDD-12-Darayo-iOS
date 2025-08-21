@@ -10,18 +10,15 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 
-struct CustomAlertViewModifier: ViewModifier {
-    private let item: Binding<StoreOf<CustomAlert>?>
-    private let icon: Image?
+struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
+    private let item: Binding<StoreOf<CustomAlert<AlertCase>>?>
     private let onDismiss: () -> Void
     
     init(
-        item: Binding<StoreOf<CustomAlert>?>,
-        icon: Image?,
+        item: Binding<StoreOf<CustomAlert<AlertCase>>?>,
         onDismiss: @escaping () -> Void
     ) {
         self.item = item
-        self.icon = icon
         self.onDismiss = onDismiss
     }
     
@@ -43,31 +40,33 @@ struct CustomAlertViewModifier: ViewModifier {
         }
     }
     
-    private func customAlertView(store: StoreOf<CustomAlert>) -> some View {
-        CustomAlertView(
-            icon: icon,
-            title: store.title,
-            message: store.message,
-            buttonTitle: store.buttonTitle,
-            action: {
-                store.send(.buttonTapped)
-                onDismiss()
-            },
-            closeAction: {
-                store.send(.closeButtonTapped)
-                onDismiss()
-            }
-        )
+    private func customAlertView(store: StoreOf<CustomAlert<AlertCase>>) -> some View {
+        let alertInfo = store.alertCase.alertInfo
+        
+        return CustomAlertView(
+            icon: alertInfo.icon,
+            iconColor: alertInfo.iconColor,
+            title: alertInfo.title,
+            message: alertInfo.message,
+            upperText: alertInfo.box?.upperText,
+            highlightText: alertInfo.box?.highlightText,
+            lowerText: alertInfo.box?.lowerText,
+            buttonTitle: alertInfo.buttonTitle
+        ) {
+            store.send(.buttonTapped(store.alertCase))
+            onDismiss()
+        } closeAction: {
+            onDismiss()
+        }
     }
 }
 
 public extension View {
-    func customAlert(
-        _ item: Binding<StoreOf<CustomAlert>?>,
-        icon: Image? = nil
+    func customAlert<AlertCase>(
+        _ item: Binding<StoreOf<CustomAlert<AlertCase>>?>
     ) -> some View {
         modifier(
-            CustomAlertViewModifier(item: item, icon: icon) {
+            CustomAlertViewModifier(item: item) {
                 item.wrappedValue = nil
             }
         )

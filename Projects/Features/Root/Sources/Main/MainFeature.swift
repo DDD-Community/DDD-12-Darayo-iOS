@@ -26,8 +26,6 @@ public struct MainFeature {
         var home: HomeFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
-        
-        @Presents var alert: CustomAlert.State?
         var shouldOpenURL: Bool = false
     }
     
@@ -39,7 +37,6 @@ public struct MainFeature {
         case home(HomeFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
-        case alert(PresentationAction<CustomAlert.Action>)
         case navigateToFestival(Festival, Bool)
         case showAlert
     }
@@ -83,11 +80,7 @@ public struct MainFeature {
             case .home(.myPageButtonTapped):
                 state.path.append(.myPage(.init()))
                 return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
-                return .none
             case .path(.element(_, .myPage(.showAlert))):
-                state.alert = .authorization
                 return .none
             case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
                 state.path.append(.likedFestivals(.init()))
@@ -135,13 +128,9 @@ public struct MainFeature {
             case .home: return .none
             case .binding: return .none
             case .path: return .none
-            case .alert: return .none
             }
         }
         .forEach(\.path, action: \.path)
-        .ifLet(\.$alert, action: \.alert) {
-            CustomAlert()
-        }
     }
 }
 
@@ -197,12 +186,4 @@ extension MainFeature {
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
     }
-}
-
-private extension CustomAlert.State {
-    static let authorization: Self = .init(
-        title: "알림 권한이 없어요!",
-        message: "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요",
-        buttonTitle: "권한 설정하기"
-    )
 }

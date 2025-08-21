@@ -41,7 +41,6 @@ public struct MainView: View {
             }
         }
         .safari(url: $store.url)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }

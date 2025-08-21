@@ -42,7 +42,6 @@ public struct FestivalView: View {
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: alertIcon)
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
@@ -53,16 +52,6 @@ public struct FestivalView: View {
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
             store.send(.enteredForeground)
-        }
-    }
-}
-
-private extension FestivalView {
-    var alertIcon: Image? {
-        return switch store.alert?.alertCase {
-        case .authorization: .iconBellGray
-        case .like: .iconHeartGray
-        case .none: nil
         }
     }
 }
@@ -261,21 +250,5 @@ private extension FestivalFeature.AlertCase {
     
     var buttonTitle: String {
         "권한 설정하기"
-    }
-}
-
-extension CustomAlert.State {
-    init(alertCase: FestivalFeature.AlertCase) {
-        self = .init(
-            title: alertCase.title,
-            message: alertCase.message,
-            buttonTitle: alertCase.buttonTitle
-        )
-    }
-    
-    var alertCase: FestivalFeature.AlertCase? {
-        return FestivalFeature.AlertCase.allCases.first {
-            self == .init(alertCase: $0)
-        }
     }
 }

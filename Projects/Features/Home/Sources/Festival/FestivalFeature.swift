@@ -31,7 +31,6 @@ public struct FestivalFeature {
         var isFavorite: Bool = false
         var isExpanded: Bool = false
         
-        @Presents var alert: CustomAlert.State?
         var shouldOpenURL: Bool = false
         
         public init(festival: Festival, isFavorite: Bool) {
@@ -72,7 +71,6 @@ public struct FestivalFeature {
         case notificationUpdated(Bool)
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
-        case alert(PresentationAction<CustomAlert.Action>)
     }
     
     public init() {}
@@ -100,7 +98,7 @@ public struct FestivalFeature {
                 let isEnabled = !state.isNotificationOn
                 
                 if !state.isAuthorized, isEnabled {
-                    return .send(.showAlert(.authorization))
+                    return .none
                 }
                 return .send(.updateNotification(isEnabled))
             case .heartButtonTapped:
@@ -119,18 +117,10 @@ public struct FestivalFeature {
                 return .none
             case .showAlert(let alertCase):
                 guard let alertCase else { return .none }
-                state.alert = .init(alertCase: alertCase)
-                return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
                 return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
-            case .alert: return .none
             }
-        }
-        .ifLet(\.$alert, action: \.alert) {
-            CustomAlert()
         }
     }
 }
@@ -144,7 +134,6 @@ private extension FestivalFeature {
             await send(.authorizationChecked(isAuthroized))
             try await send(.notificationStateFetched(isEnabled))
         } catch {
-            await send(.showAlert(nil))
         }
     }
     

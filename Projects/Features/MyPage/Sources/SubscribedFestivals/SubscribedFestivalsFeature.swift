@@ -27,7 +27,6 @@ public struct SubscribedFestivalsFeature {
         var isEnabled: [Bool] = []
         var isLoading: Bool = true
         var shouldOpenURL: Bool = false
-        @Presents var alert: CustomAlert.State?
         public init() {}
     }
     
@@ -41,7 +40,6 @@ public struct SubscribedFestivalsFeature {
         case backButtonTapped
         case navigateToFestival(Festival, Bool)
         case binding(BindingAction<State>)
-        case alert(PresentationAction<CustomAlert.Action>)
     }
     
     public init() {}
@@ -79,21 +77,13 @@ public struct SubscribedFestivalsFeature {
             case .showAlert(let alertCase):
                 state.isLoading = false
                 guard let alertCase else { return .none }
-                state.alert = .init(alertCase: alertCase)
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             case .navigateToFestival:
                 return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
-                return .none
-            case .alert: return .none
             case .binding: return .none
             }
-        }
-        .ifLet(\.$alert, action: \.alert) {
-            CustomAlert()
         }
     }
 }

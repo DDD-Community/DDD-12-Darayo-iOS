@@ -9,27 +9,18 @@
 import ComposableArchitecture
 
 @Reducer
-public struct CustomAlert {
+public struct CustomAlert<AlertCase: AlertPresentable> {
     @ObservableState
-    public struct State: Equatable {        
-        let title: String
-        let message: String?
-        let buttonTitle: String
+    public struct State: Equatable {
+        let alertCase: AlertCase
         
-        public init(
-            title: String,
-            message: String? = nil,
-            buttonTitle: String
-        ) {
-            self.title = title
-            self.message = message
-            self.buttonTitle = buttonTitle
+        public init(alertCase: AlertCase) {
+            self.alertCase = alertCase
         }
     }
     
     public enum Action {
-        case buttonTapped
-        case closeButtonTapped
+        case buttonTapped(AlertCase)
     }
     
     public init() {}

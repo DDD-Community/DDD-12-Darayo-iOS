@@ -34,7 +34,6 @@ public struct SubscribedFestivalsView: View {
         .navigation(title: "알림 설정한 페스티벌 목록") {
             store.send(.backButtonTapped)
         }
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: alertIcon)
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
@@ -43,47 +42,6 @@ public struct SubscribedFestivalsView: View {
             store.send(.binding(.set(\.shouldOpenURL, false)))
             guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
             openURL(url)
-        }
-    }
-}
-
-private extension SubscribedFestivalsView {
-    var alertIcon: Image? {
-        return switch store.alert?.alertCase {
-        case .authorization: .iconBellGray
-        case .none: nil
-        }
-    }
-}
-
-private extension SubscribedFestivalsFeature.AlertCase {
-    var title: String {
-        switch self {
-        case .authorization: "알림 권한이 없어요!"
-        }
-    }
-    
-    var message: String {
-        "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요"
-    }
-    
-    var buttonTitle: String {
-        "권한 설정하기"
-    }
-}
-
-extension CustomAlert.State {
-    init(alertCase: SubscribedFestivalsFeature.AlertCase) {
-        self = .init(
-            title: alertCase.title,
-            message: alertCase.message,
-            buttonTitle: alertCase.buttonTitle
-        )
-    }
-    
-    var alertCase: SubscribedFestivalsFeature.AlertCase? {
-        return SubscribedFestivalsFeature.AlertCase.allCases.first {
-            self == .init(alertCase: $0)
         }
     }
 }
