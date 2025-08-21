@@ -25,7 +25,7 @@ public struct HomeView: View {
                     .opacity(opacity(.grid))
                 
                 CalendarScreen(
-                    store: store.scope(state: \.calendar, action: \.calendar)
+                  store: Store(initialState: CalendarFeature.State(), reducer: { CalendarFeature() })
                 ).opacity(opacity(.calendar))
             }
         }
