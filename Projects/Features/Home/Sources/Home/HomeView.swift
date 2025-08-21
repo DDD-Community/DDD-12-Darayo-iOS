@@ -24,8 +24,9 @@ public struct HomeView: View {
                 HomeGridView(store: store)
                     .opacity(opacity(.grid))
                 
-                HomeCalendarView(store: store)
-                    .opacity(opacity(.calendar))
+                CalendarScreen(
+                  store: Store(initialState: CalendarFeature.State(), reducer: { CalendarFeature() })
+                ).opacity(opacity(.calendar))
             }
         }
         .background(Color.background1)
