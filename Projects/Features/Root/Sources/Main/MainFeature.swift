@@ -111,6 +111,8 @@ public struct MainFeature {
                         festival: festival, isFavorite: isFavorite
                     )))
                     return .none
+                case .showAlert(let alertCase):
+                    return .send(.showAlert(.likedFestivals(alertCase)))
                 default: return .none
                 }
             case .path(.element(_, .subscribedFestivals(let action))):
@@ -141,6 +143,8 @@ public struct MainFeature {
                     return .send(.path(.element(id: id, action: .festival(.alert(alertCase)))))
                 case .myPage(let alertCase):
                     return .send(.path(.element(id: id, action: .myPage(.alert(alertCase)))))
+                case .likedFestivals(let alertCase):
+                    return .send(.path(.element(id: id, action: .likedFestivals(.alert(alertCase)))))
                 case .subscribedFestivals(let alertCase):
                     return .send(.path(
                         .element(id: id, action: .subscribedFestivals(.alert(alertCase)))
@@ -221,6 +225,7 @@ extension MainFeature {
         case home(HomeFeature.AlertCase)
         case festival(FestivalFeature.AlertCase)
         case myPage(MyPageFeature.AlertCase)
+        case likedFestivals(LikedFestivalsFeature.AlertCase)
         case subscribedFestivals(SubscribedFestivalsFeature.AlertCase)
     }
 }

@@ -132,6 +132,7 @@ extension MainFeature.AlertCase: AlertPresentable {
         case .home(let alertCase): alertCase.alertInfo
         case .festival(let alertCase): alertCase.alertInfo
         case .myPage(let alertCase): alertCase.alertInfo
+        case .likedFestivals(let alertCase): alertCase.alertInfo
         case .subscribedFestivals(let alertCase): alertCase.alertInfo
         case .error: .error
         }

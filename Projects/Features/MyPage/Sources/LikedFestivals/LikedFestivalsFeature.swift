@@ -15,6 +15,10 @@ public struct LikedFestivalsFeature {
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
     
+    public enum AlertCase {
+        case error
+    }
+    
     @ObservableState
     public struct State {
         var festivals: [Festival] = []
@@ -26,7 +30,8 @@ public struct LikedFestivalsFeature {
     public enum Action {
         case onAppear
         case festivalsFetched([Festival])
-        case showAlert
+        case showAlert(AlertCase)
+        case alert(AlertCase)
         case backButtonTapped
         case festivalTapped(Festival)
         case likeButtonTapped(Festival)
@@ -38,7 +43,7 @@ public struct LikedFestivalsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.isLoading = true
+                guard state.isLoading else { return .none }
                 return .run { send in
                     await send(fetchLikedFestivals())
                 }
@@ -52,7 +57,7 @@ public struct LikedFestivalsFeature {
                     let isFavorite = try festivalUseCase.isFavorite(festival)
                     return .send(.navigateToFestival(festival, isFavorite))
                 } catch {
-                    return .send(.showAlert)
+                    return .none
                 }
             case .likeButtonTapped(let festival):
                 let index = state.festivals.firstIndex { $0 == festival }
@@ -63,6 +68,8 @@ public struct LikedFestivalsFeature {
                 return .none
             case .showAlert:
                 state.isLoading = false
+                return .none
+            case .alert:
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
@@ -80,7 +87,7 @@ private extension LikedFestivalsFeature {
             let likedFestivals = festivals.filter { ids.contains($0.id) }
             return .festivalsFetched(likedFestivals)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
     

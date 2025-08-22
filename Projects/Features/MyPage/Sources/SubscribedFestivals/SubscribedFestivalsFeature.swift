@@ -51,6 +51,7 @@ public struct SubscribedFestivalsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                guard state.isLoading else { return .none }
                 return .run { send in
                     await send(fetchSubsribedFestivals())
                 }
@@ -78,7 +79,7 @@ public struct SubscribedFestivalsFeature {
             case .showAlert:
                 state.isLoading = false
                 return .none
-            case .alert(let alertCase):
+            case .alert:
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
