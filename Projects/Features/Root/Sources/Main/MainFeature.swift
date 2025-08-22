@@ -118,18 +118,31 @@ public struct MainFeature {
                         festival: festival, isFavorite: isFavorite
                     )))
                     return .none
+                case .showAlert(let alertCase):
+                    return .send(.showAlert(.subscribedFestivals(alertCase)))
                 default: return .none
                 }
             case .showAlert:
                 return .none
             case .alert(let alertCase):
                 switch alertCase {
-                case .error: return .none
                 case .home(let alertCase):
                     return .send(.home(.alert(alertCase)))
+                default: break
+                }
+                
+                let id = state.path.ids.last
+                guard let id else { return .none }
+                
+                switch alertCase {
                 case .myPage(let alertCase):
-                    guard let id = state.path.ids.last else { return .none }
                     return .send(.path(.element(id: id, action: .myPage(.alert(alertCase)))))
+                case .subscribedFestivals(let alertCase):
+                    return .send(.path(
+                        .element(id: id, action: .subscribedFestivals(.alert(alertCase)))
+                    ))
+                default:
+                    return .none
                 }
             case .navigateToFestival(let festival, let isFavorite):
                 UserDefaults.festivalID = nil
@@ -203,5 +216,6 @@ extension MainFeature {
         case error
         case home(HomeFeature.AlertCase)
         case myPage(MyPageFeature.AlertCase)
+        case subscribedFestivals(SubscribedFestivalsFeature.AlertCase)
     }
 }

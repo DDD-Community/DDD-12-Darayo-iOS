@@ -131,6 +131,7 @@ extension MainFeature.AlertCase: AlertPresentable {
         switch self {
         case .home(let alertCase): return alertCase.alertInfo
         case .myPage(let alertCase): return alertCase.alertInfo
+        case .subscribedFestivals(let alertCase): return alertCase.alertInfo
         case .error: return .error
         }
     }

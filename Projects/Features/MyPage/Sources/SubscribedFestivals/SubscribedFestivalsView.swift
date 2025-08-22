@@ -13,7 +13,6 @@ import Base
 
 public struct SubscribedFestivalsView: View {
     @Bindable private var store: StoreOf<SubscribedFestivalsFeature>
-    @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     
     public init(store: StoreOf<SubscribedFestivalsFeature>) {
@@ -37,11 +36,14 @@ public struct SubscribedFestivalsView: View {
         .background(Color.background1)
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
-        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
-            guard !oldValue, newValue else { return }
-            store.send(.binding(.set(\.shouldOpenURL, false)))
-            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
-            openURL(url)
+    }
+}
+
+extension SubscribedFestivalsFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .error: return .error
+        case .authorization: return .authorization
         }
     }
 }

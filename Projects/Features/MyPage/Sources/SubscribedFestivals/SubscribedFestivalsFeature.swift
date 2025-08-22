@@ -19,6 +19,7 @@ public struct SubscribedFestivalsFeature {
     
     public enum AlertCase: CaseIterable {
         case authorization
+        case error
     }
     
     @ObservableState
@@ -26,7 +27,6 @@ public struct SubscribedFestivalsFeature {
         var festivals: [Festival] = []
         var isEnabled: [Bool] = []
         var isLoading: Bool = true
-        var shouldOpenURL: Bool = false
         public init() {}
     }
     
@@ -36,7 +36,8 @@ public struct SubscribedFestivalsFeature {
         case festivalTapped(Festival)
         case noticiationButtonTapped(Festival)
         case notificationUpdated(Int)
-        case showAlert(AlertCase?)
+        case showAlert(AlertCase)
+        case alert(AlertCase)
         case backButtonTapped
         case navigateToFestival(Festival, Bool)
         case binding(BindingAction<State>)
@@ -74,9 +75,10 @@ public struct SubscribedFestivalsFeature {
                 guard let index else { return .none }
                 state.isEnabled[index].toggle()
                 return .none
-            case .showAlert(let alertCase):
+            case .showAlert:
                 state.isLoading = false
-                guard let alertCase else { return .none }
+                return .none
+            case .alert(let alertCase):
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
@@ -94,7 +96,7 @@ private extension SubscribedFestivalsFeature {
             let festivals = try await notificationUseCase.fetchSubscribedFestivals()
             return .festivalsFetched(festivals)
         } catch {
-            return .showAlert(nil)
+            return .showAlert(.error)
         }
     }
     
@@ -108,7 +110,7 @@ private extension SubscribedFestivalsFeature {
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
             return .notificationUpdated(id)
         } catch {
-            return .showAlert(nil)
+            return .showAlert(.error)
         }
     }
     
