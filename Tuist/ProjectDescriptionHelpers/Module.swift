@@ -46,6 +46,7 @@ public enum FeatureModule: Sendable {
     case root
     case base
     case home
+    case calendar
     case timetable
     case myPage
     
