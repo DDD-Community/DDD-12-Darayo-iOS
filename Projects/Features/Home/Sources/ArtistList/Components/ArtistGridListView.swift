@@ -50,11 +50,17 @@ private extension ArtistGridListView {
     func scrollToSectionHeader(collectionView: UICollectionView, section: Int) {
         let indexPath = IndexPath(item: 0, section: section)
             
-        if let layoutAttributes = collectionView.layoutAttributesForSupplementaryElement(
+        let headerLayout = collectionView.layoutAttributesForSupplementaryElement(
             ofKind: UICollectionView.elementKindSectionHeader,
             at: indexPath
-        ) {
-            let offset = layoutAttributes.frame.origin
+        )
+        
+        let offset: CGPoint? = switch headerLayout {
+        case .some(let layout): layout.frame.origin
+        case .none: collectionView.frame.origin
+        }
+        
+        if let offset {
             collectionView.setValue(0.3, forKeyPath: durationKey)
             collectionView.setContentOffset(offset, animated: true)
             DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.35) {

@@ -77,7 +77,7 @@ private extension ArtistCollectionView {
     
     var section: NSCollectionLayoutSection {
         let section = NSCollectionLayoutSection(group: group)
-        section.boundarySupplementaryItems = [header]
+        section.boundarySupplementaryItems = sectionCount > 1 ? [header] : []
         section.interGroupSpacing = 16
         section.contentInsets = .init(top: 16, leading: 0, bottom: 52, trailing: 0)
         return section
