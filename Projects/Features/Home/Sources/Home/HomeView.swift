@@ -23,9 +23,6 @@ public struct HomeView: View {
             ZStack {
                 HomeGridView(store: store)
                     .opacity(opacity(.grid))
-                
-                HomeCalendarView(store: store)
-                    .opacity(opacity(.calendar))
             }
         }
         .background(Color.background1)
