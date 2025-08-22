@@ -40,20 +40,13 @@ public struct EventCard: View {
                     endPoint: .bottom
                 )
             }
-            .frame(width: 108, height: 108)
+            .frame(width: 108, height: 95)
             .clipped()
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(event.category.label)
-                        .pretendard(style: .caption2)
-                        .foregroundColor(textColor(for: event.category))
-                        .frame(width: 47, height: 16)
-                        .background(backgroundColor(for: event.category))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                    
                     Text(event.title)
-                        .pretendard(style: .title3)
+                        .pretendard(style: .title4)
                         .foregroundColor(.white)
                         .lineLimit(1)
                 }
@@ -87,17 +80,15 @@ public struct EventCard: View {
 
 @ViewBuilder
 private func infoSection(for event: CalendarEvent) -> some View {
-    VStack(alignment: .leading, spacing: 0) {
+    VStack(alignment: .leading, spacing: 2) {
         switch event.category {
         case .festivalDay:
-            // 행사일: 장소 → Image.location, 행사일 → Image.eventDay (둘 다 point1)
-            iconRow(icon: Image.iconLocation, tint: .point1, value: event.location)
-            iconRow(icon: Image.iconEventDay, tint: .point1, value: event.time)
+            iconRow(icon: Image.iconLocation, tint: .point1, value: event.location) // 행사 장소
+            iconRow(icon: Image.iconEventDay, tint: .point1, value: event.time) // 행사 일시
             
         case .reservationDay:
-            // 예매일: 예매처 → Image.pointer, 예매일시 → Image.point (둘 다 point2)
-            iconRow(icon: Image.iconPointer, tint: .point2, value: event.location)
-            iconRow(icon: Image.iconTime,   tint: .point2, value: event.time)
+            iconRow(icon: Image.iconPointer, tint: .point2, value: event.location) // 예매처
+            iconRow(icon: Image.iconTime,   tint: .point2, value: event.time) // 예매 일시
         }
     }
 }
