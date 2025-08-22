@@ -23,15 +23,15 @@ struct CalendarGridView: View {
                     date: date,
                     currentMonth: currentMonth,
                     selectedDate: selectedDate,
-                    hasEvent: hasEvent(for: date),
+                    events: eventsForDate(date),
                     onDateSelected: onDateSelected
                 )
             }
         }
     }
     
-    private func hasEvent(for date: Date) -> Bool {
-        return calendarEvents.contains { event in
+    private func eventsForDate(_ date: Date) -> [CalendarEvent] {
+        return calendarEvents.filter { event in
             Foundation.Calendar.current.isDate(event.date, inSameDayAs: date)
         }
     }

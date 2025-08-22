@@ -1,5 +1,5 @@
 //
-//  HomeCalendarView.swift
+//  CalendarScreen.swift
 //  Home
 //
 //  Created by 이정원 on 6/29/25.
@@ -13,7 +13,6 @@ import Domain
 
 public struct CalendarScreen: View {
     @Bindable private var store: StoreOf<CalendarFeature>
-    @State private var selectedMode = 0
 
     public init(store: StoreOf<CalendarFeature>) {
         self.store = store
@@ -24,7 +23,12 @@ public struct CalendarScreen: View {
             Color.background1.ignoresSafeArea()
             VStack(spacing: 0) {
                 navigationBar
-                CalendarSegmentedControl(selectedMode: $selectedMode)
+                CalendarSegmentedControl(
+                    selectedMode: Binding(
+                        get: { store.selectedMode },
+                        set: { store.send(.modeChanged($0)) }
+                    )
+                )
                 
                 ScrollView {
                     VStack(spacing: 0) {

@@ -88,19 +88,28 @@ public struct EventCard: View {
 @ViewBuilder
 private func infoSection(for event: CalendarEvent) -> some View {
     VStack(alignment: .leading, spacing: 0) {
-        infoRow(label: event.category == .reservationDay ? "예매처" : "장소",
-                value: event.location)
-
-        infoRow(label: event.category == .reservationDay ? "예매일시" : "행사일",
-                value: event.time)
+        switch event.category {
+        case .festivalDay:
+            // 행사일: 장소 → Image.location, 행사일 → Image.eventDay (둘 다 point1)
+            iconRow(icon: Image.iconLocation, tint: .point1, value: event.location)
+            iconRow(icon: Image.iconEventDay, tint: .point1, value: event.time)
+            
+        case .reservationDay:
+            // 예매일: 예매처 → Image.pointer, 예매일시 → Image.point (둘 다 point2)
+            iconRow(icon: Image.iconPointer, tint: .point2, value: event.location)
+            iconRow(icon: Image.iconTime,   tint: .point2, value: event.time)
+        }
     }
 }
 
-private func infoRow(label: String, value: String) -> some View {
+private func iconRow(icon: Image, tint: Color, value: String) -> some View {
     HStack(spacing: 6) {
-        Text(label)
-            .pretendard(style: .body4)
-            .foregroundColor(.grey4)
+        icon
+            .renderingMode(.template)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 14, height: 14)
+            .foregroundColor(tint)
 
         Text(value)
             .pretendard(style: .body4)

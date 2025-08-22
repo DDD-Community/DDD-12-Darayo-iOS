@@ -19,6 +19,7 @@ public struct CalendarFeature {
     public var festivals: [Festival] = []
     public var selectedDate: Date?
     public var isLoading = false
+    public var selectedMode = 0 // 0: 행사일, 1: 예매일
     public init() {}
   }
 
@@ -29,6 +30,7 @@ public struct CalendarFeature {
     case fetchFailed
     case dateSelected(Date)
     case eventTapped(festivalId: Int)
+    case modeChanged(Int)
 
     case delegate(Delegate)
     public enum Delegate: Equatable {
@@ -61,7 +63,7 @@ public struct CalendarFeature {
         state.festivals = fests
         // 선택된 날짜 없으면 오늘 또는 가장 가까운 이벤트 날짜로 설정
         if state.selectedDate == nil {
-          state.selectedDate = nearestEventDate(from: fests) ?? Date()
+          state.selectedDate = nearestEventDate(from: fests, mode: state.selectedMode) ?? Date()
         }
         return .none
 
@@ -79,6 +81,12 @@ public struct CalendarFeature {
         }
         return .none
 
+      case let .modeChanged(mode):
+        state.selectedMode = mode
+        // 모드가 변경되면 가장 가까운 해당 모드의 이벤트 날짜로 이동
+        state.selectedDate = nearestEventDate(from: state.festivals, mode: mode) ?? Date()
+        return .none
+
       case .binding, .delegate:
         return .none
       }
@@ -89,8 +97,18 @@ public struct CalendarFeature {
 // MARK: - Selectors
 public extension CalendarFeature.State {
   var allCalendarEvents: [CalendarEvent] {
-    makeCalendarEvents(from: festivals)
+    let allEvents = makeCalendarEvents(from: festivals)
+    
+    // 선택된 모드에 따라 필터링
+    return allEvents.filter { event in
+      if selectedMode == 0 { // 행사일
+        return event.category == .festivalDay
+      } else { // 예매일
+        return event.category == .reservationDay
+      }
+    }
   }
+  
   var eventsForSelectedDate: [CalendarEvent] {
     guard let d = selectedDate else { return [] }
     return allCalendarEvents.filter { Calendar.current.isDate($0.date, inSameDayAs: d) }
@@ -98,7 +116,15 @@ public extension CalendarFeature.State {
 }
 
 // MARK: - Helpers
-private func nearestEventDate(from festivals: [Festival]) -> Date? {
-  let events = makeCalendarEvents(from: festivals)
-  return events.min(by: { abs($0.date.timeIntervalSinceNow) < abs($1.date.timeIntervalSinceNow) })?.date
+private func nearestEventDate(from festivals: [Festival], mode: Int) -> Date? {
+  let allEvents = makeCalendarEvents(from: festivals)
+  let filteredEvents = allEvents.filter { event in
+    if mode == 0 { // 행사일
+      return event.category == .festivalDay
+    } else { // 예매일
+      return event.category == .reservationDay
+    }
+  }
+  
+  return filteredEvents.min(by: { abs($0.date.timeIntervalSinceNow) < abs($1.date.timeIntervalSinceNow) })?.date
 }
