@@ -76,6 +76,9 @@ public struct MainFeature {
             case .calendar(.delegate(.openMyPage)):
                 state.path.append(.myPage(.init()))
                 return .none
+            case .calendar(.delegate(.openFestival(let festival))):
+                state.path.append(.festival(.init(festival: festival, isFavorite: false)))
+                return .none
             case .myPage(.showAlert):
                 state.alert = .authorization
                 return .none
