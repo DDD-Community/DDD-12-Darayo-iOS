@@ -87,3 +87,104 @@ public extension Festival {
         reservations.map { $0.vendor }
     }
 }
+
+public struct CalendarEvent {
+    public let id: String
+    public let festivalId: Int
+    public let title: String
+    public let location: String
+    public let date: Date
+    public let endDate: Date?
+    public let time: String
+    public let category: EventCategory
+    public let posterURL: URL?
+    
+    public init(
+        id: String = UUID().uuidString,
+        festivalId: Int,
+        title: String,
+        location: String,
+        date: Date,
+        endDate: Date? = nil,
+        time: String,
+        category: EventCategory,
+        posterURL: URL? = nil
+    ) {
+        self.id = id
+        self.festivalId = festivalId
+        self.title = title
+        self.location = location
+        self.date = date
+        self.endDate = endDate
+        self.time = time
+        self.category = category
+        self.posterURL = posterURL
+    }
+}
+
+public enum EventCategory {
+    case reservationDay
+    case festivalDay
+    
+    public var label: String {
+        switch self {
+        case .reservationDay:
+            return "예매일"
+        case .festivalDay:
+            return "행사일"
+        }
+    }
+}
+
+// Festival -> CalendarEvent 변환 헬퍼
+public extension Festival {
+    func toCalendarEvents() -> [CalendarEvent] {
+        var events: [CalendarEvent] = []
+        
+        // category: 예매일
+        if let openDate = reservations.first?.openDateTime {
+            let vendorNames = reservations
+                .compactMap { $0.vendor.name }
+                .joined(separator: " · ")
+            
+            events.append(CalendarEvent(
+                id: UUID().uuidString,
+                festivalId: id,
+                title: name,
+                location: vendorNames,
+                date: openDate,
+                time: openDate.toString(dateFormat: .reservateionDateTime),
+                category: .reservationDay,
+                posterURL: URL(string: posterURLString)
+            ))
+        }
+        
+        // category: 행사일
+        if let startDate = startDate, let endDate = endDate {
+            var currentDate = startDate
+            let calendar = Calendar.current
+            
+            while currentDate <= endDate {
+                events.append(CalendarEvent(
+                    id: UUID().uuidString,
+                    festivalId: id,
+                    title: name,
+                    location: placeName,
+                    date: currentDate,
+                    endDate: endDate,
+                    time: "\(startDate.toString(dateFormat: .eventDate)) - \(endDate.toString(dateFormat: .eventDate))",
+                    category: .festivalDay,
+                    posterURL: URL(string: posterURLString)
+                ))
+                guard let nextDay = calendar.date(byAdding: .day, value: 1, to: currentDate) else { break }
+                currentDate = nextDay
+            }
+        }
+        
+        return events
+    }
+}
+
+public func makeCalendarEvents(from festivals: [Festival]) -> [CalendarEvent] {
+    festivals.flatMap { $0.toCalendarEvents() }
+}
