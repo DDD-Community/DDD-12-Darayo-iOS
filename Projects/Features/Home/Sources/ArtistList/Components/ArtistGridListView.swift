@@ -10,6 +10,7 @@ import SwiftUI
 import Domain
 
 struct ArtistGridListView: UIViewRepresentable {
+    private let durationKey = "contentOffsetAnimationDuration"
     private let artists: [[Artist]]
     @Binding private var sectionToScroll: Int?
     private let onSectionChanged: (Int) -> Void
@@ -54,7 +55,11 @@ private extension ArtistGridListView {
             at: indexPath
         ) {
             let offset = layoutAttributes.frame.origin
+            collectionView.setValue(0.3, forKeyPath: durationKey)
             collectionView.setContentOffset(offset, animated: true)
+            DispatchQueue.main.asyncAfter(wallDeadline: .now() + 0.35) {
+                onSectionChanged(section)
+            }
         }
     }
 }
