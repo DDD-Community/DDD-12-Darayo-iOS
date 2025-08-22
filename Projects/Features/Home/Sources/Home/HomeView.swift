@@ -23,10 +23,6 @@ public struct HomeView: View {
             ZStack {
                 HomeGridView(store: store)
                     .opacity(opacity(.grid))
-                
-                CalendarScreen(
-                  store: Store(initialState: CalendarFeature.State(), reducer: { CalendarFeature() })
-                ).opacity(opacity(.calendar))
             }
         }
         .background(Color.background1)
