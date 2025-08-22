@@ -23,48 +23,43 @@ struct ArtistInfoView: View {
     }
     
     var body: some View {
-        VStack(spacing: 12) {
-            HStack {
-                titleView
-                Spacer()
-                seeAllButton
-            }
-            .padding(.horizontal, 16)
-            
+        Group {
             switch artists.isEmpty {
-            case true: emptyView
-            case false: artistListView
+            case true:
+                EmptyInfoView(title: "아티스트")
+            case false:
+                VStack(spacing: 16) {
+                    HStack {
+                        titleView
+                        Spacer()
+                        seeAllButton
+                    }
+                    .padding(.horizontal, 16)
+                    
+                    artistListView
+                }
+                .padding(.top, 12)
+                .padding(.bottom, 16)
+                .background(Color.background2)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
             }
-            
         }
-        .padding(.top, 12)
-        .padding(.bottom, 20)
-        .background(Color.grey6)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
 private extension ArtistInfoView {
     var titleView: some View {
         Text("아티스트")
-            .pretendard(style: .title3)
-            .foregroundStyle(Color.white)
+            .pretendard(style: .body3)
+            .foregroundStyle(Color.point1)
     }
     
     var seeAllButton: some View {
         Button(action: action) {
             Text("전체보기 >")
-                .pretendard(style: .caption2)
-                .foregroundStyle(Color.white)
+                .pretendard(style: .caption1)
+                .foregroundStyle(Color.grey3)
         }
-        .renderedIf(!artists.isEmpty)
-    }
-    
-    var emptyView: some View {
-        Text("아직 등록된 아티스트가 없어요")
-            .pretendard(style: .body0)
-            .foregroundStyle(Color.white)
-            .frame(maxWidth: .infinity)
     }
     
     var artistListView: some View {
@@ -87,7 +82,7 @@ private extension ArtistInfoView {
             
             Text(artist.name)
                 .pretendard(style: .body3)
-                .foregroundStyle(Color.white)
+                .foregroundStyle(Color.grey1)
                 .lineLimit(1)
         }
         .frame(width: 65)

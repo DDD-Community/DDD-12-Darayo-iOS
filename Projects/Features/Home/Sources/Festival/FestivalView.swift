@@ -2,18 +2,18 @@
 //  FestivalView.swift
 //  Home
 //
-//  Created by 이정원 on 6/29/25.
+//  Created by 이정원 on 8/7/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
-import Domain
 import Base
 
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
+    @State private var scrollOffset: CGFloat = 0.0
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     private enum ScrollID { case regulationInfo }
@@ -23,33 +23,21 @@ public struct FestivalView: View {
     }
     
     public var body: some View {
-        VStack(spacing: 0) {
-            navigationBar
-            GeometryReader { geometryProxy in
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(spacing: 12) {
-                            festivalInfoView
-                            ticketInfoView
-                            artistInfoView
-                            transportationInfoView
-                            regulationInfoView
-                                .id(ScrollID.regulationInfo)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        .padding(.bottom, geometryProxy.safeAreaInsets.bottom > 0 ? 0 : 16)
-                    }
+        ZStack(alignment: .top) {
+            imageView
+            
+            ScrollViewReader { proxy in
+                scrollView
                     .onChange(of: store.isExpanded) { _, isExpanded in
                         guard isExpanded else { return }
                         withAnimation {
                             proxy.scrollTo(ScrollID.regulationInfo, anchor: .top)
                         }
                     }
-                }
-                .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
-                // timetableButton
             }
+            .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
+                
+            navigationBar
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
@@ -78,15 +66,80 @@ private extension FestivalView {
     }
 }
 
+
 private extension FestivalView {
+    var scrollView: some View {
+        OffsetScrollView(scrollOffset: $scrollOffset) {
+            VStack(spacing: 0) {
+                Color.clear
+                    .frame(height: 256)
+                
+                VStack(spacing: 12) {
+                    festivalInfoView
+                    ticketInfoView
+                    artistInfoView
+                    transportationInfoView
+                        .overlay(alignment: .bottom) {
+                            Color.clear
+                                .frame(height: 56)
+                                .id(ScrollID.regulationInfo)
+                        }
+                        
+                    regulationInfoView
+                    updateInfoView
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 16)
+        }
+    }
+    
+    var imageView: some View {
+        GeometryReader { proxy in
+            let inset = proxy.safeAreaInsets.top
+            
+            AsyncImage(url: store.festival.posterURL) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+            } placeholder: {
+                let width = proxy.size.width
+                Image.placeholder1
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: width, height: width * 1.2)
+            }
+            .padding(.top, inset - 100)
+            .overlay(alignment: .top) {
+                VStack(spacing: 0) {
+                    gradient
+                        .frame(height: 256 + inset)
+                    Color.background1
+                }
+            }
+            .offset(x: 0, y: min(0, -scrollOffset))
+            .ignoresSafeArea(edges: .top)
+        }
+    }
+    
+    var gradient: some View {
+        LinearGradient(
+            colors: [.grey6.opacity(0.0), .background1],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+    
     var navigationBar: some View {
-        HStack(spacing: 20) {
+        let opacity = min(max(0, scrollOffset - 144.0), 56.0) / 56.0
+        return HStack(spacing: 20) {
             backButton
             Spacer()
             notificationButton
             heartButton
         }
         .padding(.trailing, 16)
+        .background(Color.background1.opacity(opacity))
     }
     
     var backButton: some View {
@@ -143,15 +196,15 @@ private extension FestivalView {
             title: store.festival.name,
             place: store.festival.placeName,
             dateString: store.dateString,
-            posterURL: store.festival.posterURL
+            urlInfos: store.festival.urlInfos
         )
+        .padding(.vertical, 8)
     }
     
     var ticketInfoView: some View {
         TicketInfoView(
             vendors: store.festival.vendors,
-            purchaseDates: store.purchaseDates,
-            urlInfos: store.festival.urlInfos
+            purchaseDates: store.purchaseDates
         )
     }
     
@@ -162,7 +215,9 @@ private extension FestivalView {
     }
     
     var transportationInfoView: some View {
-        TransportationInfoView(transportationInfo: store.festival.transportationInfo)
+        TransportationInfoView(
+            transportationInfo: store.festival.transportationInfo
+        )
     }
     
     var regulationInfoView: some View {
@@ -172,13 +227,27 @@ private extension FestivalView {
         )
     }
     
-    var timetableButton: some View {
-        Button("타임테이블") {
-            
+    var updateInfoView: some View {
+        VStack(spacing: 4) {
+            sentenceView("업데이트 일자 : 2025. 06. 15")
+            sentenceView("자세한 내용은 공식 사이트 참조")
         }
-        .buttonStyle(.festibee)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 8)
+        .padding(.top, 4)
+    }
+    
+    func sentenceView(_ sentence: String) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            Text("•")
+                .pretendard(style: .caption2)
+                .foregroundStyle(Color.grey5)
+                .padding(.horizontal, 8)
+            
+            Text(sentence)
+                .pretendard(style: .caption2)
+                .foregroundStyle(Color.grey5)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
     }
 }
 

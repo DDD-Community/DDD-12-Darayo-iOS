@@ -29,7 +29,7 @@ public struct FestivalFeature {
         var isAuthorized: Bool = false
         var isNotificationOn: Bool = false
         var isFavorite: Bool = false
-        var isExpanded: Bool = true
+        var isExpanded: Bool = false
         
         @Presents var alert: CustomAlert.State?
         var shouldOpenURL: Bool = false

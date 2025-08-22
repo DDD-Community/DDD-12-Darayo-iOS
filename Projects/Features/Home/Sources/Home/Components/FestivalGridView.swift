@@ -110,6 +110,7 @@ private extension FestivalGridView {
     func imageView(url: URL?) -> some View {
         ZStack {
             ImageView(url, placeholder: .placeholder2)
+                .scaledToFill()
                 .frame(height: 110)
                 .clipped()
             
