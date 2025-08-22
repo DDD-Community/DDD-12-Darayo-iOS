@@ -56,6 +56,13 @@ public struct CalendarView: View {
             )
         }
         .frame(maxWidth: .infinity, alignment: .topLeading)
+        .onChange(of: selectedDate) { oldValue, newValue in
+            if let newDate = newValue,
+               !Calendar.current.isDate(newDate, equalTo: currentMonth, toGranularity: .month) {
+                currentMonth = newDate
+                onMonthChanged(currentMonth)
+            }
+        }
     }
     
     private var calendarDates: [Date] {

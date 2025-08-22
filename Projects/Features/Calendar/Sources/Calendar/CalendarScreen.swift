@@ -23,6 +23,7 @@ public struct CalendarScreen: View {
             Color.background1.ignoresSafeArea()
             VStack(spacing: 0) {
                 navigationBar
+                
                 CalendarSegmentedControl(
                     selectedMode: Binding(
                         get: { store.selectedMode },
@@ -33,11 +34,11 @@ public struct CalendarScreen: View {
                 ScrollView {
                     VStack(spacing: 0) {
                         calendarSection
-                            .padding(.top, 16)
+                            .padding(.top, 20)
                         
                         eventListSection
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-                            .padding(.top, 20)
+                            .padding(.top, 16)
                     }
                 }
             }

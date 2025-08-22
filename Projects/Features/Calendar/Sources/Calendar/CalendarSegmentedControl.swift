@@ -49,6 +49,5 @@ public struct CalendarSegmentedControl: View {
         .frame(height: 34)
         .padding(.horizontal, 16)
         .padding(.top, 8)
-        .padding(.bottom, 16)
     }
 }
