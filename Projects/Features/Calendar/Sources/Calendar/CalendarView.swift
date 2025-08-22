@@ -7,9 +7,10 @@
 //
 
 import SwiftUI
+import Domain
 
 public struct CalendarView: View {
-    let calendar: CalendarModel
+    let calendarEvents: [CalendarEvent]
     let selectedDate: Date?
     let onDateSelected: (Date) -> Void
     let onMonthChanged: (Date) -> Void
@@ -18,13 +19,13 @@ public struct CalendarView: View {
     @State private var currentMonth: Date = Date()
     
     public init(
-        calendar: CalendarModel,
+        calendarEvents: [CalendarEvent],
         selectedDate: Date?,
         onDateSelected: @escaping (Date) -> Void,
         onMonthChanged: @escaping (Date) -> Void,
         onLikedFestivalsRequested: @escaping () -> Void = {}
     ) {
-        self.calendar = calendar
+        self.calendarEvents = calendarEvents
         self.selectedDate = selectedDate
         self.onDateSelected = onDateSelected
         self.onMonthChanged = onMonthChanged
@@ -47,7 +48,7 @@ public struct CalendarView: View {
             CalendarGridView(
                 currentMonth: currentMonth,
                 selectedDate: selectedDate,
-                calendar: calendar,
+                calendarEvents: calendarEvents,
                 dates: calendarDates,
                 onDateSelected: { date in
                     onDateSelected(date)

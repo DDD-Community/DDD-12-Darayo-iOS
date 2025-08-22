@@ -8,23 +8,24 @@
 
 import SwiftUI
 import DesignSystem
+import Domain
 
 struct EventListView: View {
-    let allEventsOfSelectedDate: [CalendarModel.Event] // 선택된 날짜의 전체 페스티벌 이벤트
-    let likedEventsOfSelectedDate: [CalendarModel.Event] // 선택된 날짜의 좋아요한 페스티벌 이벤트
-    let totalLikedEvents: [CalendarModel.Event] // 전체 날짜 기준 좋아요한 모든 페스티벌 이벤트
+    let allEventsOfSelectedDate: [CalendarEvent] // 선택된 날짜의 전체 페스티벌 이벤트
+    let likedEventsOfSelectedDate: [CalendarEvent] // 선택된 날짜의 좋아요한 페스티벌 이벤트
+    let totalLikedEvents: [CalendarEvent] // 전체 날짜 기준 좋아요한 모든 페스티벌 이벤트
     let title: String
     let isFiltered: Bool // 외부에서 받은 필터 상태
-    let onTap: (CalendarModel.Event) -> Void
+    let onTap: (CalendarEvent) -> Void
     let onToggleFilter: () -> Void // 토글 액션 전달
     
     public init(
-        events: [CalendarModel.Event],
-        allEvents: [CalendarModel.Event],
-        totalLikedEvents: [CalendarModel.Event],
+        events: [CalendarEvent],
+        allEvents: [CalendarEvent],
+        totalLikedEvents: [CalendarEvent],
         title: String = "좋아요한 페스티벌",
         isFiltered: Bool,
-        onTap: @escaping (CalendarModel.Event) -> Void,
+        onTap: @escaping (CalendarEvent) -> Void,
         onToggleFilter: @escaping () -> Void = {}
     ) {
         self.allEventsOfSelectedDate = events
@@ -66,7 +67,7 @@ struct EventListView: View {
         .background(Color.background1)
     }
     
-    private var currentEvents: [CalendarModel.Event] {
+    private var currentEvents: [CalendarEvent] {
         isFiltered ? likedEventsOfSelectedDate : allEventsOfSelectedDate
     }
 }
