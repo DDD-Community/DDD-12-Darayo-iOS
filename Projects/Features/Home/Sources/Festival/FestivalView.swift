@@ -10,6 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import Base
+import Kingfisher
 
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
@@ -96,28 +97,24 @@ private extension FestivalView {
     var imageView: some View {
         GeometryReader { proxy in
             let inset = proxy.safeAreaInsets.top
-            
-            AsyncImage(url: store.festival.posterURL) { image in
-                image
-                    .resizable()
-                    .scaledToFit()
-            } placeholder: {
-                let width = proxy.size.width
-                Image.placeholder1
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .frame(width: width, height: width * 1.2)
-            }
-            .padding(.top, inset - 100)
-            .overlay(alignment: .top) {
-                VStack(spacing: 0) {
-                    gradient
-                        .frame(height: 256 + inset)
-                    Color.background1
+            KFImage(store.festival.posterURL)
+                .placeholder {
+                    Image.placeholder1
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
                 }
-            }
-            .offset(x: 0, y: min(0, -scrollOffset))
-            .ignoresSafeArea(edges: .top)
+                .resizable()
+                .scaledToFit()
+                .padding(.top, inset - 100)
+                .overlay(alignment: .top) {
+                    VStack(spacing: 0) {
+                        gradient
+                            .frame(height: 256 + inset)
+                        Color.background1
+                    }
+                }
+                .offset(x: 0, y: min(0, -scrollOffset))
+                .ignoresSafeArea(edges: .top)
         }
     }
     

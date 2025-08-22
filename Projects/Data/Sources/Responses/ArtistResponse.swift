@@ -13,6 +13,7 @@ struct ArtistResponse: Decodable {
     let artistId: Int?
     let artistDisplayName: String?
     let performanceDate: String?
+    let artistImageUrl: String?
 }
 
 extension ArtistResponse {
@@ -24,7 +25,7 @@ extension ArtistResponse {
             id: artistId.string,
             name: artistDisplayName ?? "",
             performanceDate: performanceDate,
-            imageURLString: ""
+            imageURLString: artistImageUrl
         )
     }
 }

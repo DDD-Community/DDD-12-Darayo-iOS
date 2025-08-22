@@ -9,6 +9,7 @@
 import SwiftUI
 import DesignSystem
 import Domain
+import Kingfisher
 
 struct FestivalGridView: View {
     private let festivals: [Festival]
@@ -109,8 +110,14 @@ private extension FestivalGridView {
     
     func imageView(url: URL?) -> some View {
         ZStack {
-            ImageView(url, placeholder: .placeholder2)
-                .scaledToFill()
+            KFImage(url)
+                .placeholder {
+                    Image.placeholder2
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                }
+                .resizable()
+                .aspectRatio(contentMode: .fill)
                 .frame(height: 110)
                 .clipped()
             

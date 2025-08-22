@@ -12,17 +12,24 @@ public struct Artist: Equatable, Hashable {
     public let id: String
     public let name: String
     public let performanceDate: Date?
-    public let imageURLString: String
+    let imageURLString: String?
     
     public init(
         id: String,
         name: String,
         performanceDate: Date?,
-        imageURLString: String = ""
+        imageURLString: String? = nil
     ) {
         self.id = id
         self.name = name
         self.performanceDate = performanceDate
         self.imageURLString = imageURLString
+    }
+    
+    public func imageURL(_ size: Int) -> URL? {
+        guard let imageURLString else { return nil }
+        let urlString = imageURLString
+            .replacingOccurrences(of: "{w}x{h}", with: "\(size)x\(size)")
+        return URL(string: urlString)
     }
 }
