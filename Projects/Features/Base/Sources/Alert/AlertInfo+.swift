@@ -1,0 +1,40 @@
+//
+//  AlertInfo+.swift
+//  Base
+//
+//  Created by 이정원 on 8/22/25.
+//  Copyright © 2025 Darayo. All rights reserved.
+//
+
+import SwiftUI
+import DesignSystem
+
+public extension AlertInfo {
+    static var error: Self {
+        let message = """
+        일시적인 오류가 발생했어요.
+        버튼을 눌러 1:1 문의해주세요.    
+        """
+        
+        return .init(
+            icon: .iconError,
+            title: "잠시 오류가 발생했어요",
+            message: message,
+            buttonTitle: "1:1 문의하기"
+        )
+    }
+    
+    static var authorization: Self {
+        return .init(
+            icon: Image.iconBellGray,
+            title: "알림 권한이 없어요",
+            box: .init(
+                upperText: "권한을 허용하면",
+                highlightText: "좋아요한 페스티벌 예매일, 반입규정, 교통안내",
+                lowerText: "알림을 PUSH로 보내드려요."
+            ),
+            hasCloseButton: true,
+            buttonTitle: "권한 허용하기"
+        )
+    }
+}

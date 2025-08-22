@@ -71,6 +71,8 @@ public struct CustomAlertView: View {
             if let message {
                 Text(message)
                     .pretendard(style: .body4)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color.grey3)
                     .padding(.top, 10)
             }
             

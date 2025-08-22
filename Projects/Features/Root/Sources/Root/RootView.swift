@@ -13,6 +13,7 @@ import Base
 
 public struct RootView: View {
     @Bindable private var store: StoreOf<RootFeature>
+    @Environment(\.openURL) private var openURL
     
     public init(store: StoreOf<RootFeature>) {
         self.store = store
@@ -37,6 +38,13 @@ public struct RootView: View {
             }
         }
         .customAlert($store.scope(state: \.alert, action: \.alert))
+        .onChange(of: self.store.shouldNavigateToSettings) { oldValue, newValue in
+            guard !oldValue, newValue else { return }
+            self.store.send(.binding(.set(\.shouldNavigateToSettings, false)))
+            let url = URL(string: UIApplication.openSettingsURLString)
+            guard let url else { return }
+            openURL(url)
+        }
     }
 }
 

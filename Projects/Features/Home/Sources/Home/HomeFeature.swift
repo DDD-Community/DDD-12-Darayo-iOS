@@ -18,7 +18,7 @@ public struct HomeFeature {
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
     public enum AlertCase {
-        case network
+        case error
     }
     
     @ObservableState
@@ -55,11 +55,12 @@ public struct HomeFeature {
         case heartButtonTapped(Festival)
         case myPageButtonTapped
         case showAlert(AlertCase)
+        case alert(AlertCase)
         case navigateToFestival(Festival, Bool)
     }
     
     public init() {}
-    public var body: some ReducerOf<Self> {        
+    public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -81,7 +82,10 @@ public struct HomeFeature {
                 state.likedFestivals = fetchLikedFestivals()
                 return .none
             case .myPageButtonTapped: return .none
-            case .showAlert: return .none
+            case .showAlert:
+                state.isLoading = false
+                return .none
+            case .alert: return .none
             case .navigateToFestival: return .none
             }
         }
@@ -94,7 +98,7 @@ private extension HomeFeature {
             let festivals = try await festivalUseCase.fetchFestivals()
             return .festivalsFetched(festivals)
         } catch {
-            return .showAlert(.network)
+            return .showAlert(.error)
         }
     }
     

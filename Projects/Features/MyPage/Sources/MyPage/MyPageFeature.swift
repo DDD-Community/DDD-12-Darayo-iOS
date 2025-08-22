@@ -18,11 +18,15 @@ public struct MyPageFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.dismiss) private var dismiss
     
+    public enum AlertCase {
+        case error
+        case authorization
+    }
+    
     @ObservableState
     public struct State {
         var likedFestivals: [LikedFestival] = []
         var subscribedFestivals: [Festival] = []
-        var isLoading: Bool = false
         
         var isAuthorized: Bool = false
         var isNotificationOn: Bool = false
@@ -51,7 +55,8 @@ public struct MyPageFeature {
         case setToggle(Bool)
         case likedFestivalsButtonTapped
         case subscribedFestivalsButtonTapped
-        case showAlert
+        case showAlert(AlertCase)
+        case alert(AlertCase)
         case menuTapped(Menu)
         case backButtonTapped
         case binding(BindingAction<State>)
@@ -65,7 +70,6 @@ public struct MyPageFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.isLoading = true
                 return .merge([
                     .send(.checkAuthorization),
                     .run { send in await fetchAll(send) }
@@ -103,7 +107,6 @@ public struct MyPageFeature {
                 state.subscribedFestivals = festivals
                 return .none
             case .allFetched:
-                state.isLoading = false
                 return .none
             case .toggleChanged(let isOn):
                 return .run { send in
@@ -112,16 +115,17 @@ public struct MyPageFeature {
                         await send(.setToggle(isOn))
                         await updateNotification(isEnabled: isOn)
                     case false:
-                        await send(.showAlert)
+                        await send(.showAlert(.authorization))
                     }
                 }
             case .setToggle(let isOn):
                 state.isNotificationOn = isOn
                 return .none
-            
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
             case .showAlert:
+                return .none
+            case .alert:
                 return .none
             case .likedFestivalsButtonTapped: return .none
             case .subscribedFestivalsButtonTapped: return .none
@@ -142,7 +146,7 @@ private extension MyPageFeature {
             try await send(.subscribedFestivalsFetched(subscribedFestivals))
             await send(.allFetched)
         } catch {
-            await send(.showAlert)
+            await send(.showAlert(.error))
         }
     }
     
@@ -159,7 +163,7 @@ private extension MyPageFeature {
             let isEnabled = try await notificationUseCase.fetchNotificationState()
             return .notificationStateFetched(isEnabled)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
     

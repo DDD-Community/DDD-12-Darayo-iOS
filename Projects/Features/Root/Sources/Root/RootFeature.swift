@@ -17,18 +17,22 @@ public struct RootFeature {
     public struct State {
         var path: Path.State = .splash(.init())
         @Presents var alert: CustomAlert<AlertCase>.State?
+        var shouldNavigateToSettings: Bool = false
         
         public init() {}
     }
     
-    public enum Action {
+    public enum Action: BindableAction {
         case path(Path.Action)
         case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
         case showAlert(AlertCase)
+        case binding(BindingAction<State>)
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
+        BindingReducer()
+        
         Scope(state: \.path, action: \.path) {
             Path()
         }
@@ -49,7 +53,18 @@ public struct RootFeature {
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
                 return .none
-            default: return .none
+            case .alert(.presented(.buttonTapped(let alertCase))):
+                if alertCase.alertInfo == .authorization {
+                    state.shouldNavigateToSettings = true
+                }
+                
+                switch alertCase {
+                case .main(let alertCase):
+                    return .send(.path(.main(.alert(alertCase))))
+                }
+            case .path: return .none
+            case .alert: return .none
+            case .binding: return .none
             }
         }
         .ifLet(\.$alert, action: \.alert) {

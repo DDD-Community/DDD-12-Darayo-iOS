@@ -44,8 +44,7 @@ private extension HomeView {
     
     var myPageButton: some View {
         Button {
-            // store.send(.myPageButtonTapped)
-            store.send(.showAlert(.network))
+            store.send(.myPageButtonTapped)
         } label: {
             Image.iconMyPage
                 .renderingMode(.template)
@@ -60,12 +59,7 @@ private extension HomeView {
 extension HomeFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
-        case .network:
-            return .init(
-                icon: .iconBellGray,
-                title: "연결이 원활하지 않아요",
-                buttonTitle: "확인"
-            )
+        case .error: return .error
         }
     }
 }

@@ -9,6 +9,7 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Base
 
 public struct MyPageView: View {
     @Bindable private var store: StoreOf<MyPageFeature>
@@ -246,5 +247,14 @@ private extension MyPageView {
                 .foregroundStyle(Color.grey3)
         }
         .disabled(isLatestVersion)
+    }
+}
+
+extension MyPageFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .authorization: return .authorization
+        case .error: return .error
+        }
     }
 }
