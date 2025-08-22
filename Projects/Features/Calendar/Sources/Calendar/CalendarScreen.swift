@@ -38,6 +38,9 @@ public struct CalendarScreen: View {
                 }
             }
         }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }
 
@@ -73,16 +76,10 @@ private extension CalendarScreen {
 
     var eventListSection: some View {
         EventListView(
-            events: store.eventsForSelectedDate,             // 선택일 전체
-            allEvents: store.likedEventsForSelectedDate,     // 선택일 좋아요
-            totalLikedEvents: store.totalLikedEvents,        // 전체 기간 좋아요
-            title: "좋아요한 페스티벌",
-            isFiltered: store.isFiltered,
+            events: store.eventsForSelectedDate,
+            title: nil,
             onTap: { event in
                 store.send(.eventTapped(festivalId: event.festivalId))
-            },
-            onToggleFilter: {
-                store.send(.toggleFilter)
             }
         )
     }
