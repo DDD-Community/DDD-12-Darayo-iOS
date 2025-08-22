@@ -22,6 +22,7 @@ public struct PermissionFeature {
     
     public enum Action {
         case onAppear
+        case buttonTapped
         case allPermissionsCompleted
         case showAlert
     }
@@ -30,7 +31,8 @@ public struct PermissionFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .onAppear:
+            case .onAppear: return .none
+            case .buttonTapped:
                 return .run { send in
                     await send(requestAllAuthorizations())
                 }
