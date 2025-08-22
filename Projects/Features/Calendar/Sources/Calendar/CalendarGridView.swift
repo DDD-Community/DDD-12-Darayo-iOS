@@ -7,11 +7,12 @@
 //
 
 import SwiftUI
+import Domain
 
 struct CalendarGridView: View {
     let currentMonth: Date
     let selectedDate: Date?
-    let calendar: CalendarModel
+    let calendarEvents: [CalendarEvent]
     let dates: [Date]
     let onDateSelected: (Date) -> Void
     
@@ -30,7 +31,7 @@ struct CalendarGridView: View {
     }
     
     private func hasEvent(for date: Date) -> Bool {
-        return calendar.events.contains { event in
+        return calendarEvents.contains { event in
             Foundation.Calendar.current.isDate(event.date, inSameDayAs: date)
         }
     }
