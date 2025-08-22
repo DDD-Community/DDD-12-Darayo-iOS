@@ -16,7 +16,7 @@ import Base
 public struct FestivalFeature {
     public enum AlertCase: CaseIterable {
         case authorization
-        case like
+        case error
     }
     
     @Dependency(\.dismiss) private var dismiss
@@ -67,7 +67,8 @@ public struct FestivalFeature {
         case heartButtonTapped
         case updateNotification(Bool)
         case seeAllButtonTapped
-        case showAlert(AlertCase?)
+        case showAlert(AlertCase)
+        case alert(AlertCase)
         case notificationUpdated(Bool)
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
@@ -87,10 +88,7 @@ public struct FestivalFeature {
                 state.isAuthorized = isAuthorized
                 return .none
             case .notificationStateFetched(let isEnabled):
-                switch state.isAuthorized {
-                case true: state.isNotificationOn = isEnabled
-                case false: state.isNotificationOn = false
-                }
+                state.isNotificationOn = isEnabled
                 return .none
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
@@ -98,7 +96,7 @@ public struct FestivalFeature {
                 let isEnabled = !state.isNotificationOn
                 
                 if !state.isAuthorized, isEnabled {
-                    return .none
+                    return .send(.showAlert(.authorization))
                 }
                 return .send(.updateNotification(isEnabled))
             case .heartButtonTapped:
@@ -115,8 +113,9 @@ public struct FestivalFeature {
             case .notificationUpdated(let isEnabled):
                 state.isNotificationOn = isEnabled
                 return .none
-            case .showAlert(let alertCase):
-                guard let alertCase else { return .none }
+            case .showAlert:
+                return .none
+            case .alert:
                 return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
@@ -170,7 +169,7 @@ private extension FestivalFeature {
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
             return .notificationUpdated(isEnabled)
         } catch {
-            return .showAlert(nil)
+            return .showAlert(.error)
         }
     }
 }

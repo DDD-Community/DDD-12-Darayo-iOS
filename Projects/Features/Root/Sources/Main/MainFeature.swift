@@ -102,6 +102,8 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
+            case .path(.element(_, .festival(.showAlert(let alertCase)))):
+                return .send(.showAlert(.festival(alertCase)))
             case .path(.element(_, .likedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):
@@ -135,6 +137,8 @@ public struct MainFeature {
                 guard let id else { return .none }
                 
                 switch alertCase {
+                case .festival(let alertCase):
+                    return .send(.path(.element(id: id, action: .festival(.alert(alertCase)))))
                 case .myPage(let alertCase):
                     return .send(.path(.element(id: id, action: .myPage(.alert(alertCase)))))
                 case .subscribedFestivals(let alertCase):
@@ -215,6 +219,7 @@ extension MainFeature {
     public enum AlertCase: Equatable {
         case error
         case home(HomeFeature.AlertCase)
+        case festival(FestivalFeature.AlertCase)
         case myPage(MyPageFeature.AlertCase)
         case subscribedFestivals(SubscribedFestivalsFeature.AlertCase)
     }

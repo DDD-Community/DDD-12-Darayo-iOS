@@ -236,19 +236,11 @@ private extension FestivalView {
     }
 }
 
-private extension FestivalFeature.AlertCase {
-    var title: String {
+extension FestivalFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
         switch self {
-        case .authorization: "알림 권한이 없어요!"
-        case .like: "좋아요가 설정되었어요!"
+        case .authorization: return .authorization
+        case .error: return .error
         }
-    }
-    
-    var message: String {
-        "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요"
-    }
-    
-    var buttonTitle: String {
-        "권한 설정하기"
     }
 }

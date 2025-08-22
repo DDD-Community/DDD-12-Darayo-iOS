@@ -128,11 +128,12 @@ private extension MainView {
 
 extension MainFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
-        switch self {
-        case .home(let alertCase): return alertCase.alertInfo
-        case .myPage(let alertCase): return alertCase.alertInfo
-        case .subscribedFestivals(let alertCase): return alertCase.alertInfo
-        case .error: return .error
+        return switch self {
+        case .home(let alertCase): alertCase.alertInfo
+        case .festival(let alertCase): alertCase.alertInfo
+        case .myPage(let alertCase): alertCase.alertInfo
+        case .subscribedFestivals(let alertCase): alertCase.alertInfo
+        case .error: .error
         }
     }
 }
