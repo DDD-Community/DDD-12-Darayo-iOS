@@ -20,64 +20,37 @@ public struct HomeView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            ZStack {
-                HomeGridView(store: store)
-                    .opacity(opacity(.grid))
-            }
+            HomeGridView(store: store)
         }
         .background(Color.background1)
-        .onAppear {
-            if store.selectedDate == nil {
-                store.send(.dateSelected(Date()))
-            }
-            store.send(.onAppear)
-        }
+        .onAppear { store.send(.onAppear) }
     }
 }
 
 private extension HomeView {
-    func opacity(_ mode: HomeFeature.DisplayMode) -> CGFloat {
-        mode == store.displayMode ? 1 : 0
-    }
-    
     var navigationBar: some View {
         HStack {
             Image.logo
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 106)
+                .padding(.leading, 16)
+            
             Spacer()
-            displayModeView(mode: $store.displayMode)
-        }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 16)
-    }
-    
-    func displayModeView(mode: Binding<HomeFeature.DisplayMode>) -> some View {
-        return HStack(spacing: 15) {
-            displayModebutton(mode: .grid) {
-                mode.wrappedValue = .grid
-            }
-            
-            displayModebutton(mode: .calendar) {
-                mode.wrappedValue = .calendar
-            }
+            myPageButton
         }
     }
     
-    func displayModebutton(
-        mode: HomeFeature.DisplayMode,
-        action: @escaping () -> Void
-    ) -> some View {
-        let color: Color = mode == store.displayMode ? .white : .grey4
-        return Button(action: action) {
-            let image: Image = switch mode {
-            case .grid: Image.iconGridMode
-            case .calendar: Image.iconCalendarMode
-            }
-            
-            image
+    var myPageButton: some View {
+        Button {
+            store.send(.myPageButtonTapped)
+        } label: {
+            Image.iconMyPage
                 .renderingMode(.template)
                 .resizable()
                 .frame(width: 24, height: 24)
-                .foregroundStyle(color)
+                .foregroundStyle(Color.grey4)
+                .padding(16)
         }
     }
 }

@@ -19,6 +19,11 @@ public struct FestivalUseCase {
         return try festivalRepository.fetchLikedFestivals()
     }
     
+    public func isFavorite(_ festival: Festival) throws -> Bool {
+        let ids = try Set(fetchLikedFestivals().map { $0.id })
+        return ids.contains(festival.id)
+    }
+    
     public func addLikedFestival(id: Int) throws {
         let likedFestival = LikedFestival(id: id, creationDate: .now)
         return try festivalRepository.addLikedFestival(festival: likedFestival)

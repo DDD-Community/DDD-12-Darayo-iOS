@@ -21,8 +21,6 @@ public struct MainFeature {
     public struct State {
         var currentTab: Tab = .home
         var home: HomeFeature.State = .init()
-        // var timetable: TimetableFeature.State = .init()
-        var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
         
@@ -33,8 +31,6 @@ public struct MainFeature {
     public enum Action: BindableAction {
         case enteredForeground
         case home(HomeFeature.Action)
-        // case timetable(TimetableFeature.Action)
-        case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
         case alert(PresentationAction<CustomAlert.Action>)
@@ -48,14 +44,6 @@ public struct MainFeature {
             HomeFeature()
         }
         
-//        Scope(state: \.timetable, action: \.timetable) {
-//            TimetableFeature()
-//        }
-        
-        Scope(state: \.myPage, action: \.myPage) {
-            MyPageFeature()
-        }
-        
         Reduce { state, action in
             switch action {
             case .enteredForeground:
@@ -63,16 +51,25 @@ public struct MainFeature {
             case let .home(.navigateToFestival(festival, isFavorite)):
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
-            case .myPage(.showAlert):
-                state.alert = .authorization
+            case .home(.myPageButtonTapped):
+                state.path.append(.myPage(.init()))
                 return .none
             case .alert(.presented(.buttonTapped)):
                 state.shouldOpenURL = true
                 return .none
-            case .myPage(.menuTapped(.inquiry)):
+            case .path(.element(_, .myPage(.showAlert))):
+                state.alert = .authorization
+                return .none
+            case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
+                state.path.append(.likedFestivals(.init()))
+                return .none
+            case .path(.element(_, .myPage(.subscribedFestivalsButtonTapped))):
+                state.path.append(.subscribedFestivals(.init()))
+                return .none
+            case .path(.element(_, .myPage(.menuTapped(.inquiry)))):
                 state.url = URL(string: Constant.URL.inquiry)
                 return .none
-            case .myPage(.menuTapped(let menu)):
+            case .path(.element(_, .myPage(.menuTapped(let menu)))):
                 let pathState = getPathState(menu: menu)
                 guard let pathState else { return .none }
                 state.path.append(pathState)
@@ -80,7 +77,16 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
-            case .path(.element(_, .notificationSetting(let action))):
+            case .path(.element(_, .likedFestivals(let action))):
+                switch action {
+                case .navigateToFestival(let festival, let isFavorite):
+                    state.path.append(.festival(.init(
+                        festival: festival, isFavorite: isFavorite
+                    )))
+                    return .none
+                default: return .none
+                }
+            case .path(.element(_, .subscribedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):
                     state.path.append(.festival(.init(
@@ -90,8 +96,6 @@ public struct MainFeature {
                 default: return .none
                 }
             case .home: return .none
-            // case .timetable: return .none
-            case .myPage: return .none
             case .binding: return .none
             case .path: return .none
             case .alert: return .none
@@ -117,10 +121,8 @@ private extension MainFeature {
     
     func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
         return switch menu {
-        case .individualNotificationSettings: .notificationSetting(.init())
         case .termsOfService: .termsOfService(.init())
         case .privacyPolicy: .privacyPolicy(.init())
-        case .notificationSettings: nil
         case .inquiry: nil
         }
     }
@@ -129,14 +131,10 @@ private extension MainFeature {
 extension MainFeature {
     public enum Tab: CaseIterable {
         case home
-        // case timetable
-        case myPage
         
         var name: String {
             switch self {
             case .home: "홈"
-            // case .timetable: "타임테이블"
-            case .myPage: "MY"
             }
         }
     }
@@ -145,7 +143,9 @@ extension MainFeature {
     public enum Path {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
-        case notificationSetting(NotificationSettingFeature)
+        case myPage(MyPageFeature)
+        case likedFestivals(LikedFestivalsFeature)
+        case subscribedFestivals(SubscribedFestivalsFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
     }

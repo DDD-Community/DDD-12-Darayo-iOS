@@ -33,7 +33,9 @@ public struct MainView: View {
             switch store.case {
             case .festival(let store): FestivalView(store: store)
             case .artistList(let store): ArtistListView(store: store)
-            case .notificationSetting(let store): NotificationSettingView(store: store)
+            case .myPage(let store): MyPageView(store: store)
+            case .likedFestivals(let store): LikedFestivalsView(store: store)
+            case .subscribedFestivals(let store): SubscribedFestivalsView(store: store)
             case .termsOfService(let store): TermsOfServiceView(store: store)
             case .privacyPolicy(let store): PrivacyPolicyView(store: store)
             }
@@ -57,8 +59,6 @@ private extension MainView {
     func icon(tab: MainFeature.Tab) -> Image {
         switch tab {
         case .home: Image.iconHome
-        // case .timetable: Image.iconTimetable
-        case .myPage: Image.iconMyPage
         }
     }
 }
@@ -81,12 +81,6 @@ private extension MainView {
         TabView(selection: $store.currentTab) {
             HomeView(store: store.scope(state: \.home, action: \.home))
                 .tag(MainFeature.Tab.home)
-            
-//            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
-//                .tag(MainFeature.Tab.timetable)
-            
-            MyPageView(store: store.scope(state: \.myPage, action: \.myPage))
-                .tag(MainFeature.Tab.myPage)
         }
         .padding(.bottom, bottomPadding)
         .ignoresSafeArea(edges: .bottom)
