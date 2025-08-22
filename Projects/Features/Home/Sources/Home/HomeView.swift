@@ -9,9 +9,10 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Base
 
 public struct HomeView: View {
-    @Bindable private var store: StoreOf<HomeFeature>
+    private let store: StoreOf<HomeFeature>
     
     public init(store: StoreOf<HomeFeature>) {
         self.store = store
@@ -43,7 +44,8 @@ private extension HomeView {
     
     var myPageButton: some View {
         Button {
-            store.send(.myPageButtonTapped)
+            // store.send(.myPageButtonTapped)
+            store.send(.showAlert(.network))
         } label: {
             Image.iconMyPage
                 .renderingMode(.template)
@@ -51,6 +53,19 @@ private extension HomeView {
                 .frame(width: 24, height: 24)
                 .foregroundStyle(Color.grey4)
                 .padding(16)
+        }
+    }
+}
+
+extension HomeFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .network:
+            return .init(
+                icon: .iconBellGray,
+                title: "연결이 원활하지 않아요",
+                buttonTitle: "확인"
+            )
         }
     }
 }

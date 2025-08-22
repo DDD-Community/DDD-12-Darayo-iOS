@@ -38,7 +38,7 @@ public struct MainFeature {
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
         case navigateToFestival(Festival, Bool)
-        case showAlert
+        case showAlert(AlertCase)
     }
     
     public init() {}
@@ -80,8 +80,8 @@ public struct MainFeature {
             case .home(.myPageButtonTapped):
                 state.path.append(.myPage(.init()))
                 return .none
-            case .path(.element(_, .myPage(.showAlert))):
-                return .none
+            case .home(.showAlert(let alertCase)):
+                return .send(.showAlert(.home(alertCase)))
             case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
                 state.path.append(.likedFestivals(.init()))
                 return .none
@@ -160,7 +160,7 @@ private extension MainFeature {
             let festival = try await festivalUseCase.fetchFestival(id: id)
             return .navigateToFestival(festival, isFavorite)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
 }
@@ -185,5 +185,10 @@ extension MainFeature {
         case subscribedFestivals(SubscribedFestivalsFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
+    }
+    
+    public enum AlertCase: Equatable {
+        case error
+        case home(HomeFeature.AlertCase)
     }
 }

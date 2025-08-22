@@ -13,8 +13,8 @@ public protocol AlertPresentable: Equatable {
     var alertInfo: AlertInfo { get }
 }
 
-public struct AlertInfo {
-    public struct Box {
+public struct AlertInfo: Equatable {
+    public struct Box: Equatable {
         let upperText: String
         let highlightText: String
         let lowerText: String
@@ -44,7 +44,7 @@ public struct AlertInfo {
         title: String,
         box: Box? = nil,
         message: String? = nil,
-        hasCloseButton: Bool,
+        hasCloseButton: Bool = false,
         buttonTitle: String
     ) {
         self.icon = icon

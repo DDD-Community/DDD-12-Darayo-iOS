@@ -9,16 +9,22 @@
 import UIKit
 import ComposableArchitecture
 import Domain
+import Base
 
 @Reducer
 public struct RootFeature {
+    @ObservableState
     public struct State {
         var path: Path.State = .splash(.init())
+        @Presents var alert: CustomAlert<AlertCase>.State?
+        
         public init() {}
     }
     
     public enum Action {
         case path(Path.Action)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
+        case showAlert(AlertCase)
     }
     
     public init() {}
@@ -38,8 +44,16 @@ public struct RootFeature {
             case .path(.permission(.allPermissionsCompleted)):
                 state.path = .main(.init())
                 return .none
+            case .path(.main(.showAlert(let alertCase))):
+                return .send(.showAlert(.main(alertCase)))
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase)
+                return .none
             default: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }

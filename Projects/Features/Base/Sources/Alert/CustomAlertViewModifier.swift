@@ -11,19 +11,14 @@ import ComposableArchitecture
 import DesignSystem
 
 struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
-    private let item: Binding<StoreOf<CustomAlert<AlertCase>>?>
-    private let onDismiss: () -> Void
+    @Binding private var item: StoreOf<CustomAlert<AlertCase>>?
     
-    init(
-        item: Binding<StoreOf<CustomAlert<AlertCase>>?>,
-        onDismiss: @escaping () -> Void
-    ) {
-        self.item = item
-        self.onDismiss = onDismiss
+    init(item: Binding<StoreOf<CustomAlert<AlertCase>>?>) {
+        self._item = item
     }
     
     func body(content: Content) -> some View {
-        switch item.wrappedValue {
+        switch item {
         case .none: content
         case .some(let store):
             ZStack {
@@ -33,7 +28,8 @@ struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
                 
                 Color.background1
                     .opacity(0.2)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(.all)
+                    .onTapGesture { item = nil }
             
                 customAlertView(store: store)
             }
@@ -54,10 +50,11 @@ struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
             buttonTitle: alertInfo.buttonTitle
         ) {
             store.send(.buttonTapped(store.alertCase))
-            onDismiss()
+            item = nil
         } closeAction: {
-            onDismiss()
+            item = nil
         }
+        .background(Color.clear)
     }
 }
 
@@ -65,10 +62,6 @@ public extension View {
     func customAlert<AlertCase>(
         _ item: Binding<StoreOf<CustomAlert<AlertCase>>?>
     ) -> some View {
-        modifier(
-            CustomAlertViewModifier(item: item) {
-                item.wrappedValue = nil
-            }
-        )
+        modifier(CustomAlertViewModifier(item: item))
     }
 }

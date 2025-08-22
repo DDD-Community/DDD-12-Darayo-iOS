@@ -1,5 +1,5 @@
 //
-//  CustomAlertFeature.swift
+//  CustomAlert.swift
 //  Base
 //
 //  Created by 이정원 on 7/25/25.
@@ -14,7 +14,7 @@ public struct CustomAlert<AlertCase: AlertPresentable> {
     public struct State: Equatable {
         let alertCase: AlertCase
         
-        public init(alertCase: AlertCase) {
+        public init(_ alertCase: AlertCase) {
             self.alertCase = alertCase
         }
     }

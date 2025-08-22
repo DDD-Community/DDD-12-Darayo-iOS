@@ -125,3 +125,17 @@ private extension MainView {
         }
     }
 }
+
+extension MainFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        return switch self {
+        case .home(let alertCase): alertCase.alertInfo
+        case .error:
+            .init(
+                icon: .iconBellGray,
+                title: "연결이 원활하지 않아요",
+                buttonTitle: "확인"
+            )
+        }
+    }
+}
