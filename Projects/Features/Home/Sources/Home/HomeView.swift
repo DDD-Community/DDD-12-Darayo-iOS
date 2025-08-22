@@ -20,8 +20,10 @@ public struct HomeView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            HomeGridView(store: store)
-                .opacity(opacity(.grid))
+            ZStack {
+                HomeGridView(store: store)
+                    .opacity(opacity(.grid))
+            }
         }
         .background(Color.background1)
         .onAppear {

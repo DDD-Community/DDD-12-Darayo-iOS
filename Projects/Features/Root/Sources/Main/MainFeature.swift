@@ -9,6 +9,7 @@
 import UIKit
 import ComposableArchitecture
 import Home
+import Calendar
 import Timetable
 import MyPage
 import Util
@@ -21,6 +22,7 @@ public struct MainFeature {
     public struct State {
         var currentTab: Tab = .home
         var home: HomeFeature.State = .init()
+        var calendar: CalendarFeature.State = .init()
         // var timetable: TimetableFeature.State = .init()
         var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
@@ -33,6 +35,7 @@ public struct MainFeature {
     public enum Action: BindableAction {
         case enteredForeground
         case home(HomeFeature.Action)
+        case calendar(CalendarFeature.Action)
         // case timetable(TimetableFeature.Action)
         case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
@@ -46,6 +49,10 @@ public struct MainFeature {
         
         Scope(state: \.home, action: \.home) {
             HomeFeature()
+        }
+        
+        Scope(state: \.calendar, action: \.calendar) {
+                    CalendarFeature()
         }
         
 //        Scope(state: \.timetable, action: \.timetable) {
@@ -64,6 +71,9 @@ public struct MainFeature {
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
             case .home(.navigateToMyPage):
+                state.path.append(.myPage(.init()))
+                return .none
+            case .calendar(.delegate(.openMyPage)):
                 state.path.append(.myPage(.init()))
                 return .none
             case .myPage(.showAlert):
@@ -93,6 +103,7 @@ public struct MainFeature {
                 default: return .none
                 }
             case .home: return .none
+            case .calendar: return .none
             // case .timetable: return .none
             case .myPage: return .none
             case .binding: return .none

@@ -10,6 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import Home
+import Calendar
 import Timetable
 import MyPage
 import Base
@@ -91,7 +92,7 @@ private extension MainView {
 //            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
 //                .tag(MainFeature.Tab.timetable)
             
-            HomeCalendarView(store: store.scope(state: \.home, action: \.home))
+            CalendarScreen(store: store.scope(state: \.calendar, action: \.calendar))
                 .tag(MainFeature.Tab.calendar)
         }
         .padding(.bottom, bottomPadding)
