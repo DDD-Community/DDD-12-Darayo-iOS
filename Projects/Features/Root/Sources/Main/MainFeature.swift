@@ -27,6 +27,7 @@ public struct MainFeature {
         var path: StackState<Path.State> = .init()
         var url: URL?
         var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert<AlertCase>.State?
     }
     
     public enum Action: BindableAction {
@@ -39,7 +40,7 @@ public struct MainFeature {
         case path(StackActionOf<Path>)
         case navigateToFestival(Festival, Bool)
         case showAlert(AlertCase)
-        case alert(AlertCase)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -83,8 +84,6 @@ public struct MainFeature {
                 return .none
             case .home(.showAlert(let alertCase)):
                 return .send(.showAlert(.home(alertCase)))
-            case .path(.element(_, .myPage(.showAlert(let alertCase)))):
-                return .send(.showAlert(.myPage(alertCase)))
             case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
                 state.path.append(.likedFestivals(.init()))
                 return .none
@@ -102,8 +101,6 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
-            case .path(.element(_, .festival(.showAlert(let alertCase)))):
-                return .send(.showAlert(.festival(alertCase)))
             case .path(.element(_, .likedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):
@@ -111,8 +108,6 @@ public struct MainFeature {
                         festival: festival, isFavorite: isFavorite
                     )))
                     return .none
-                case .showAlert(let alertCase):
-                    return .send(.showAlert(.likedFestivals(alertCase)))
                 default: return .none
                 }
             case .path(.element(_, .subscribedFestivals(let action))):
@@ -122,36 +117,11 @@ public struct MainFeature {
                         festival: festival, isFavorite: isFavorite
                     )))
                     return .none
-                case .showAlert(let alertCase):
-                    return .send(.showAlert(.subscribedFestivals(alertCase)))
                 default: return .none
                 }
-            case .showAlert:
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase)
                 return .none
-            case .alert(let alertCase):
-                switch alertCase {
-                case .home(let alertCase):
-                    return .send(.home(.alert(alertCase)))
-                default: break
-                }
-                
-                let id = state.path.ids.last
-                guard let id else { return .none }
-                
-                switch alertCase {
-                case .festival(let alertCase):
-                    return .send(.path(.element(id: id, action: .festival(.alert(alertCase)))))
-                case .myPage(let alertCase):
-                    return .send(.path(.element(id: id, action: .myPage(.alert(alertCase)))))
-                case .likedFestivals(let alertCase):
-                    return .send(.path(.element(id: id, action: .likedFestivals(.alert(alertCase)))))
-                case .subscribedFestivals(let alertCase):
-                    return .send(.path(
-                        .element(id: id, action: .subscribedFestivals(.alert(alertCase)))
-                    ))
-                default:
-                    return .none
-                }
             case .navigateToFestival(let festival, let isFavorite):
                 UserDefaults.festivalID = nil
                 state.path.append(.festival(.init(
@@ -160,10 +130,14 @@ public struct MainFeature {
                 return .none
             case .home: return .none
             case .binding: return .none
+            case .alert: return .none
             case .path: return .none
             }
         }
         .forEach(\.path, action: \.path)
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
+        }
     }
 }
 
@@ -223,9 +197,5 @@ extension MainFeature {
     public enum AlertCase: Equatable {
         case error
         case home(HomeFeature.AlertCase)
-        case festival(FestivalFeature.AlertCase)
-        case myPage(MyPageFeature.AlertCase)
-        case likedFestivals(LikedFestivalsFeature.AlertCase)
-        case subscribedFestivals(SubscribedFestivalsFeature.AlertCase)
     }
 }

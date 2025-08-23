@@ -41,6 +41,7 @@ public struct MainView: View {
             }
         }
         .safari(url: $store.url)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
@@ -130,10 +131,6 @@ extension MainFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         return switch self {
         case .home(let alertCase): alertCase.alertInfo
-        case .festival(let alertCase): alertCase.alertInfo
-        case .myPage(let alertCase): alertCase.alertInfo
-        case .likedFestivals(let alertCase): alertCase.alertInfo
-        case .subscribedFestivals(let alertCase): alertCase.alertInfo
         case .error: .error
         }
     }
