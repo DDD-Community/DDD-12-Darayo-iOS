@@ -28,14 +28,14 @@ public struct MyPageFeature {
     public struct State {
         var likedFestivals: [LikedFestival] = []
         var subscribedFestivals: [Festival] = []
-        
+        var isLoading: Bool = false
         var isAuthorized: Bool = false
         var isNotificationOn: Bool = false
         
         var isLatestVersion: Bool = true
         var currentVersion: String
         var latestVersion: String
-        
+        var shouldOpenURL: Bool = false
         @Presents var alert: CustomAlert<AlertCase>.State?
         
         public init() {
@@ -73,6 +73,7 @@ public struct MyPageFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
+                state.isLoading = true
                 return .merge([
                     .send(.checkAuthorization),
                     .run { send in await fetchAll(send) }
@@ -109,6 +110,7 @@ public struct MyPageFeature {
                 state.subscribedFestivals = festivals
                 return .none
             case .allFetched:
+                state.isLoading = false
                 return .none
             case .toggleChanged(let isOn):
                 return .run { send in
@@ -126,6 +128,9 @@ public struct MyPageFeature {
                 return .run { _ in await dismiss() }
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
+                return .none
+            case .alert(.presented(.buttonTapped(.authorization))):
+                state.shouldOpenURL = true
                 return .none
             case .alert:
                 return .none

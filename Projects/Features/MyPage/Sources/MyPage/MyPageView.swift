@@ -14,6 +14,7 @@ import Base
 public struct MyPageView: View {
     @Bindable private var store: StoreOf<MyPageFeature>
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
     
     public init(store: StoreOf<MyPageFeature>) {
         self.store = store
@@ -40,6 +41,12 @@ public struct MyPageView: View {
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
             store.send(.enteredForeground)
+        }
+        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
+            guard !oldValue, newValue else { return }
+            store.send(.binding(.set(\.shouldOpenURL, false)))
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            openURL(url)
         }
     }
 }
@@ -137,6 +144,7 @@ private extension MyPageView {
                     Text(String(count))
                         .pretendard(style: .title2)
                         .foregroundStyle(Color.point1)
+                        .opacity(store.isLoading ? 0 : 1)
                 }
                 
                 Text(title)
@@ -183,6 +191,7 @@ private extension MyPageView {
                 }
             )
             .tint(Color.point1)
+            .renderedIf(!store.isLoading)
         }
         .frame(height: 64)
         .padding(.horizontal, 16)
