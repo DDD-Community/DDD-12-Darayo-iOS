@@ -14,7 +14,7 @@ import Base
 
 @Reducer
 public struct FestivalFeature {
-    public enum AlertCase: CaseIterable {
+    public enum AlertCase {
         case authorization
         case error
     }
@@ -30,8 +30,8 @@ public struct FestivalFeature {
         var isNotificationOn: Bool = false
         var isFavorite: Bool = false
         var isExpanded: Bool = false
-        
         var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert<AlertCase>.State?
         
         public init(festival: Festival, isFavorite: Bool) {
             self.festival = festival
@@ -68,10 +68,10 @@ public struct FestivalFeature {
         case updateNotification(Bool)
         case seeAllButtonTapped
         case showAlert(AlertCase)
-        case alert(AlertCase)
         case notificationUpdated(Bool)
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -113,13 +113,17 @@ public struct FestivalFeature {
             case .notificationUpdated(let isEnabled):
                 state.isNotificationOn = isEnabled
                 return .none
-            case .showAlert:
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase)
                 return .none
             case .alert:
                 return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }
