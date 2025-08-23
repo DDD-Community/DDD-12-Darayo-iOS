@@ -14,6 +14,7 @@ import Base
 public struct SubscribedFestivalsView: View {
     @Bindable private var store: StoreOf<SubscribedFestivalsFeature>
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
     
     public init(store: StoreOf<SubscribedFestivalsFeature>) {
         self.store = store
@@ -37,6 +38,12 @@ public struct SubscribedFestivalsView: View {
         .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
+        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
+            guard !oldValue, newValue else { return }
+            store.send(.binding(.set(\.shouldOpenURL, false)))
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            openURL(url)
+        }
     }
 }
 

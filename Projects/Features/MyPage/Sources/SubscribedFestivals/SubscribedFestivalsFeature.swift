@@ -27,6 +27,7 @@ public struct SubscribedFestivalsFeature {
         var festivals: [Festival] = []
         var isEnabled: [Bool] = []
         var isLoading: Bool = true
+        var shouldOpenURL: Bool = false
         @Presents var alert: CustomAlert<AlertCase>.State?
         public init() {}
     }
@@ -80,6 +81,9 @@ public struct SubscribedFestivalsFeature {
             case .showAlert(let alertCase):
                 state.isLoading = false
                 state.alert = .init(alertCase)
+                return .none
+            case .alert(.presented(.buttonTapped(.authorization))):
+                state.shouldOpenURL = true
                 return .none
             case .alert: return .none
             case .backButtonTapped:

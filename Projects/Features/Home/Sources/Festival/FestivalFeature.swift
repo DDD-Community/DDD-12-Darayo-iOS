@@ -116,6 +116,9 @@ public struct FestivalFeature {
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
                 return .none
+            case .alert(.presented(.buttonTapped(.authorization))):
+                state.shouldOpenURL = true
+                return .none
             case .alert:
                 return .none
             case .navigateToArtistList: return .none
