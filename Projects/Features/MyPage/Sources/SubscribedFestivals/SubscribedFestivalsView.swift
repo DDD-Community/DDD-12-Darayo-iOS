@@ -34,6 +34,7 @@ public struct SubscribedFestivalsView: View {
             store.send(.backButtonTapped)
         }
         .background(Color.background1)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
     }

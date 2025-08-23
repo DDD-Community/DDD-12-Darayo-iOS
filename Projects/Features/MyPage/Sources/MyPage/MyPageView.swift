@@ -35,6 +35,7 @@ public struct MyPageView: View {
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }

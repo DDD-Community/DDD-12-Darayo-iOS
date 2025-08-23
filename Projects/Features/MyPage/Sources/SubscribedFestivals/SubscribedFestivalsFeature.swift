@@ -27,6 +27,7 @@ public struct SubscribedFestivalsFeature {
         var festivals: [Festival] = []
         var isEnabled: [Bool] = []
         var isLoading: Bool = true
+        @Presents var alert: CustomAlert<AlertCase>.State?
         public init() {}
     }
     
@@ -37,10 +38,10 @@ public struct SubscribedFestivalsFeature {
         case noticiationButtonTapped(Festival)
         case notificationUpdated(Int)
         case showAlert(AlertCase)
-        case alert(AlertCase)
         case backButtonTapped
         case navigateToFestival(Festival, Bool)
         case binding(BindingAction<State>)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -51,7 +52,7 @@ public struct SubscribedFestivalsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.isLoading else { return .none }
+                state.isLoading = true
                 return .run { send in
                     await send(fetchSubsribedFestivals())
                 }
@@ -79,14 +80,16 @@ public struct SubscribedFestivalsFeature {
             case .showAlert:
                 state.isLoading = false
                 return .none
-            case .alert:
-                return .none
+            case .alert: return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             case .navigateToFestival:
                 return .none
             case .binding: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }

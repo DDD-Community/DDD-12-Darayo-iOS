@@ -9,6 +9,7 @@
 import SwiftUI
 import ComposableArchitecture
 import Domain
+import Base
 
 @Reducer
 public struct LikedFestivalsFeature {
@@ -24,6 +25,7 @@ public struct LikedFestivalsFeature {
         var festivals: [Festival] = []
         var isFavorite: [Bool] = []
         var isLoading: Bool = true
+        @Presents var alert: CustomAlert<AlertCase>.State?
         public init() {}
     }
     
@@ -31,11 +33,11 @@ public struct LikedFestivalsFeature {
         case onAppear
         case festivalsFetched([Festival])
         case showAlert(AlertCase)
-        case alert(AlertCase)
         case backButtonTapped
         case festivalTapped(Festival)
         case likeButtonTapped(Festival)
         case navigateToFestival(Festival, Bool)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -43,7 +45,7 @@ public struct LikedFestivalsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.isLoading else { return .none }
+                state.isLoading = true
                 return .run { send in
                     await send(fetchLikedFestivals())
                 }
@@ -66,15 +68,18 @@ public struct LikedFestivalsFeature {
                 updateLikedFestivals(festival.id, isFavorite: isFavorite)
                 state.isFavorite[index].toggle()
                 return .none
-            case .showAlert:
+            case .showAlert(let alertCase):
                 state.isLoading = false
-                return .none
-            case .alert:
+                state.alert = .init(alertCase)
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             case .navigateToFestival: return .none
+            case .alert: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }

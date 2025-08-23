@@ -11,6 +11,7 @@ import UserNotifications
 import ComposableArchitecture
 import Domain
 import Util
+import Base
 
 @Reducer
 public struct MyPageFeature {
@@ -35,6 +36,8 @@ public struct MyPageFeature {
         var currentVersion: String
         var latestVersion: String
         
+        @Presents var alert: CustomAlert<AlertCase>.State?
+        
         public init() {
             let appVersion = Bundle.appVersion
             self.currentVersion = appVersion
@@ -56,10 +59,10 @@ public struct MyPageFeature {
         case likedFestivalsButtonTapped
         case subscribedFestivalsButtonTapped
         case showAlert(AlertCase)
-        case alert(AlertCase)
         case menuTapped(Menu)
         case backButtonTapped
         case binding(BindingAction<State>)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -123,7 +126,8 @@ public struct MyPageFeature {
                 return .none
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
-            case .showAlert:
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase)
                 return .none
             case .alert:
                 return .none
@@ -132,6 +136,9 @@ public struct MyPageFeature {
             case .menuTapped: return .none
             case .binding: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }
