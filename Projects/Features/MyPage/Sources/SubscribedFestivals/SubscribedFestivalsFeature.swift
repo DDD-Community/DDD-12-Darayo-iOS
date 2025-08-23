@@ -77,8 +77,9 @@ public struct SubscribedFestivalsFeature {
                 guard let index else { return .none }
                 state.isEnabled[index].toggle()
                 return .none
-            case .showAlert:
+            case .showAlert(let alertCase):
                 state.isLoading = false
+                state.alert = .init(alertCase)
                 return .none
             case .alert: return .none
             case .backButtonTapped:

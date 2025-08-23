@@ -137,6 +137,7 @@ private extension FestivalFeature {
             await send(.authorizationChecked(isAuthroized))
             try await send(.notificationStateFetched(isEnabled))
         } catch {
+            await send(.showAlert(.error))
         }
     }
     

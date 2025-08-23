@@ -12,15 +12,14 @@ import DesignSystem
 public extension AlertInfo {
     static var error: Self {
         let message = """
-        일시적인 오류가 발생했어요.
-        버튼을 눌러 1:1 문의해주세요.    
+        일시적인 오류가 발생했어요. 
         """
         
         return .init(
             icon: .iconError,
             title: "잠시 오류가 발생했어요",
             message: message,
-            buttonTitle: "1:1 문의하기"
+            buttonTitle: "확인"
         )
     }
     
