@@ -33,6 +33,7 @@ public struct FestivalFeature {
         var isFavorite: Bool = false
         var isExpanded: Bool = false
         var shouldOpenURL: Bool = false
+        var hasTappedButton: Bool = false
         @Presents var alert: CustomAlert<AlertCase>.State?
         
         public init(festival: Festival, isFavorite: Bool) {
@@ -61,16 +62,19 @@ public struct FestivalFeature {
     
     public enum Action: BindableAction {
         case onAppear
-        case enteredForeground
+        case foregroundEntered
         case authorizationChecked(Bool)
-        case notificationStateFetched(Bool, Bool)
+        case notificationStateFetched(Bool)
+        case notificationAgreementStateFetched(Bool)
         case backButtonTapped
         case notificationButtonTapped
         case heartButtonTapped
+        case updateNotificationAgreement(Bool)
         case updateNotification(Bool)
         case seeAllButtonTapped
         case showAlert(AlertCase)
         case notificationUpdated(Bool)
+        case notificationAgreementUpdated(Bool)
         case navigateToArtistList([Artist])
         case navigateToMyPage
         case binding(BindingAction<State>)
@@ -83,19 +87,32 @@ public struct FestivalFeature {
         
         Reduce { state, action in
             switch action {
-            case .onAppear, .enteredForeground:
-                return .run { [state] send in
-                    await fetchAll(state, send)
-                }
+            case .onAppear:
+                return .run { [state] send in await fetchAll(state, send) }
+            case .foregroundEntered:
+                return .run { send in await checkAuthorization(send) }
             case .authorizationChecked(let isAuthorized):
                 state.isAuthorized = isAuthorized
-                if isAuthorized { return .none }
-                return .run { send in
-                    await updateNotification(send, isEnabled: false)
+                
+                switch isAuthorized {
+                case true:
+                    if state.isAccepted { return .none }
+                    guard state.hasTappedButton else { return .none }
+                    state.hasTappedButton = false
+                    return .send(.updateNotificationAgreement(true))
+                case false:
+                    if !state.isAccepted { return .none }
+                    return .send(.updateNotificationAgreement(false))
                 }
-            case .notificationStateFetched(let isAccepted, let isEnabled):
-                state.isAccepted = isAccepted
+            case .updateNotificationAgreement(let isEnabled):
+                return .run { send in
+                    await updateNotification(send, isEnabled: isEnabled)
+                }
+            case .notificationStateFetched(let isEnabled):
                 state.isNotificationOn = isEnabled
+                return .none
+            case .notificationAgreementStateFetched(let isAccepted):
+                state.isAccepted = isAccepted
                 return .none
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
@@ -126,10 +143,14 @@ public struct FestivalFeature {
             case .notificationUpdated(let isEnabled):
                 state.isNotificationOn = isEnabled
                 return .none
+            case .notificationAgreementUpdated(let isAccepted):
+                state.isAccepted = isAccepted
+                return .none
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
                 return .none
             case .alert(.presented(.buttonTapped(.authorization))):
+                state.hasTappedButton = true
                 state.shouldOpenURL = true
                 return .none
             case .alert(.presented(.buttonTapped(.agreement))):
@@ -149,20 +170,19 @@ public struct FestivalFeature {
 private extension FestivalFeature {
     func fetchAll(_ state: State, _ send: Send<Action>) async {
         do {
-            let isAuthroized = await isAuthorized
-            await send(.authorizationChecked(isAuthroized))
+            async let isEnabled = fetchNotificationState(state)
+            async let isAccepted = fetchNotificationState()
             
-            async let isEnabled = fetchNotificationState(id: state.festival.id)
-            switch isAuthroized {
-            case true:
-                async let isAccepted = fetchNotificationState()
-                try await send(.notificationStateFetched(isAccepted, isEnabled))
-            case false:
-                try await send(.notificationStateFetched(false, isEnabled))
-            }
+            try await send(.notificationStateFetched(isEnabled))
+            try await send(.notificationAgreementStateFetched(isAccepted))
+            await send(.authorizationChecked(isAuthorized))
         } catch {
             await send(.showAlert(.error))
         }
+    }
+    
+    func checkAuthorization(_ send: Send<Action>) async {
+        await send(.authorizationChecked(isAuthorized))
     }
     
     var isAuthorized: Bool {
@@ -187,8 +207,8 @@ private extension FestivalFeature {
         }
     }
     
-    func fetchNotificationState(id: Int) async throws -> Bool {
-        let festivalID = String(id)
+    func fetchNotificationState(_ state: State) async throws -> Bool {
+        let festivalID = String(state.festival.id)
         return try await notificationUseCase.fetchNotificationState(id: festivalID)
     }
     
@@ -209,6 +229,7 @@ private extension FestivalFeature {
     func updateNotification(_ send: Send<Action>, isEnabled: Bool) async {
         do {
             try await notificationUseCase.updateNotification(isEnabled: isEnabled)
+            await send(.notificationAgreementUpdated(isEnabled))
         } catch {
             await send(.showAlert(.error))
         }

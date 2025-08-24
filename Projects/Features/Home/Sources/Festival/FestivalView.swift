@@ -52,7 +52,7 @@ public struct FestivalView: View {
         }
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
-            store.send(.enteredForeground)
+            store.send(.foregroundEntered)
         }
     }
 }
