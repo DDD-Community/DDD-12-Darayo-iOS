@@ -241,6 +241,7 @@ extension FestivalFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
         case .authorization: return .authorization
+        case .agreement: return .agreement
         case .error: return .error
         }
     }

@@ -36,4 +36,18 @@ public extension AlertInfo {
             buttonTitle: "권한 허용하기"
         )
     }
+    
+    static var agreement: Self {
+        return .init(
+            icon: Image.iconBellGray,
+            title: "알림 수신 동의가 필요해요",
+            box: .init(
+                upperText: "수신에 동의하면",
+                highlightText: "좋아요한 페스티벌 예매일, 반입규정, 교통안내",
+                lowerText: "알림을 PUSH로 보내드려요."
+            ),
+            hasCloseButton: true,
+            buttonTitle: "수신 동의하기"
+        )
+    }
 }
