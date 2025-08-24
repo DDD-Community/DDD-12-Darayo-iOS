@@ -18,20 +18,18 @@ struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
     }
     
     func body(content: Content) -> some View {
-        switch item {
-        case .none: content
-        case .some(let store):
-            ZStack {
-                content
-                    .blur(radius: 4)
-                    .allowsHitTesting(false)
-                
+        ZStack {
+            content
+                .blur(radius: item == nil ? 0 : 4)
+                .allowsHitTesting(item == nil)
+            
+            if let item {
                 Color.background1
                     .opacity(0.2)
                     .ignoresSafeArea(.all)
-                    .onTapGesture { item = nil }
+                    .onTapGesture { self.item = nil }
             
-                customAlertView(store: store)
+                customAlertView(store: item)
             }
         }
     }
