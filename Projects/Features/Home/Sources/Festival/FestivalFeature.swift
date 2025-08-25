@@ -14,10 +14,10 @@ import Base
 
 @Reducer
 public struct FestivalFeature {
-    public enum AlertCase {
+    public enum AlertCase: Equatable {
         case authorization
         case agreement
-        case error
+        case error(NetworkError.ErrorType)
     }
     
     @Dependency(\.dismiss) private var dismiss
@@ -72,6 +72,7 @@ public struct FestivalFeature {
         case updateNotificationAgreement(Bool)
         case updateNotification(Bool)
         case seeAllButtonTapped
+        case showError(NetworkError?)
         case showAlert(AlertCase)
         case notificationUpdated(Bool)
         case notificationAgreementUpdated(Bool)
@@ -146,6 +147,9 @@ public struct FestivalFeature {
             case .notificationAgreementUpdated(let isAccepted):
                 state.isAccepted = isAccepted
                 return .none
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError.type)))
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
                 return .none
@@ -177,7 +181,8 @@ private extension FestivalFeature {
             try await send(.notificationAgreementStateFetched(isAccepted))
             await send(.authorizationChecked(isAuthorized))
         } catch {
-            await send(.showAlert(.error))
+            let networkError = error as? NetworkError
+            await send(.showError(networkError))
         }
     }
     
@@ -221,8 +226,9 @@ private extension FestivalFeature {
             let id = state.festival.id
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
             return .notificationUpdated(isEnabled)
-        } catch {
-            return .showAlert(.error)
+        } catch(let error) {
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
     
@@ -231,7 +237,8 @@ private extension FestivalFeature {
             try await notificationUseCase.updateNotification(isEnabled: isEnabled)
             await send(.notificationAgreementUpdated(isEnabled))
         } catch {
-            await send(.showAlert(.error))
+            let networkError = error as? NetworkError
+            await send(.showError(networkError))
         }
     }
 }

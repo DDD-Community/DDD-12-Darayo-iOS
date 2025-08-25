@@ -8,6 +8,7 @@
 
 import Foundation
 import Util
+import Domain
 
 public protocol Endpoint {
     associatedtype Response

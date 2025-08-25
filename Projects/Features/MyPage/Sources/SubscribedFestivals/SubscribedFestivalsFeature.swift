@@ -17,10 +17,10 @@ public struct SubscribedFestivalsFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
-    public enum AlertCase: CaseIterable {
+    public enum AlertCase: Equatable {
         case authorization
         case agreement
-        case error
+        case error(NetworkError.ErrorType)
     }
     
     @ObservableState
@@ -47,6 +47,7 @@ public struct SubscribedFestivalsFeature {
         case noticiationButtonTapped(Festival)
         case notificationAgreementUpdated(Bool)
         case notificationUpdated(Int)
+        case showError(NetworkError?)
         case showAlert(AlertCase)
         case backButtonTapped
         case navigateToFestival(Festival, Bool)
@@ -122,6 +123,9 @@ public struct SubscribedFestivalsFeature {
             case .notificationAgreementUpdated(let isAccepted):
                 state.isAccepted = isAccepted
                 return .none
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError.type)))
             case .showAlert(let alertCase):
                 state.isLoading = false
                 state.alert = .init(alertCase)
@@ -160,7 +164,8 @@ private extension SubscribedFestivalsFeature {
             try await send(.notificationStateFetched(isAccepted))
             await send(.authorizationChecked(isAuthorized))
         } catch {
-            await send(.showAlert(.error))
+            let networkError = error as? NetworkError
+            await send(.showError(networkError))
         }
     }
     
@@ -182,7 +187,8 @@ private extension SubscribedFestivalsFeature {
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
             return .notificationUpdated(id)
         } catch {
-            return .showAlert(.error)
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
     
@@ -191,7 +197,8 @@ private extension SubscribedFestivalsFeature {
             try await notificationUseCase.updateNotification(isEnabled: isEnabled)
             await send(.notificationAgreementUpdated(isEnabled))
         } catch {
-            await send(.showAlert(.error))
+            let networkError = error as? NetworkError
+            await send(.showError(networkError))
         }
     }
     

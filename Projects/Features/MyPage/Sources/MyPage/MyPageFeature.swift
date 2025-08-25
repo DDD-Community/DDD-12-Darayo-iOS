@@ -19,8 +19,8 @@ public struct MyPageFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.dismiss) private var dismiss
     
-    public enum AlertCase {
-        case error
+    public enum AlertCase: Equatable {
+        case error(NetworkError.ErrorType)
         case authorization
     }
     
@@ -58,6 +58,7 @@ public struct MyPageFeature {
         case setToggle(Bool)
         case likedFestivalsButtonTapped
         case subscribedFestivalsButtonTapped
+        case showError(NetworkError?)
         case showAlert(AlertCase)
         case menuTapped(Menu)
         case backButtonTapped
@@ -119,6 +120,9 @@ public struct MyPageFeature {
                 return .none
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError.type)))
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
                 return .none
@@ -153,7 +157,8 @@ private extension MyPageFeature {
             await send(.authorizationChecked(isAuthorized))
             await send(.allFetched)
         } catch {
-            await send(.showAlert(.error))
+            let networkError = error as? NetworkError
+            await send(.showError(networkError))
         }
     }
     
@@ -178,7 +183,8 @@ private extension MyPageFeature {
             try await notificationUseCase.updateNotification(isEnabled: isEnabled)
             return .setToggle(isEnabled)
         } catch {
-            return .showAlert(.error)
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
 }

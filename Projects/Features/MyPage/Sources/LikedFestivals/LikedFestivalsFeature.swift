@@ -16,8 +16,8 @@ public struct LikedFestivalsFeature {
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
     
-    public enum AlertCase {
-        case error
+    public enum AlertCase: Equatable {
+        case error(NetworkError.ErrorType)
     }
     
     @ObservableState
@@ -32,6 +32,7 @@ public struct LikedFestivalsFeature {
     public enum Action {
         case onAppear
         case festivalsFetched([Festival])
+        case showError(NetworkError?)
         case showAlert(AlertCase)
         case backButtonTapped
         case festivalTapped(Festival)
@@ -68,6 +69,9 @@ public struct LikedFestivalsFeature {
                 updateLikedFestivals(festival.id, isFavorite: isFavorite)
                 state.isFavorite[index].toggle()
                 return .none
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError.type)))
             case .showAlert(let alertCase):
                 state.isLoading = false
                 state.alert = .init(alertCase)
@@ -92,7 +96,8 @@ private extension LikedFestivalsFeature {
             let likedFestivals = festivals.filter { ids.contains($0.id) }
             return .festivalsFetched(likedFestivals)
         } catch {
-            return .showAlert(.error)
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
     

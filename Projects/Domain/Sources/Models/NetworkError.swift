@@ -35,9 +35,10 @@ extension NetworkError {
         case unauthorized
         case forbidden
         case notFound
-        case timeout
         case client
         case server
+        case noInternet
+        case timeout
         case others
         case responseDecoding
         case unknown

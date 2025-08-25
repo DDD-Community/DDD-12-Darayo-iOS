@@ -10,6 +10,20 @@ import SwiftUI
 import DesignSystem
 
 public extension AlertInfo {
+    static var noInternet: Self {
+        let message = """
+        WIFI 또는 모바일 네트워크
+        연결 상태를 확인해주세요.
+        """
+        
+        return .init(
+            icon: .iconError,
+            title: "연결이 원활하지 않아요",
+            message: message,
+            buttonTitle: "확인"
+        )
+    }
+    
     static var error: Self {
         let message = """
         일시적인 오류가 발생했어요. 

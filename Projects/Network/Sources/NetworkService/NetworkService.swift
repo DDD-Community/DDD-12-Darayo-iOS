@@ -9,6 +9,7 @@
 import Foundation
 import OSLog
 import Data
+import Domain
 
 public struct NetworkService: NetworkServiceProtocol {
     public init() {}
@@ -75,6 +76,7 @@ private extension NetworkService {
     func networkError(_ error: URLError) -> NetworkError {
         let message = error.localizedDescription
         let type: NetworkError.ErrorType = switch error.code {
+        case .notConnectedToInternet: .noInternet
         case .networkConnectionLost, .timedOut: .timeout
         default: .others
         }

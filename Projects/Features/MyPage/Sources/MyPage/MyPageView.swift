@@ -264,6 +264,7 @@ extension MyPageFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
         case .authorization: return .authorization
+        case .error(.noInternet): return .noInternet
         case .error: return .error
         }
     }

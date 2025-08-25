@@ -242,6 +242,7 @@ extension FestivalFeature.AlertCase: AlertPresentable {
         switch self {
         case .authorization: return .authorization
         case .agreement: return .agreement
+        case .error(.noInternet): return .noInternet
         case .error: return .error
         }
     }
