@@ -62,7 +62,7 @@ extension HomeFeature.AlertCase: AlertPresentable {
         case .error(let error):
             switch error.type {
             case .noInternet: return .noInternet
-            default: return .error(error, buttonTitle: "새로 고침")
+            default: return .error(error, buttonTitle: "확인")
             }
         }
     }

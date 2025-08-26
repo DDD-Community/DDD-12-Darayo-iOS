@@ -144,7 +144,6 @@ private extension MyPageView {
                     Text(String(count))
                         .pretendard(style: .title2)
                         .foregroundStyle(Color.point1)
-                        .opacity(store.isLoading ? 0 : 1)
                 }
                 
                 Text(title)
@@ -191,7 +190,7 @@ private extension MyPageView {
                 }
             )
             .tint(Color.point1)
-            .renderedIf(!store.isLoading)
+            .disabled(store.isLoading)
         }
         .frame(height: 64)
         .padding(.horizontal, 16)
