@@ -19,8 +19,8 @@ struct TransportationInfoView: View {
             self.sentences = []
         case false:
             self.sentences = transportationInfo
-                .components(separatedBy: "\n")
-                .map { $0.replacingOccurrences(of: "- ", with: "") }
+                .components(separatedBy: "*")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty }
         }
     }
