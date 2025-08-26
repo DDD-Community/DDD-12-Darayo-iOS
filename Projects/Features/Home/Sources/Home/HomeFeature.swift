@@ -18,7 +18,7 @@ public struct HomeFeature {
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
     public enum AlertCase: Equatable {
-        case error(NetworkError.ErrorType)
+        case error(NetworkError)
     }
     
     @ObservableState
@@ -85,7 +85,7 @@ public struct HomeFeature {
             case .myPageButtonTapped: return .none
             case .showError(let networkError):
                 guard let networkError else { return .none }
-                return .send(.showAlert(.error(networkError.type)))
+                return .send(.showAlert(.error(networkError)))
             case .showAlert:
                 state.isLoading = false
                 return .none

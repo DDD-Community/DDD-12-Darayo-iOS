@@ -27,7 +27,10 @@ struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
                 Color.background1
                     .opacity(0.2)
                     .ignoresSafeArea(.all)
-                    .onTapGesture { self.item = nil }
+                    .onTapGesture {
+                        guard item.canDismiss else { return }
+                        self.item = nil
+                    }
             
                 customAlertView(store: item)
             }
@@ -36,6 +39,7 @@ struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
     
     private func customAlertView(store: StoreOf<CustomAlert<AlertCase>>) -> some View {
         let alertInfo = store.alertCase.alertInfo
+        let closeAction: (() -> Void)? = store.canDismiss ? { item = nil } : nil
         
         return CustomAlertView(
             icon: alertInfo.icon,
@@ -45,13 +49,13 @@ struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
             upperText: alertInfo.box?.upperText,
             highlightText: alertInfo.box?.highlightText,
             lowerText: alertInfo.box?.lowerText,
-            buttonTitle: alertInfo.buttonTitle
-        ) {
-            store.send(.buttonTapped(store.alertCase))
-            item = nil
-        } closeAction: {
-            item = nil
-        }
+            buttonTitle: alertInfo.buttonTitle,
+            action: {
+                store.send(.buttonTapped(store.alertCase))
+                item = nil
+            },
+            closeAction: closeAction
+        )
         .background(Color.clear)
     }
 }

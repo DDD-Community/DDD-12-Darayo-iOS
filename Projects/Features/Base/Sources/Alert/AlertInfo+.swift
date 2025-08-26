@@ -8,6 +8,7 @@
 
 import SwiftUI
 import DesignSystem
+import Domain
 
 public extension AlertInfo {
     static var noInternet: Self {
@@ -24,16 +25,25 @@ public extension AlertInfo {
         )
     }
     
-    static var error: Self {
+    static func error(
+        _ error: NetworkError,
+        buttonTitle: String
+    ) -> Self {
+        let code = switch error.code {
+        case .some(let code): "(\(code))"
+        case .none: ""
+        }
+        
         let message = """
-        일시적인 오류가 발생했어요. 
+        일시적인 오류\(code)가 발생했어요.
+        다시 시도해주세요.
         """
         
         return .init(
             icon: .iconError,
             title: "잠시 오류가 발생했어요",
             message: message,
-            buttonTitle: "확인"
+            buttonTitle: buttonTitle
         )
     }
     

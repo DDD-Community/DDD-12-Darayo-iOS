@@ -129,9 +129,13 @@ private extension MainView {
 
 extension MainFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
-        return switch self {
-        case .home(let alertCase): alertCase.alertInfo
-        case .error: .error
+        switch self {
+        case .home(let alertCase): return alertCase.alertInfo
+        case .error(let error):
+            switch error.type {
+            case .noInternet: return .noInternet
+            default: return .error(error, buttonTitle: "확인")
+            }
         }
     }
 }

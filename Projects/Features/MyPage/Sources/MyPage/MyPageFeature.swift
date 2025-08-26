@@ -20,7 +20,7 @@ public struct MyPageFeature {
     @Dependency(\.dismiss) private var dismiss
     
     public enum AlertCase: Equatable {
-        case error(NetworkError.ErrorType)
+        case error(NetworkError)
         case authorization
     }
     
@@ -122,7 +122,7 @@ public struct MyPageFeature {
                 return .run { _ in await dismiss() }
             case .showError(let networkError):
                 guard let networkError else { return .none }
-                return .send(.showAlert(.error(networkError.type)))
+                return .send(.showAlert(.error(networkError)))
             case .showAlert(let alertCase):
                 state.alert = .init(alertCase)
                 return .none
@@ -157,8 +157,6 @@ private extension MyPageFeature {
             await send(.authorizationChecked(isAuthorized))
             await send(.allFetched)
         } catch {
-            let networkError = error as? NetworkError
-            await send(.showError(networkError))
         }
     }
     

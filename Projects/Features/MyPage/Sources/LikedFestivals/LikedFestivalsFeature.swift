@@ -17,7 +17,7 @@ public struct LikedFestivalsFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     
     public enum AlertCase: Equatable {
-        case error(NetworkError.ErrorType)
+        case error(NetworkError)
     }
     
     @ObservableState
@@ -71,11 +71,13 @@ public struct LikedFestivalsFeature {
                 return .none
             case .showError(let networkError):
                 guard let networkError else { return .none }
-                return .send(.showAlert(.error(networkError.type)))
+                return .send(.showAlert(.error(networkError)))
             case .showAlert(let alertCase):
                 state.isLoading = false
-                state.alert = .init(alertCase)
+                state.alert = .init(alertCase, false)
                 return .none
+            case .alert(.presented(.buttonTapped(.error))):
+                return .send(.backButtonTapped)
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             case .navigateToFestival: return .none

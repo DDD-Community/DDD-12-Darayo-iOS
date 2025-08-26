@@ -11,6 +11,7 @@ import ComposableArchitecture
 import DesignSystem
 import Base
 import Kingfisher
+import Domain
 
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
@@ -242,8 +243,15 @@ extension FestivalFeature.AlertCase: AlertPresentable {
         switch self {
         case .authorization: return .authorization
         case .agreement: return .agreement
-        case .error(.noInternet): return .noInternet
-        case .error: return .error
+        case .failedToFetch(let error): return alertInfo(error)
+        case .failedToUpdate(let error): return alertInfo(error)
+        }
+    }
+    
+    private func alertInfo(_ error: NetworkError) -> AlertInfo {
+        switch error.type {
+        case .noInternet: return .noInternet
+        default: return .error(error, buttonTitle: "확인")
         }
     }
 }

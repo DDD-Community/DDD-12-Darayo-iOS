@@ -17,7 +17,15 @@ public struct FestivalFeature {
     public enum AlertCase: Equatable {
         case authorization
         case agreement
-        case error(NetworkError.ErrorType)
+        case failedToFetch(NetworkError)
+        case failedToUpdate(NetworkError)
+        
+        var canDismiss: Bool {
+            switch self {
+            case .failedToFetch: return false
+            default: return true
+            }
+        }
     }
     
     @Dependency(\.dismiss) private var dismiss
@@ -72,7 +80,6 @@ public struct FestivalFeature {
         case updateNotificationAgreement(Bool)
         case updateNotification(Bool)
         case seeAllButtonTapped
-        case showError(NetworkError?)
         case showAlert(AlertCase)
         case notificationUpdated(Bool)
         case notificationAgreementUpdated(Bool)
@@ -136,7 +143,7 @@ public struct FestivalFeature {
                 return .none
             case .updateNotification(let isEnabled):
                 return .run { [state] send in
-                    await send(updateNotificaion(state, isEnabled: isEnabled))
+                    await updateNotificaion(state, send, isEnabled: isEnabled)
                 }
             case .seeAllButtonTapped:
                 let artists = state.festival.artists
@@ -147,11 +154,8 @@ public struct FestivalFeature {
             case .notificationAgreementUpdated(let isAccepted):
                 state.isAccepted = isAccepted
                 return .none
-            case .showError(let networkError):
-                guard let networkError else { return .none }
-                return .send(.showAlert(.error(networkError.type)))
             case .showAlert(let alertCase):
-                state.alert = .init(alertCase)
+                state.alert = .init(alertCase, alertCase.canDismiss)
                 return .none
             case .alert(.presented(.buttonTapped(.authorization))):
                 state.hasTappedButton = true
@@ -159,6 +163,8 @@ public struct FestivalFeature {
                 return .none
             case .alert(.presented(.buttonTapped(.agreement))):
                 return .send(.navigateToMyPage)
+            case .alert(.presented(.buttonTapped(.failedToFetch))):
+                return .send(.backButtonTapped)
             case .alert: return .none
             case .navigateToArtistList: return .none
             case .navigateToMyPage: return .none
@@ -182,7 +188,8 @@ private extension FestivalFeature {
             await send(.authorizationChecked(isAuthorized))
         } catch {
             let networkError = error as? NetworkError
-            await send(.showError(networkError))
+            guard let networkError else { return }
+            await send(.showAlert(.failedToFetch(networkError)))
         }
     }
     
@@ -221,14 +228,19 @@ private extension FestivalFeature {
         return try await notificationUseCase.fetchNotificationState()
     }
     
-    func updateNotificaion(_ state: State, isEnabled: Bool) async -> Action {
+    func updateNotificaion(
+        _ state: State,
+        _ send: Send<Action>,
+        isEnabled: Bool
+    ) async {
         do {
             let id = state.festival.id
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
-            return .notificationUpdated(isEnabled)
+            await send(.notificationUpdated(isEnabled))
         } catch(let error) {
             let networkError = error as? NetworkError
-            return .showError(networkError)
+            guard let networkError else { return }
+            await send(.showAlert(.failedToUpdate((networkError))))
         }
     }
     
@@ -236,9 +248,10 @@ private extension FestivalFeature {
         do {
             try await notificationUseCase.updateNotification(isEnabled: isEnabled)
             await send(.notificationAgreementUpdated(isEnabled))
-        } catch {
+        } catch(let error) {
             let networkError = error as? NetworkError
-            await send(.showError(networkError))
+            guard let networkError else { return }
+            await send(.showAlert(.failedToUpdate((networkError))))
         }
     }
 }

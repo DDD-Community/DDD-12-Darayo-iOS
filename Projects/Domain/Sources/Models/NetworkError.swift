@@ -6,7 +6,7 @@
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
-public struct NetworkError: Error {
+public struct NetworkError: Error, Equatable {
     public let type: ErrorType
     public let path: String?
     public let code: Int?

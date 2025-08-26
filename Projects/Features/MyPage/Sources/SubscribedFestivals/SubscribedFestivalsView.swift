@@ -55,10 +55,17 @@ public struct SubscribedFestivalsView: View {
 extension SubscribedFestivalsFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
-        case .error(.noInternet): return .noInternet
-        case .error: return .error
         case .authorization: return .authorization
         case .agreement: return .agreement
+        case .failedToFetch(let error): return alertInfo(error)
+        case .failedToUpdate(let error): return alertInfo(error)
+        }
+    }
+    
+    private func alertInfo(_ error: NetworkError) -> AlertInfo {
+        switch error.type {
+        case .noInternet: .noInternet
+        default: .error(error, buttonTitle: "확인")
         }
     }
 }

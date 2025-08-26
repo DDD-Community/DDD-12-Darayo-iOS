@@ -264,8 +264,11 @@ extension MyPageFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
         case .authorization: return .authorization
-        case .error(.noInternet): return .noInternet
-        case .error: return .error
+        case .error(let error):
+            switch error.type {
+            case .noInternet: return .noInternet
+            default: return .error(error, buttonTitle: "확인")
+            }
         }
     }
 }

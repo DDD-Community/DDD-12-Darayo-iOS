@@ -42,8 +42,11 @@ public struct LikedFestivalsView: View {
 extension LikedFestivalsFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
-        case .error(.noInternet): return .noInternet
-        case .error: return .error
+        case .error(let error):
+            switch error.type {
+            case .noInternet: return .noInternet
+            default: return .error(error, buttonTitle: "확인")
+            }
         }
     }
 }
