@@ -20,6 +20,7 @@ struct FestivalResponse: Decodable {
     let banGoods: String?
     let transportationInfo: String?
     let remark: String?
+    let updatedAt: String?
     let reservationInfos: [ReservationInfoResponse]?
     let artists: [ArtistResponse]?
     let urlInfos: [URLInfoResponse]?
@@ -40,7 +41,8 @@ extension FestivalResponse {
             transportationInfo: transportationInfo ?? "",
             remark: remark ?? "",
             reservations: reservationInfos?.compactMap { $0.toDomain } ?? [],
-            urlInfos: urlInfos?.compactMap { $0.toDomain } ?? []
+            urlInfos: urlInfos?.compactMap { $0.toDomain } ?? [],
+            updateDate: updatedAt?.toDate(dateFormat: .updateDate)
         )
     }
 }

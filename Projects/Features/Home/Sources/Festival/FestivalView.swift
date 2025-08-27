@@ -216,7 +216,7 @@ private extension FestivalView {
     
     var updateInfoView: some View {
         VStack(spacing: 4) {
-            sentenceView("업데이트 일자 : 2025. 06. 15")
+            sentenceView("업데이트 일자 : \(store.updateDateString)")
             sentenceView("자세한 내용은 공식 사이트 참조")
         }
         .padding(.top, 4)
