@@ -50,7 +50,8 @@ private extension ArtistListView {
     var dayListView: some View {
         DayListView(
             totalDays: store.totalDays,
-            selectedIndex: store.tabIndex
+            selectedIndex: store.tabIndex,
+            containsNil: store.containsNil
         ) { index in
             store.send(.dayButtonTapped(index))
         }
@@ -59,6 +60,7 @@ private extension ArtistListView {
     var artistGridListView: some View {
         ArtistGridListView(
             artists: store.artists,
+            containsNil: store.containsNil,
             sectionToScroll: $store.sectionToScroll
         ) { section in
             store.send(.indexChanged(section))

@@ -31,6 +31,10 @@ public struct ArtistListFeature {
         var totalDays: Int {
             artists.count
         }
+        
+        var containsNil: Bool {
+            artists.flatMap { $0 }.contains { $0.performanceDate == nil }
+        }
     }
     
     public enum Action: BindableAction {
