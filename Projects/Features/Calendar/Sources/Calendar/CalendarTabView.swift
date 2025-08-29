@@ -25,7 +25,7 @@ public struct CalendarTabView: View {
                 navigationBar
                 
                 CalendarSegmentedControl(
-                    selectedMode: Binding(
+                    selectedMode: Binding<CalendarMode>(
                         get: { store.selectedMode },
                         set: { store.send(.modeChanged($0)) }
                     )

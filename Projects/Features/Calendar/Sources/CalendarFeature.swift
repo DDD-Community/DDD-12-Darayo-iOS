@@ -19,7 +19,7 @@ public struct CalendarFeature {
     public var festivals: [Festival] = []
     public var selectedDate: Date?
     public var isLoading = false
-    public var selectedMode = 0 // 0: 행사일, 1: 예매일
+    public var selectedMode: CalendarMode = .eventDay
     public init() {}
   }
 
@@ -30,7 +30,7 @@ public struct CalendarFeature {
     case fetchFailed
     case dateSelected(Date)
     case eventTapped(festivalId: Int)
-    case modeChanged(Int)
+    case modeChanged(CalendarMode)
 
     case delegate(Delegate)
     public enum Delegate: Equatable {
@@ -63,7 +63,7 @@ public struct CalendarFeature {
         state.festivals = fests
         // 선택된 날짜 없으면 오늘 또는 가장 가까운 이벤트 날짜로 설정
         if state.selectedDate == nil {
-          state.selectedDate = nearestEventDate(from: fests, mode: state.selectedMode) ?? Date()
+            state.selectedDate = nearestEventDate(from: fests, mode: state.selectedMode) ?? Date()
         }
         return .none
 
@@ -101,11 +101,12 @@ public extension CalendarFeature.State {
     
     // 선택된 모드에 따라 필터링
     return allEvents.filter { event in
-      if selectedMode == 0 { // 행사일
-        return event.category == .festivalDay
-      } else { // 예매일
-        return event.category == .reservationDay
-      }
+        switch selectedMode {
+        case .eventDay:
+            return event.category == .festivalDay
+        case .reservationDay:
+            return event.category == .reservationDay
+        }
     }
   }
   
@@ -116,14 +117,15 @@ public extension CalendarFeature.State {
 }
 
 // MARK: - Helpers
-private func nearestEventDate(from festivals: [Festival], mode: Int) -> Date? {
+private func nearestEventDate(from festivals: [Festival], mode: CalendarMode) -> Date? {
   let allEvents = makeCalendarEvents(from: festivals)
   let filteredEvents = allEvents.filter { event in
-    if mode == 0 { // 행사일
-      return event.category == .festivalDay
-    } else { // 예매일
-      return event.category == .reservationDay
-    }
+      switch mode {
+      case .eventDay:
+          return event.category == .festivalDay
+      case .reservationDay:
+          return event.category == .reservationDay
+      }
   }
   
   return filteredEvents.min(by: { abs($0.date.timeIntervalSinceNow) < abs($1.date.timeIntervalSinceNow) })?.date

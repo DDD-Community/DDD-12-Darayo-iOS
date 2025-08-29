@@ -9,39 +9,38 @@
 import SwiftUI
 
 public struct CalendarSegmentedControl: View {
-    @Binding var selectedMode: Int
-    private let modes = ["행사일", "예매일"]
-    
-    public init(selectedMode: Binding<Int>) {
+    @Binding var selectedMode: CalendarMode
+
+    public init(selectedMode: Binding<CalendarMode>) {
         self._selectedMode = selectedMode
     }
-    
+
     public var body: some View {
         GeometryReader { geometry in
             let totalWidth = geometry.size.width
-            let segmentWidth = totalWidth / CGFloat(modes.count)
-            
+            let count = CGFloat(CalendarMode.allCases.count)
+            let segmentWidth = totalWidth / count
+
             ZStack(alignment: .leading) {
-                Capsule()
-                    .fill(Color.black)
-                
+                // 배경
+                Capsule().fill(Color.black)
+
+                // 선택 하이라이트
                 Capsule()
                     .fill(Color.grey6)
                     .frame(width: segmentWidth)
-                    .offset(x: CGFloat(selectedMode) * segmentWidth)
+                    .offset(x: CGFloat(selectedMode.rawValue) * segmentWidth)
                     .animation(.easeInOut(duration: 0.2), value: selectedMode)
-                
-                // 텍스트
+
+                // 라벨
                 HStack(spacing: 0) {
-                    ForEach(0..<modes.count, id: \.self) { index in
-                        Text(modes[index])
-                            .pretendard(style: selectedMode == index ? .body2 : .body3)
-                            .foregroundColor(selectedMode == index ? .white : .grey3)
+                    ForEach(CalendarMode.allCases, id: \.self) { mode in
+                        Text(mode.title)
+                            .pretendard(style: selectedMode == mode ? .body2 : .body3)
+                            .foregroundColor(selectedMode == mode ? .white : .grey3)
                             .frame(maxWidth: .infinity)
                             .contentShape(Rectangle())
-                            .onTapGesture {
-                                selectedMode = index
-                            }
+                            .onTapGesture { selectedMode = mode }
                     }
                 }
             }
