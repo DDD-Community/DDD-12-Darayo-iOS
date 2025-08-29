@@ -16,11 +16,10 @@ public struct CalendarFeature {
 
   @ObservableState
   public struct State: Equatable {
-    public var festivals: [Festival] = []
-    public var selectedDate: Date?
-    public var isLoading = false
-    public var selectedMode: CalendarMode = .eventDay
-    public init() {}
+    var festivals: [Festival] = []
+    var selectedDate: Date?
+    var isLoading = false
+    var selectedMode: CalendarMode = .eventDay
   }
 
   public enum Action: BindableAction, Equatable {
@@ -58,12 +57,12 @@ public struct CalendarFeature {
           }
         }
 
-      case let .festivalsLoaded(fests):
+      case let .festivalsLoaded(festivals):
         state.isLoading = false
-        state.festivals = fests
+        state.festivals = festivals
         // 선택된 날짜 없으면 오늘 또는 가장 가까운 이벤트 날짜로 설정
         if state.selectedDate == nil {
-            state.selectedDate = nearestEventDate(from: fests, mode: state.selectedMode) ?? Date()
+            state.selectedDate = nearestEventDate(from: festivals, mode: state.selectedMode) ?? Date()
         }
         return .none
 
@@ -111,8 +110,8 @@ public extension CalendarFeature.State {
   }
   
   var eventsForSelectedDate: [CalendarEvent] {
-    guard let d = selectedDate else { return [] }
-    return allCalendarEvents.filter { Calendar.current.isDate($0.date, inSameDayAs: d) }
+    guard let date = selectedDate else { return [] }
+    return allCalendarEvents.filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
   }
 }
 
