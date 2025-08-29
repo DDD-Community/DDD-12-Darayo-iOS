@@ -146,9 +146,9 @@ public extension Festival {
         // category: 예매일
         if let openDate = reservations.first?.openDateTime {
             if vendorNamesArray.count > 3 {
-                    let firstTwo = vendorNamesArray.prefix(3).joined(separator: ", ")
+                    let firstThree = vendorNamesArray.prefix(3).joined(separator: ", ")
                     let remainingCount = vendorNamesArray.count - 3
-                    vendorNames = "\(firstTwo) +\(remainingCount)"
+                    vendorNames = "\(firstThree) +\(remainingCount)"
             } else {
                 vendorNames = vendorNamesArray.joined(separator: ", ")
             }

@@ -11,7 +11,7 @@ import ComposableArchitecture
 import DesignSystem
 import Domain
 
-public struct CalendarScreen: View {
+public struct CalendarTabView: View {
     @Bindable private var store: StoreOf<CalendarFeature>
 
     public init(store: StoreOf<CalendarFeature>) {
@@ -49,7 +49,7 @@ public struct CalendarScreen: View {
     }
 }
 
-private extension CalendarScreen {
+private extension CalendarTabView {
     var navigationBar: some View {
         HStack {
             Image.logo
@@ -82,7 +82,6 @@ private extension CalendarScreen {
     var eventListSection: some View {
         EventListView(
             events: store.eventsForSelectedDate,
-            title: nil,
             onTap: { event in
                 store.send(.eventTapped(festivalId: event.festivalId))
             }

@@ -92,7 +92,7 @@ private extension MainView {
 //            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
 //                .tag(MainFeature.Tab.timetable)
             
-            CalendarScreen(store: store.scope(state: \.calendar, action: \.calendar))
+            CalendarTabView(store: store.scope(state: \.calendar, action: \.calendar))
                 .tag(MainFeature.Tab.calendar)
         }
         .padding(.bottom, bottomPadding)
