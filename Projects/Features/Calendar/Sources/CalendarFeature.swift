@@ -20,6 +20,8 @@ public struct CalendarFeature {
     var selectedDate: Date?
     var isLoading = false
     var selectedMode: CalendarMode = .eventDay
+      
+      public init() {}
   }
 
   public enum Action: BindableAction, Equatable {
