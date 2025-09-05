@@ -22,8 +22,8 @@ struct RegulationInfoView: View {
             self.sentences = []
         case false:
             self.sentences = regulation
-                .components(separatedBy: "\n")
-                .map { $0.replacingOccurrences(of: "- ", with: "") }
+                .components(separatedBy: "*")
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
                 .filter { !$0.isEmpty }
         }
         self._isExpanded = isExpanded
