@@ -31,8 +31,11 @@ final class DayHeaderView: UICollectionReusableView {
         configureLayouts()
     }
     
-    func configure(dayNumber: Int) {
-        titleLabel.text = "DAY\(dayNumber)"
+    func configure(dayNumber: Int?) {
+        titleLabel.text = switch dayNumber {
+        case .some(let dayNumber): "DAY\(dayNumber)"
+        case .none: "일정 미정"
+        }
         titleLabel.lineHeight(22 * 1.3)
     }
 }

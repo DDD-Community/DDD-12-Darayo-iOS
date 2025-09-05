@@ -11,9 +11,14 @@ import DesignSystem
 
 final class ArtistCollectionView: UICollectionView {
     private let sectionCount: Int
+    private let containsNil: Bool
     
-    init(sectionCount: Int) {
+    init(
+        sectionCount: Int,
+        containsNil: Bool
+    ) {
         self.sectionCount = sectionCount
+        self.containsNil = containsNil
         super.init(frame: .zero, collectionViewLayout: .init())
         backgroundColor = .background1
         register()

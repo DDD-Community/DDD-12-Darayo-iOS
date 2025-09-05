@@ -12,21 +12,27 @@ import Domain
 struct ArtistGridListView: UIViewRepresentable {
     private let durationKey = "contentOffsetAnimationDuration"
     private let artists: [[Artist]]
+    private let containsNil: Bool
     @Binding private var sectionToScroll: Int?
     private let onSectionChanged: (Int) -> Void
     
     init(
         artists: [[Artist]],
+        containsNil: Bool,
         sectionToScroll: Binding<Int?>,
         onSectionChanged: @escaping (Int) -> Void
     ) {
         self.artists = artists
+        self.containsNil = containsNil
         self._sectionToScroll = sectionToScroll
         self.onSectionChanged = onSectionChanged
     }
     
     func makeUIView(context: Context) -> UICollectionView {
-        let collectionView = ArtistCollectionView(sectionCount: artists.count)
+        let collectionView = ArtistCollectionView(
+            sectionCount: artists.count,
+            containsNil: containsNil
+        )
         collectionView.delegate = context.coordinator
         collectionView.dataSource = context.coordinator
         return collectionView
@@ -41,6 +47,7 @@ struct ArtistGridListView: UIViewRepresentable {
     func makeCoordinator() -> Coordinator {
         Coordinator(
             artists: artists,
+            containsNil: containsNil,
             onSectionChanged: onSectionChanged
         )
     }
@@ -73,13 +80,16 @@ private extension ArtistGridListView {
 extension ArtistGridListView {
     final class Coordinator: NSObject, UICollectionViewDataSource, UICollectionViewDelegate {
         private let artists: [[Artist]]
+        private let containsNil: Bool
         private let onSectionChanged: (Int) -> Void
         
         init(
             artists: [[Artist]],
+            containsNil: Bool,
             onSectionChanged: @escaping (Int) -> Void
         ) {
             self.artists = artists
+            self.containsNil = containsNil
             self.onSectionChanged = onSectionChanged
         }
         
@@ -122,7 +132,9 @@ extension ArtistGridListView {
             )
             
             if let dayHeaderReusableView = view as? DayHeaderView {
-                dayHeaderReusableView.configure(dayNumber: indexPath.section + 1)
+                let isNil = indexPath.section == artists.count - 1 && containsNil
+                let dayNumber = isNil ? nil : indexPath.section + 1
+                dayHeaderReusableView.configure(dayNumber: dayNumber)
                 return dayHeaderReusableView
             }
             return view
