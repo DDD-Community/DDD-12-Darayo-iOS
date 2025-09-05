@@ -13,9 +13,11 @@ public struct CustomAlert<AlertCase: AlertPresentable> {
     @ObservableState
     public struct State: Equatable {
         let alertCase: AlertCase
+        let canDismiss: Bool
         
-        public init(_ alertCase: AlertCase) {
+        public init(_ alertCase: AlertCase, _ canDismiss: Bool = true) {
             self.alertCase = alertCase
+            self.canDismiss = canDismiss
         }
     }
     

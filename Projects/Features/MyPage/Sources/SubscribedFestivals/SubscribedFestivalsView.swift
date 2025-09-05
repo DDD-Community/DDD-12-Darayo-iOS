@@ -10,6 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import Base
+import Domain
 
 public struct SubscribedFestivalsView: View {
     @Bindable private var store: StoreOf<SubscribedFestivalsFeature>
@@ -54,9 +55,17 @@ public struct SubscribedFestivalsView: View {
 extension SubscribedFestivalsFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
-        case .error: return .error
         case .authorization: return .authorization
         case .agreement: return .agreement
+        case .failedToFetch(let error): return alertInfo(error)
+        case .failedToUpdate(let error): return alertInfo(error)
+        }
+    }
+    
+    private func alertInfo(_ error: NetworkError) -> AlertInfo {
+        switch error.type {
+        case .noInternet: .noInternet
+        default: .error(error, buttonTitle: "확인")
         }
     }
 }

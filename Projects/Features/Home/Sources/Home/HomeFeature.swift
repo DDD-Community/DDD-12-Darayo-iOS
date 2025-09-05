@@ -17,8 +17,8 @@ public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
-    public enum AlertCase {
-        case error
+    public enum AlertCase: Equatable {
+        case error(NetworkError)
     }
     
     @ObservableState
@@ -54,6 +54,7 @@ public struct HomeFeature {
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
         case myPageButtonTapped
+        case showError(NetworkError?)
         case showAlert(AlertCase)
         case alert(AlertCase)
         case navigateToFestival(Festival, Bool)
@@ -82,6 +83,9 @@ public struct HomeFeature {
                 state.likedFestivals = fetchLikedFestivals()
                 return .none
             case .myPageButtonTapped: return .none
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError)))
             case .showAlert:
                 state.isLoading = false
                 return .none
@@ -97,8 +101,9 @@ private extension HomeFeature {
         do {
             let festivals = try await festivalUseCase.fetchFestivals()
             return .festivalsFetched(festivals)
-        } catch {
-            return .showAlert(.error)
+        } catch(let error) {
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
     

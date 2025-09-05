@@ -39,6 +39,7 @@ public struct MainFeature {
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
         case navigateToFestival(Festival, Bool)
+        case showError(NetworkError?)
         case showAlert(AlertCase)
         case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
@@ -122,9 +123,14 @@ public struct MainFeature {
                     return .none
                 default: return .none
                 }
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError)))
             case .showAlert(let alertCase):
-                state.alert = .init(alertCase)
+                state.alert = .init(alertCase, alertCase.canDismiss)
                 return .none
+            case .alert(.presented(.buttonTapped(.home))):
+                return .send(.home(.onRefresh))
             case .navigateToFestival(let festival, let isFavorite):
                 UserDefaults.festivalID = nil
                 state.path.append(.festival(.init(
@@ -170,7 +176,8 @@ private extension MainFeature {
             let festival = try await festivalUseCase.fetchFestival(id: id)
             return .navigateToFestival(festival, isFavorite)
         } catch {
-            return .showAlert(.error)
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
 }
@@ -198,7 +205,14 @@ extension MainFeature {
     }
     
     public enum AlertCase: Equatable {
-        case error
+        case error(NetworkError)
         case home(HomeFeature.AlertCase)
+        
+        var canDismiss: Bool {
+            switch self {
+            case .error: return true
+            case .home: return false
+            }
+        }
     }
 }

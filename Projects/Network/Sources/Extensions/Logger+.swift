@@ -9,6 +9,7 @@
 import OSLog
 import Util
 import Data
+import Domain
 
 extension Logger {
     private static let network = Logger(subsystem: Bundle.identifier, category: "Network")
