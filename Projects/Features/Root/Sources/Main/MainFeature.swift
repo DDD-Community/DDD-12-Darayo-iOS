@@ -101,6 +101,9 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
+            case .path(.element(_, .festival(.navigateToMyPage))):
+                state.path.append(.myPage(.init()))
+                return .none
             case .path(.element(_, .likedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):

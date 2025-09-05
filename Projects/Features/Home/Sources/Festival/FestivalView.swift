@@ -52,7 +52,7 @@ public struct FestivalView: View {
         }
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
-            store.send(.enteredForeground)
+            store.send(.foregroundEntered)
         }
     }
 }
@@ -241,6 +241,7 @@ extension FestivalFeature.AlertCase: AlertPresentable {
     public var alertInfo: AlertInfo {
         switch self {
         case .authorization: return .authorization
+        case .agreement: return .agreement
         case .error: return .error
         }
     }

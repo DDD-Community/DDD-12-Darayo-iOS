@@ -38,6 +38,10 @@ public struct SubscribedFestivalsView: View {
         .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
+        .onChange(of: scenePhase) { oldValue, _ in
+            guard oldValue == .background else { return }
+            store.send(.foregroundEntered)
+        }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
             store.send(.binding(.set(\.shouldOpenURL, false)))
@@ -52,6 +56,7 @@ extension SubscribedFestivalsFeature.AlertCase: AlertPresentable {
         switch self {
         case .error: return .error
         case .authorization: return .authorization
+        case .agreement: return .agreement
         }
     }
 }

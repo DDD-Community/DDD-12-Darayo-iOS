@@ -36,6 +36,7 @@ public struct MyPageFeature {
         var currentVersion: String
         var latestVersion: String
         var shouldOpenURL: Bool = false
+        var hasTappedButton: Bool = false
         @Presents var alert: CustomAlert<AlertCase>.State?
         
         public init() {
@@ -48,7 +49,6 @@ public struct MyPageFeature {
     public enum Action: BindableAction {
         case onAppear
         case enteredForeground
-        case checkAuthorization
         case authorizationChecked(Bool)
         case notificationStateFetched(Bool)
         case likedFestivalsFetched([LikedFestival])
@@ -74,28 +74,22 @@ public struct MyPageFeature {
             switch action {
             case .onAppear:
                 state.isLoading = true
-                return .merge([
-                    .send(.checkAuthorization),
-                    .run { send in await fetchAll(send) }
-                ])
+                return .run { send in await fetchAll(send) }
             case .enteredForeground:
-                return .send(.checkAuthorization)
-            case .checkAuthorization:
-                return .run { send in
-                    let isAuthorized = await isAuthorized
-                    await send(.authorizationChecked(isAuthorized))
-                }
+                return .run { send in await checkAuthorization(send) }
             case .authorizationChecked(let isAuthorized):
-                let isChanged = state.isAuthorized != isAuthorized
                 state.isAuthorized = isAuthorized
-                guard isChanged else { return .none }
                 
                 switch isAuthorized {
                 case true:
+                    if state.isNotificationOn { return .none }
+                    guard state.hasTappedButton else { return .none }
+                    state.hasTappedButton = false
                     return .run { send in
-                        await send(fetchNotificationState())
+                        await send(updateNotification(isEnabled: true))
                     }
                 case false:
+                    if !state.isNotificationOn { return .none }
                     return .run { send in
                         await send(updateNotification(isEnabled: false))
                     }
@@ -113,13 +107,12 @@ public struct MyPageFeature {
                 state.isLoading = false
                 return .none
             case .toggleChanged(let isOn):
+                if isOn, !state.isAuthorized {
+                    return .send(.showAlert(.authorization))
+                }
+                
                 return .run { send in
-                    switch await isAuthorized {
-                    case true:
-                        await send(updateNotification(isEnabled: isOn))
-                    case false:
-                        await send(.showAlert(.authorization))
-                    }
+                    await send(updateNotification(isEnabled: isOn))
                 }
             case .setToggle(let isOn):
                 state.isNotificationOn = isOn
@@ -130,6 +123,7 @@ public struct MyPageFeature {
                 state.alert = .init(alertCase)
                 return .none
             case .alert(.presented(.buttonTapped(.authorization))):
+                state.hasTappedButton = true
                 state.shouldOpenURL = true
                 return .none
             case .alert:
@@ -151,13 +145,20 @@ private extension MyPageFeature {
         do {
             let likedFestivals = try festivalUseCase.fetchLikedFestivals()
             async let subscribedFestivals = notificationUseCase.fetchSubscribedFestivals()
+            async let isEnabled = fetchNotificationState()
             
             await send(.likedFestivalsFetched(likedFestivals))
             try await send(.subscribedFestivalsFetched(subscribedFestivals))
+            try await send(.notificationStateFetched(isEnabled))
+            await send(.authorizationChecked(isAuthorized))
             await send(.allFetched)
         } catch {
             await send(.showAlert(.error))
         }
+    }
+    
+    func checkAuthorization(_ send: Send<Action>) async {
+        await send(.authorizationChecked(isAuthorized))
     }
     
     var isAuthorized: Bool {
@@ -168,13 +169,8 @@ private extension MyPageFeature {
         }
     }
     
-    func fetchNotificationState() async -> Action {
-        do {
-            let isEnabled = try await notificationUseCase.fetchNotificationState()
-            return .notificationStateFetched(isEnabled)
-        } catch {
-            return .showAlert(.error)
-        }
+    func fetchNotificationState() async throws -> Bool {
+        return try await notificationUseCase.fetchNotificationState()
     }
     
     func updateNotification(isEnabled: Bool) async -> Action {
