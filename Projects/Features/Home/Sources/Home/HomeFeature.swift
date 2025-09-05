@@ -8,6 +8,7 @@
 
 import Foundation
 import ComposableArchitecture
+import Base
 import Domain
 import UserNotifications
 
@@ -16,14 +17,12 @@ public struct HomeFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.notificationUseCase) private var notificationUseCase
     
-    enum DisplayMode {
-        case grid
-        case calendar
+    public enum AlertCase {
+        case error
     }
     
     @ObservableState
     public struct State {
-        var displayMode: DisplayMode = .grid
         var allFestivals: [Festival] = []
         var likedFestivals: Set<Int> = .init()
         var selectedDate: Date?
@@ -48,22 +47,20 @@ public struct HomeFeature {
         }
     }
     
-    public enum Action: BindableAction {
+    public enum Action {
         case onAppear
         case onRefresh
         case festivalsFetched([Festival])
         case festivalTapped(Festival)
         case heartButtonTapped(Festival)
         case myPageButtonTapped
-        case showAlert
-        case binding(BindingAction<State>)
+        case showAlert(AlertCase)
+        case alert(AlertCase)
         case navigateToFestival(Festival, Bool)
     }
     
     public init() {}
     public var body: some ReducerOf<Self> {
-        BindingReducer()
-        
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -85,8 +82,10 @@ public struct HomeFeature {
                 state.likedFestivals = fetchLikedFestivals()
                 return .none
             case .myPageButtonTapped: return .none
-            case .showAlert: return .none
-            case .binding: return .none
+            case .showAlert:
+                state.isLoading = false
+                return .none
+            case .alert: return .none
             case .navigateToFestival: return .none
             }
         }
@@ -99,7 +98,7 @@ private extension HomeFeature {
             let festivals = try await festivalUseCase.fetchFestivals()
             return .festivalsFetched(festivals)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
     

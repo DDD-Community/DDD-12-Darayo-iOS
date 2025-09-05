@@ -13,8 +13,8 @@ import Base
 
 public struct SubscribedFestivalsView: View {
     @Bindable private var store: StoreOf<SubscribedFestivalsFeature>
-    @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
     
     public init(store: StoreOf<SubscribedFestivalsFeature>) {
         self.store = store
@@ -34,8 +34,8 @@ public struct SubscribedFestivalsView: View {
         .navigation(title: "알림 설정한 페스티벌 목록") {
             store.send(.backButtonTapped)
         }
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: alertIcon)
         .background(Color.background1)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
@@ -47,43 +47,11 @@ public struct SubscribedFestivalsView: View {
     }
 }
 
-private extension SubscribedFestivalsView {
-    var alertIcon: Image? {
-        return switch store.alert?.alertCase {
-        case .authorization: .iconBellGray
-        case .none: nil
-        }
-    }
-}
-
-private extension SubscribedFestivalsFeature.AlertCase {
-    var title: String {
+extension SubscribedFestivalsFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
         switch self {
-        case .authorization: "알림 권한이 없어요!"
-        }
-    }
-    
-    var message: String {
-        "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요"
-    }
-    
-    var buttonTitle: String {
-        "권한 설정하기"
-    }
-}
-
-extension CustomAlert.State {
-    init(alertCase: SubscribedFestivalsFeature.AlertCase) {
-        self = .init(
-            title: alertCase.title,
-            message: alertCase.message,
-            buttonTitle: alertCase.buttonTitle
-        )
-    }
-    
-    var alertCase: SubscribedFestivalsFeature.AlertCase? {
-        return SubscribedFestivalsFeature.AlertCase.allCases.first {
-            self == .init(alertCase: $0)
+        case .error: return .error
+        case .authorization: return .authorization
         }
     }
 }

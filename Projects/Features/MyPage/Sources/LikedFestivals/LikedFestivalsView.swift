@@ -9,9 +9,10 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Base
 
 public struct LikedFestivalsView: View {
-    private let store: StoreOf<LikedFestivalsFeature>
+    @Bindable private var store: StoreOf<LikedFestivalsFeature>
     
     public init(store: StoreOf<LikedFestivalsFeature>) {
         self.store = store
@@ -32,7 +33,16 @@ public struct LikedFestivalsView: View {
             store.send(.backButtonTapped)
         }
         .background(Color.background1)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .refreshable { store.send(.onAppear) }
+    }
+}
+
+extension LikedFestivalsFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .error: return .error
+        }
     }
 }

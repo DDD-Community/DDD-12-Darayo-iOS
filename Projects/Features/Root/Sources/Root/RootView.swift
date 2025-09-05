@@ -9,6 +9,7 @@
 import SwiftUI
 import ComposableArchitecture
 import Domain
+import Base
 
 public struct RootView: View {
     private let store: StoreOf<RootFeature>

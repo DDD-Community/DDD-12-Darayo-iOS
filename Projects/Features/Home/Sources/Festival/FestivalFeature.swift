@@ -14,9 +14,9 @@ import Base
 
 @Reducer
 public struct FestivalFeature {
-    public enum AlertCase: CaseIterable {
+    public enum AlertCase {
         case authorization
-        case like
+        case error
     }
     
     @Dependency(\.dismiss) private var dismiss
@@ -30,9 +30,8 @@ public struct FestivalFeature {
         var isNotificationOn: Bool = false
         var isFavorite: Bool = false
         var isExpanded: Bool = false
-        
-        @Presents var alert: CustomAlert.State?
         var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert<AlertCase>.State?
         
         public init(festival: Festival, isFavorite: Bool) {
             self.festival = festival
@@ -68,11 +67,11 @@ public struct FestivalFeature {
         case heartButtonTapped
         case updateNotification(Bool)
         case seeAllButtonTapped
-        case showAlert(AlertCase?)
+        case showAlert(AlertCase)
         case notificationUpdated(Bool)
         case navigateToArtistList([Artist])
         case binding(BindingAction<State>)
-        case alert(PresentationAction<CustomAlert.Action>)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -89,10 +88,7 @@ public struct FestivalFeature {
                 state.isAuthorized = isAuthorized
                 return .none
             case .notificationStateFetched(let isEnabled):
-                switch state.isAuthorized {
-                case true: state.isNotificationOn = isEnabled
-                case false: state.isNotificationOn = false
-                }
+                state.isNotificationOn = isEnabled
                 return .none
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
@@ -118,15 +114,15 @@ public struct FestivalFeature {
                 state.isNotificationOn = isEnabled
                 return .none
             case .showAlert(let alertCase):
-                guard let alertCase else { return .none }
-                state.alert = .init(alertCase: alertCase)
+                state.alert = .init(alertCase)
                 return .none
-            case .alert(.presented(.buttonTapped)):
+            case .alert(.presented(.buttonTapped(.authorization))):
                 state.shouldOpenURL = true
+                return .none
+            case .alert:
                 return .none
             case .navigateToArtistList: return .none
             case .binding: return .none
-            case .alert: return .none
             }
         }
         .ifLet(\.$alert, action: \.alert) {
@@ -144,7 +140,7 @@ private extension FestivalFeature {
             await send(.authorizationChecked(isAuthroized))
             try await send(.notificationStateFetched(isEnabled))
         } catch {
-            await send(.showAlert(nil))
+            await send(.showAlert(.error))
         }
     }
     
@@ -181,7 +177,7 @@ private extension FestivalFeature {
             try await notificationUseCase.updateNotification(id: id, isEnabled: isEnabled)
             return .notificationUpdated(isEnabled)
         } catch {
-            return .showAlert(nil)
+            return .showAlert(.error)
         }
     }
 }

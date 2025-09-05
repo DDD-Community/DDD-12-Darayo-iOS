@@ -9,9 +9,10 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Base
 
 public struct HomeView: View {
-    @Bindable private var store: StoreOf<HomeFeature>
+    private let store: StoreOf<HomeFeature>
     
     public init(store: StoreOf<HomeFeature>) {
         self.store = store
@@ -51,6 +52,14 @@ private extension HomeView {
                 .frame(width: 24, height: 24)
                 .foregroundStyle(Color.grey4)
                 .padding(16)
+        }
+    }
+}
+
+extension HomeFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .error: return .error
         }
     }
 }

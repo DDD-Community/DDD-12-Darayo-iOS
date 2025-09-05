@@ -10,66 +10,56 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 
-struct CustomAlertViewModifier: ViewModifier {
-    private let item: Binding<StoreOf<CustomAlert>?>
-    private let icon: Image?
-    private let onDismiss: () -> Void
+struct CustomAlertViewModifier<AlertCase: AlertPresentable>: ViewModifier {
+    @Binding private var item: StoreOf<CustomAlert<AlertCase>>?
     
-    init(
-        item: Binding<StoreOf<CustomAlert>?>,
-        icon: Image?,
-        onDismiss: @escaping () -> Void
-    ) {
-        self.item = item
-        self.icon = icon
-        self.onDismiss = onDismiss
+    init(item: Binding<StoreOf<CustomAlert<AlertCase>>?>) {
+        self._item = item
     }
     
     func body(content: Content) -> some View {
-        switch item.wrappedValue {
-        case .none: content
-        case .some(let store):
-            ZStack {
-                content
-                    .blur(radius: 4)
-                    .allowsHitTesting(false)
-                
+        ZStack {
+            content
+                .blur(radius: item == nil ? 0 : 4)
+                .allowsHitTesting(item == nil)
+            
+            if let item {
                 Color.background1
                     .opacity(0.2)
-                    .ignoresSafeArea()
+                    .ignoresSafeArea(.all)
+                    .onTapGesture { self.item = nil }
             
-                customAlertView(store: store)
+                customAlertView(store: item)
             }
         }
     }
     
-    private func customAlertView(store: StoreOf<CustomAlert>) -> some View {
-        CustomAlertView(
-            icon: icon,
-            title: store.title,
-            message: store.message,
-            buttonTitle: store.buttonTitle,
-            action: {
-                store.send(.buttonTapped)
-                onDismiss()
-            },
-            closeAction: {
-                store.send(.closeButtonTapped)
-                onDismiss()
-            }
-        )
+    private func customAlertView(store: StoreOf<CustomAlert<AlertCase>>) -> some View {
+        let alertInfo = store.alertCase.alertInfo
+        
+        return CustomAlertView(
+            icon: alertInfo.icon,
+            iconColor: alertInfo.iconColor,
+            title: alertInfo.title,
+            message: alertInfo.message,
+            upperText: alertInfo.box?.upperText,
+            highlightText: alertInfo.box?.highlightText,
+            lowerText: alertInfo.box?.lowerText,
+            buttonTitle: alertInfo.buttonTitle
+        ) {
+            store.send(.buttonTapped(store.alertCase))
+            item = nil
+        } closeAction: {
+            item = nil
+        }
+        .background(Color.clear)
     }
 }
 
 public extension View {
-    func customAlert(
-        _ item: Binding<StoreOf<CustomAlert>?>,
-        icon: Image? = nil
+    func customAlert<AlertCase>(
+        _ item: Binding<StoreOf<CustomAlert<AlertCase>>?>
     ) -> some View {
-        modifier(
-            CustomAlertViewModifier(item: item, icon: icon) {
-                item.wrappedValue = nil
-            }
-        )
+        modifier(CustomAlertViewModifier(item: item))
     }
 }

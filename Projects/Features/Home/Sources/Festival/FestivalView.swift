@@ -42,7 +42,7 @@ public struct FestivalView: View {
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: alertIcon)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
@@ -53,16 +53,6 @@ public struct FestivalView: View {
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
             store.send(.enteredForeground)
-        }
-    }
-}
-
-private extension FestivalView {
-    var alertIcon: Image? {
-        return switch store.alert?.alertCase {
-        case .authorization: .iconBellGray
-        case .like: .iconHeartGray
-        case .none: nil
         }
     }
 }
@@ -247,35 +237,11 @@ private extension FestivalView {
     }
 }
 
-private extension FestivalFeature.AlertCase {
-    var title: String {
+extension FestivalFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
         switch self {
-        case .authorization: "알림 권한이 없어요!"
-        case .like: "좋아요가 설정되었어요!"
-        }
-    }
-    
-    var message: String {
-        "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요"
-    }
-    
-    var buttonTitle: String {
-        "권한 설정하기"
-    }
-}
-
-extension CustomAlert.State {
-    init(alertCase: FestivalFeature.AlertCase) {
-        self = .init(
-            title: alertCase.title,
-            message: alertCase.message,
-            buttonTitle: alertCase.buttonTitle
-        )
-    }
-    
-    var alertCase: FestivalFeature.AlertCase? {
-        return FestivalFeature.AlertCase.allCases.first {
-            self == .init(alertCase: $0)
+        case .authorization: return .authorization
+        case .error: return .error
         }
     }
 }

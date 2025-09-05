@@ -11,6 +11,7 @@ import UserNotifications
 import ComposableArchitecture
 import Domain
 import Util
+import Base
 
 @Reducer
 public struct MyPageFeature {
@@ -18,18 +19,24 @@ public struct MyPageFeature {
     @Dependency(\.festivalUseCase) private var festivalUseCase
     @Dependency(\.dismiss) private var dismiss
     
+    public enum AlertCase {
+        case error
+        case authorization
+    }
+    
     @ObservableState
     public struct State {
         var likedFestivals: [LikedFestival] = []
         var subscribedFestivals: [Festival] = []
         var isLoading: Bool = false
-        
         var isAuthorized: Bool = false
         var isNotificationOn: Bool = false
         
         var isLatestVersion: Bool = true
         var currentVersion: String
         var latestVersion: String
+        var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert<AlertCase>.State?
         
         public init() {
             let appVersion = Bundle.appVersion
@@ -51,10 +58,11 @@ public struct MyPageFeature {
         case setToggle(Bool)
         case likedFestivalsButtonTapped
         case subscribedFestivalsButtonTapped
-        case showAlert
+        case showAlert(AlertCase)
         case menuTapped(Menu)
         case backButtonTapped
         case binding(BindingAction<State>)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -88,9 +96,8 @@ public struct MyPageFeature {
                         await send(fetchNotificationState())
                     }
                 case false:
-                    state.isNotificationOn = false
                     return .run { send in
-                        await updateNotification(isEnabled: false)
+                        await send(updateNotification(isEnabled: false))
                     }
                 }
             case .notificationStateFetched(let isEnabled):
@@ -109,25 +116,32 @@ public struct MyPageFeature {
                 return .run { send in
                     switch await isAuthorized {
                     case true:
-                        await send(.setToggle(isOn))
-                        await updateNotification(isEnabled: isOn)
+                        await send(updateNotification(isEnabled: isOn))
                     case false:
-                        await send(.showAlert)
+                        await send(.showAlert(.authorization))
                     }
                 }
             case .setToggle(let isOn):
                 state.isNotificationOn = isOn
                 return .none
-            
             case .backButtonTapped:
                 return .run { _ in await dismiss() }
-            case .showAlert:
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase)
+                return .none
+            case .alert(.presented(.buttonTapped(.authorization))):
+                state.shouldOpenURL = true
+                return .none
+            case .alert:
                 return .none
             case .likedFestivalsButtonTapped: return .none
             case .subscribedFestivalsButtonTapped: return .none
             case .menuTapped: return .none
             case .binding: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }
@@ -142,7 +156,7 @@ private extension MyPageFeature {
             try await send(.subscribedFestivalsFetched(subscribedFestivals))
             await send(.allFetched)
         } catch {
-            await send(.showAlert)
+            await send(.showAlert(.error))
         }
     }
     
@@ -159,12 +173,17 @@ private extension MyPageFeature {
             let isEnabled = try await notificationUseCase.fetchNotificationState()
             return .notificationStateFetched(isEnabled)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
     
-    func updateNotification(isEnabled: Bool) async {
-        try? await notificationUseCase.updateNotification(isEnabled: isEnabled)
+    func updateNotification(isEnabled: Bool) async -> Action {
+        do {
+            try await notificationUseCase.updateNotification(isEnabled: isEnabled)
+            return .setToggle(isEnabled)
+        } catch {
+            return .showAlert(.error)
+        }
     }
 }
 

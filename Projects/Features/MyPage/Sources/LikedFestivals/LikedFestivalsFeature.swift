@@ -9,28 +9,35 @@
 import SwiftUI
 import ComposableArchitecture
 import Domain
+import Base
 
 @Reducer
 public struct LikedFestivalsFeature {
     @Dependency(\.dismiss) private var dismiss
     @Dependency(\.festivalUseCase) private var festivalUseCase
     
+    public enum AlertCase {
+        case error
+    }
+    
     @ObservableState
     public struct State {
         var festivals: [Festival] = []
         var isFavorite: [Bool] = []
         var isLoading: Bool = true
+        @Presents var alert: CustomAlert<AlertCase>.State?
         public init() {}
     }
     
     public enum Action {
         case onAppear
         case festivalsFetched([Festival])
-        case showAlert
+        case showAlert(AlertCase)
         case backButtonTapped
         case festivalTapped(Festival)
         case likeButtonTapped(Festival)
         case navigateToFestival(Festival, Bool)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -52,7 +59,7 @@ public struct LikedFestivalsFeature {
                     let isFavorite = try festivalUseCase.isFavorite(festival)
                     return .send(.navigateToFestival(festival, isFavorite))
                 } catch {
-                    return .send(.showAlert)
+                    return .none
                 }
             case .likeButtonTapped(let festival):
                 let index = state.festivals.firstIndex { $0 == festival }
@@ -61,13 +68,18 @@ public struct LikedFestivalsFeature {
                 updateLikedFestivals(festival.id, isFavorite: isFavorite)
                 state.isFavorite[index].toggle()
                 return .none
-            case .showAlert:
+            case .showAlert(let alertCase):
                 state.isLoading = false
+                state.alert = .init(alertCase)
                 return .none
             case .backButtonTapped:
                 return .run { _ in await self.dismiss() }
             case .navigateToFestival: return .none
+            case .alert: return .none
             }
+        }
+        .ifLet(\.$alert, action: \.alert) {
+            CustomAlert()
         }
     }
 }
@@ -80,7 +92,7 @@ private extension LikedFestivalsFeature {
             let likedFestivals = festivals.filter { ids.contains($0.id) }
             return .festivalsFetched(likedFestivals)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
     

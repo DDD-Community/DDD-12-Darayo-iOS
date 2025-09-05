@@ -26,9 +26,8 @@ public struct MainFeature {
         var home: HomeFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
-        
-        @Presents var alert: CustomAlert.State?
         var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert<AlertCase>.State?
     }
     
     public enum Action: BindableAction {
@@ -39,9 +38,9 @@ public struct MainFeature {
         case home(HomeFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
-        case alert(PresentationAction<CustomAlert.Action>)
         case navigateToFestival(Festival, Bool)
-        case showAlert
+        case showAlert(AlertCase)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -83,12 +82,8 @@ public struct MainFeature {
             case .home(.myPageButtonTapped):
                 state.path.append(.myPage(.init()))
                 return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
-                return .none
-            case .path(.element(_, .myPage(.showAlert))):
-                state.alert = .authorization
-                return .none
+            case .home(.showAlert(let alertCase)):
+                return .send(.showAlert(.home(alertCase)))
             case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
                 state.path.append(.likedFestivals(.init()))
                 return .none
@@ -124,7 +119,8 @@ public struct MainFeature {
                     return .none
                 default: return .none
                 }
-            case .showAlert:
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase)
                 return .none
             case .navigateToFestival(let festival, let isFavorite):
                 UserDefaults.festivalID = nil
@@ -134,8 +130,8 @@ public struct MainFeature {
                 return .none
             case .home: return .none
             case .binding: return .none
-            case .path: return .none
             case .alert: return .none
+            case .path: return .none
             }
         }
         .forEach(\.path, action: \.path)
@@ -171,7 +167,7 @@ private extension MainFeature {
             let festival = try await festivalUseCase.fetchFestival(id: id)
             return .navigateToFestival(festival, isFavorite)
         } catch {
-            return .showAlert
+            return .showAlert(.error)
         }
     }
 }
@@ -197,12 +193,9 @@ extension MainFeature {
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
     }
-}
-
-private extension CustomAlert.State {
-    static let authorization: Self = .init(
-        title: "알림 권한이 없어요!",
-        message: "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요",
-        buttonTitle: "권한 설정하기"
-    )
+    
+    public enum AlertCase: Equatable {
+        case error
+        case home(HomeFeature.AlertCase)
+    }
 }

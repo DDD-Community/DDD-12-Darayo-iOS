@@ -9,9 +9,11 @@
 import UIKit
 import ComposableArchitecture
 import Domain
+import Base
 
 @Reducer
 public struct RootFeature {
+    @ObservableState
     public struct State {
         var path: Path.State = .splash(.init())
         public init() {}
@@ -38,7 +40,7 @@ public struct RootFeature {
             case .path(.permission(.allPermissionsCompleted)):
                 state.path = .main(.init())
                 return .none
-            default: return .none
+            case .path: return .none
             }
         }
     }

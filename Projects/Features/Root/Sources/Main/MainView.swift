@@ -41,7 +41,7 @@ public struct MainView: View {
             }
         }
         .safari(url: $store.url)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
@@ -123,6 +123,15 @@ private extension MainView {
             .frame(maxWidth: .infinity)
             .padding(.top, 14)
             .contentShape(Rectangle())
+        }
+    }
+}
+
+extension MainFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        return switch self {
+        case .home(let alertCase): alertCase.alertInfo
+        case .error: .error
         }
     }
 }
