@@ -11,6 +11,8 @@ public enum DateFormat {
     case home
     case performanceDate
     case reservation
+    case updateDate
+    case updateDateString
     case festivalWithWeekday
     case reservationWithWeekday
     case eventDate
@@ -21,7 +23,10 @@ public enum DateFormat {
         case .festivalDate, .performanceDate:
             "yyyy-MM-dd"
         case .home: "yy.MM.dd"
-        case .reservation: "yyyy-MM-dd'T'HH:mm:ss"
+        case .reservation, .updateDate:
+            "yyyy-MM-dd'T'HH:mm:ss"
+        case .updateDateString:
+            "yyyy. MM. dd"
         case .festivalWithWeekday, .reservationWithWeekday:
             "yyyy. MM. dd (E)"
         case .eventDate: "yy.MM.dd" //calendarView 행사일 표시

@@ -56,6 +56,10 @@ public struct FestivalFeature {
             return "\(startDate) - \(endDate)"
         }
         
+        var updateDateString: String {
+            return festival.updateDate?.toString(dateFormat: .updateDateString) ?? ""
+        }
+        
         var purchaseDates: [String] {
             festival.purchaseDates.map { dates in
                 let dateFormat = DateFormat.reservationWithWeekday
