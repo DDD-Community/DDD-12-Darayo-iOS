@@ -2,18 +2,20 @@
 //  FestivalView.swift
 //  Home
 //
-//  Created by 이정원 on 6/29/25.
+//  Created by 이정원 on 8/7/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
-import Domain
 import Base
+import Kingfisher
+import Domain
 
 public struct FestivalView: View {
     @Bindable private var store: StoreOf<FestivalFeature>
+    @State private var scrollOffset: CGFloat = 0.0
     @Environment(\.openURL) private var openURL
     @Environment(\.scenePhase) private var scenePhase
     private enum ScrollID { case regulationInfo }
@@ -23,37 +25,25 @@ public struct FestivalView: View {
     }
     
     public var body: some View {
-        VStack(spacing: 0) {
-            navigationBar
-            GeometryReader { geometryProxy in
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(spacing: 12) {
-                            festivalInfoView
-                            ticketInfoView
-                            artistInfoView
-                            transportationInfoView
-                            regulationInfoView
-                                .id(ScrollID.regulationInfo)
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 16)
-                        .padding(.bottom, geometryProxy.safeAreaInsets.bottom > 0 ? 0 : 16)
-                    }
+        ZStack(alignment: .top) {
+            imageView
+            
+            ScrollViewReader { proxy in
+                scrollView
                     .onChange(of: store.isExpanded) { _, isExpanded in
                         guard isExpanded else { return }
                         withAnimation {
                             proxy.scrollTo(ScrollID.regulationInfo, anchor: .top)
                         }
                     }
-                }
-                .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
-                // timetableButton
             }
+            .animation(store.isExpanded ? nil : .default, value: store.isExpanded)
+                
+            navigationBar
         }
         .navigationBarBackButtonHidden()
         .background(Color.background1)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: alertIcon)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
@@ -63,30 +53,80 @@ public struct FestivalView: View {
         }
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
-            store.send(.enteredForeground)
+            store.send(.foregroundEntered)
         }
     }
 }
 
 private extension FestivalView {
-    var alertIcon: Image? {
-        return switch store.alert?.alertCase {
-        case .authorization: .iconBellGray
-        case .like: .iconHeartGray
-        case .none: nil
+    var scrollView: some View {
+        OffsetScrollView(scrollOffset: $scrollOffset) {
+            VStack(spacing: 0) {
+                Color.clear
+                    .frame(height: 256)
+                
+                VStack(spacing: 12) {
+                    festivalInfoView
+                    ticketInfoView
+                    artistInfoView
+                    transportationInfoView
+                        .overlay(alignment: .bottom) {
+                            Color.clear
+                                .frame(height: 56)
+                                .id(ScrollID.regulationInfo)
+                        }
+                        
+                    regulationInfoView
+                    updateInfoView
+                }
+                .padding(.horizontal, 16)
+            }
+            .padding(.bottom, 16)
         }
     }
-}
-
-private extension FestivalView {
+    
+    var imageView: some View {
+        GeometryReader { proxy in
+            let inset = proxy.safeAreaInsets.top
+            KFImage(store.festival.posterURL)
+                .placeholder {
+                    Image.placeholder1
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                }
+                .resizable()
+                .scaledToFit()
+                .padding(.top, inset - 100)
+                .overlay(alignment: .top) {
+                    VStack(spacing: 0) {
+                        gradient
+                            .frame(height: 256 + inset)
+                        Color.background1
+                    }
+                }
+                .offset(x: 0, y: min(0, -scrollOffset))
+                .ignoresSafeArea(edges: .top)
+        }
+    }
+    
+    var gradient: some View {
+        LinearGradient(
+            colors: [.grey6.opacity(0.0), .background1],
+            startPoint: .top,
+            endPoint: .bottom
+        )
+    }
+    
     var navigationBar: some View {
-        HStack(spacing: 20) {
+        let opacity = min(max(0, scrollOffset - 144.0), 56.0) / 56.0
+        return HStack(spacing: 20) {
             backButton
             Spacer()
             notificationButton
             heartButton
         }
         .padding(.trailing, 16)
+        .background(Color.background1.opacity(opacity))
     }
     
     var backButton: some View {
@@ -143,15 +183,15 @@ private extension FestivalView {
             title: store.festival.name,
             place: store.festival.placeName,
             dateString: store.dateString,
-            posterURL: store.festival.posterURL
+            urlInfos: store.festival.urlInfos
         )
+        .padding(.vertical, 8)
     }
     
     var ticketInfoView: some View {
         TicketInfoView(
             vendors: store.festival.vendors,
-            purchaseDates: store.purchaseDates,
-            urlInfos: store.festival.urlInfos
+            purchaseDates: store.purchaseDates
         )
     }
     
@@ -162,7 +202,9 @@ private extension FestivalView {
     }
     
     var transportationInfoView: some View {
-        TransportationInfoView(transportationInfo: store.festival.transportationInfo)
+        TransportationInfoView(
+            transportationInfo: store.festival.transportationInfo
+        )
     }
     
     var regulationInfoView: some View {
@@ -172,45 +214,44 @@ private extension FestivalView {
         )
     }
     
-    var timetableButton: some View {
-        Button("타임테이블") {
+    var updateInfoView: some View {
+        VStack(spacing: 4) {
+            sentenceView("업데이트 일자 : \(store.updateDateString)")
+            sentenceView("자세한 내용은 공식 사이트 참조")
+        }
+        .padding(.top, 4)
+    }
+    
+    func sentenceView(_ sentence: String) -> some View {
+        HStack(alignment: .top, spacing: 0) {
+            Text("•")
+                .pretendard(style: .caption2)
+                .foregroundStyle(Color.grey5)
+                .padding(.horizontal, 8)
             
+            Text(sentence)
+                .pretendard(style: .caption2)
+                .foregroundStyle(Color.grey5)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .buttonStyle(.festibee)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 8)
     }
 }
 
-private extension FestivalFeature.AlertCase {
-    var title: String {
+extension FestivalFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
         switch self {
-        case .authorization: "알림 권한이 없어요!"
-        case .like: "좋아요가 설정되었어요!"
+        case .authorization: return .authorization
+        case .agreement: return .agreement
+        case .failedToFetch(let error): return alertInfo(error)
+        case .failedToUpdate(let error): return alertInfo(error)
         }
     }
     
-    var message: String {
-        "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요"
-    }
-    
-    var buttonTitle: String {
-        "권한 설정하기"
-    }
-}
-
-extension CustomAlert.State {
-    init(alertCase: FestivalFeature.AlertCase) {
-        self = .init(
-            title: alertCase.title,
-            message: alertCase.message,
-            buttonTitle: alertCase.buttonTitle
-        )
-    }
-    
-    var alertCase: FestivalFeature.AlertCase? {
-        return FestivalFeature.AlertCase.allCases.first {
-            self == .init(alertCase: $0)
+    private func alertInfo(_ error: NetworkError) -> AlertInfo {
+        switch error.type {
+        case .noInternet: return .noInternet
+        default: return .error(error, buttonTitle: "확인")
         }
     }
 }

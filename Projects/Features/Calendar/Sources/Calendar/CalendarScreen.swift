@@ -82,7 +82,6 @@ private extension CalendarScreen {
     var eventListSection: some View {
         EventListView(
             events: store.eventsForSelectedDate,
-            title: nil,
             onTap: { event in
                 store.send(.eventTapped(festivalId: event.festivalId))
             }

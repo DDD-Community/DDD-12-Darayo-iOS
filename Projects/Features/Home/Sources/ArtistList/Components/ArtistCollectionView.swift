@@ -11,9 +11,14 @@ import DesignSystem
 
 final class ArtistCollectionView: UICollectionView {
     private let sectionCount: Int
+    private let containsNil: Bool
     
-    init(sectionCount: Int) {
+    init(
+        sectionCount: Int,
+        containsNil: Bool
+    ) {
         self.sectionCount = sectionCount
+        self.containsNil = containsNil
         super.init(frame: .zero, collectionViewLayout: .init())
         backgroundColor = .background1
         register()
@@ -77,7 +82,7 @@ private extension ArtistCollectionView {
     
     var section: NSCollectionLayoutSection {
         let section = NSCollectionLayoutSection(group: group)
-        section.boundarySupplementaryItems = [header]
+        section.boundarySupplementaryItems = sectionCount > 1 ? [header] : []
         section.interGroupSpacing = 16
         section.contentInsets = .init(top: 16, leading: 0, bottom: 52, trailing: 0)
         return section

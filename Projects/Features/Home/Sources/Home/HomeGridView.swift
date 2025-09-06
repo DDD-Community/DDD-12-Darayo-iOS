@@ -18,27 +18,18 @@ struct HomeGridView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                ZStack {
-                    switch store.isFiltered {
-                    case true:
-                        festivalGridView
-                    case false:
-                        festivalGridView
-                            .refreshable {
-                                store.send(.onRefresh)
-                            }
-                    }
+        ZStack {
+            festivalGridView
+                .refreshable {
+                    store.send(.onRefresh)
                 }
                 .animation(.easeInOut(duration: 0.3), value: store.festivals)
                 .renderedIf(shouldShowGridView)
-                
-                emptyView
-                    .renderedIf(shouldShowEmptyView)
-            }
-            .animation(.easeInOut(duration: 0.3), value: store.festivals.isEmpty)
+            
+            Color.background1
+                .renderedIf(shouldShowEmptyView)
         }
+        .animation(.easeInOut(duration: 0.3), value: store.festivals.isEmpty)
         .background(Color.background1)
     }
 }
@@ -68,27 +59,7 @@ private extension HomeGridView {
             .padding(.horizontal, 16)
             .padding(.bottom, 100)
             .padding(.bottom, 24)
+            .padding(.top, 12)
         }
-        .id(store.isFiltered)
-    }
-    
-    var emptyView: some View {
-        VStack(spacing: 0) {
-            Image.star
-            
-            Text("아직 좋아요한 페스티벌이 없어요!")
-                .pretendard(style: .title2)
-                .foregroundStyle(Color.white)
-                .padding(.top, 22)
-            
-            Text("관심있는 페스티벌을\n좋아요하고, 소식을 받아보세요 :)")
-                .pretendard(style: .body4)
-                .multilineTextAlignment(.center)
-                .foregroundStyle(Color.grey4)
-                .padding(.top, 10)
-        }
-        .padding(.bottom, 10)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.bottom, 24)
     }
 }

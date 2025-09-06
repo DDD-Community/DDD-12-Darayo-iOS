@@ -13,11 +13,16 @@ public typealias Pretendard = DesignSystemFontFamily.Pretendard
 struct PretendardModifier: ViewModifier {
     private let size: CGFloat
     private let weight: Pretendard.Weight
-    private let multiplier: CGFloat = 1.3
+    private let multiplier: CGFloat
     
-    init(size: CGFloat, weight: Pretendard.Weight) {
+    init(
+        size: CGFloat,
+        weight: Pretendard.Weight,
+        multiplier: CGFloat = 1.3
+    ) {
         self.size = size
         self.weight = weight
+        self.multiplier = multiplier
     }
     
     func body(content: Content) -> some View {
@@ -36,7 +41,12 @@ struct PretendardModifier: ViewModifier {
 
 public extension View {
     func pretendard(style: Pretendard.TextStyle) -> some View {
-        modifier(PretendardModifier(size: style.size, weight: style.weight))
+        modifier(
+            PretendardModifier(
+                size: style.size,
+                weight: style.weight
+            )
+        )
     }
     
     func pretendard(size: CGFloat, weight: Pretendard.Weight) -> some View {

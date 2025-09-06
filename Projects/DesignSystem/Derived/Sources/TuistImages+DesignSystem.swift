@@ -6,7 +6,6 @@ public extension Image {
         self.init(name, bundle: Bundle.module)
     }
     
-    static let characterSplash = Self("character_splash")
     static let iconArrowLeft = Self("icon_arrow_left")
     static let iconArtistPlaceholder = Self("icon_artist_placeholder")
     static let iconArtistPlaceholderSelected = Self("icon_artist_placeholder_selected")
@@ -21,6 +20,7 @@ public extension Image {
     static let iconClose = Self("icon_close")
     static let iconDown = Self("icon_down")
     static let iconDownload = Self("icon_download")
+    static let iconError = Self("icon_error")
     static let iconEventDay = Self("icon_eventDay")
     static let iconFilter = Self("icon_filter")
     static let iconGridMode = Self("icon_grid_mode")
@@ -42,6 +42,7 @@ public extension Image {
     static let iconReservationDay = Self("icon_reservationDay")
     static let iconSelectedDay = Self("icon_selectedDay")
     static let iconShare = Self("icon_share")
+    static let iconStarGrey = Self("icon_star_grey")
     static let iconSubway = Self("icon_subway")
     static let iconTime = Self("icon_time")
     static let iconTimetable = Self("icon_timetable")
@@ -62,7 +63,6 @@ public extension UIImage {
         return UIImage(named: name, in: Bundle.module, compatibleWith: nil) ?? UIImage()
     }
     
-    static let characterSplash = UIImage.named("character_splash")
     static let iconArrowLeft = UIImage.named("icon_arrow_left")
     static let iconArtistPlaceholder = UIImage.named("icon_artist_placeholder")
     static let iconArtistPlaceholderSelected = UIImage.named("icon_artist_placeholder_selected")
@@ -77,6 +77,7 @@ public extension UIImage {
     static let iconClose = UIImage.named("icon_close")
     static let iconDown = UIImage.named("icon_down")
     static let iconDownload = UIImage.named("icon_download")
+    static let iconError = UIImage.named("icon_error")
     static let iconEventDay = UIImage.named("icon_eventDay")
     static let iconFilter = UIImage.named("icon_filter")
     static let iconGridMode = UIImage.named("icon_grid_mode")
@@ -98,6 +99,7 @@ public extension UIImage {
     static let iconReservationDay = UIImage.named("icon_reservationDay")
     static let iconSelectedDay = UIImage.named("icon_selectedDay")
     static let iconShare = UIImage.named("icon_share")
+    static let iconStarGrey = UIImage.named("icon_star_grey")
     static let iconSubway = UIImage.named("icon_subway")
     static let iconTime = UIImage.named("icon_time")
     static let iconTimetable = UIImage.named("icon_timetable")

@@ -2,7 +2,7 @@
 //  TicketInfoView.swift
 //  Home
 //
-//  Created by 이정원 on 6/30/25.
+//  Created by 이정원 on 8/9/25.
 //  Copyright © 2025 Darayo. All rights reserved.
 //
 
@@ -13,139 +13,103 @@ import Domain
 struct TicketInfoView: View {
     private let vendors: [Vendor]
     private let purchaseDates: [String]
-    private let urlInfos: [URLInfo]
+    @Environment(\.openURL) private var openURL
     
     init(
         vendors: [Vendor],
-        purchaseDates: [String],
-        urlInfos: [URLInfo]
+        purchaseDates: [String]
     ) {
         self.vendors = vendors
         self.purchaseDates = purchaseDates
-        self.urlInfos = urlInfos
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            titleView
-            vendorInfoView
-            dateInfoView
-            urlInfoView
+        VStack(spacing: 12) {
+            vendorSection
+            purchaseDateSection
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 20)
-        .background(Color.grey6)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(16)
+        .background(Color.background2)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
 private extension TicketInfoView {
-    var titleView: some View {
-        Text("예매정보")
-            .pretendard(style: .title3)
-            .foregroundStyle(Color.white)
-            .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    
-    var vendorInfoView: some View {
-        HStack(alignment: .top, spacing: 12) {
+    var vendorSection: some View {
+        HStack(
+            alignment: vendors.isEmpty ? .center : .top,
+            spacing: 12
+        ) {
             Text("예매처")
-                .pretendard(style: .body2)
+                .pretendard(style: .body3)
                 .foregroundStyle(Color.point1)
                 .frame(width: 50, alignment: .leading)
+                .padding(.top, vendors.isEmpty ? 0 : 5)
             
-            Text("미정")
-                .pretendard(style: .body0)
-                .foregroundStyle(Color.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .renderedIf(vendors.isEmpty)
-            
-            vendorListView
-                .renderedIf(!vendors.isEmpty)
-        }
-    }
-    
-    var vendorListView: some View {
-        WrappingHStack(
-            horizontalSpacing: 12,
-            verticalSpacing: 5
-        ) {
-            ForEach(0..<vendors.count, id: \.self) { index in
-                let vendor = vendors[index]
-                
-                Button {
-                    guard let url = URL(string: vendor.urlString) else { return }
-                    UIApplication.shared.open(url)
-                } label: {
-                    HStack(spacing: 6) {
-                        Text("\(vendor.name)")
-                            .pretendard(style: .body0)
-                            .foregroundStyle(Color.white)
-                        
-                        Image.iconLink
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 12, height: 12)
-                            .foregroundStyle(Color.white)
-                    }
+            WrappingHStack(horizontalSpacing: 8, verticalSpacing: 8) {
+                ForEach(0..<vendors.count, id: \.self) { index in
+                    vendorButton(vendors[index])
                 }
             }
+            .renderedIf(!vendors.isEmpty)
+            
+            Text("미정")
+                .pretendard(style: .body4)
+                .foregroundStyle(Color.grey4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .renderedIf(vendors.isEmpty)
         }
     }
     
-    var dateInfoView: some View {
-        HStack(alignment: .top, spacing: 12) {
+    func vendorButton(_ vendor: Vendor) -> some View {
+        Button {
+            let url = URL(string: vendor.urlString)
+            guard let url else { return }
+            openURL(url)
+        } label: {
+            HStack(spacing: 8) {
+                Text(vendor.name)
+                    .pretendard(style: .caption1)
+                    .foregroundStyle(Color.white)
+                
+                Image.iconLink
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 8, height: 8)
+                    .foregroundStyle(Color.white)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background(Color.grey5)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+        }
+    }
+    
+    var purchaseDateSection: some View {
+        HStack(
+            alignment: vendors.isEmpty ? .center : .top,
+            spacing: 12
+        ) {
             Text("예매일자")
-                .pretendard(style: .body2)
+                .pretendard(style: .body3)
                 .foregroundStyle(Color.point1)
                 .frame(width: 50, alignment: .leading)
-            
-            Text("미정")
-                .pretendard(style: .body0)
-                .foregroundStyle(Color.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .renderedIf(purchaseDates.isEmpty)
             
             VStack(spacing: 2) {
                 ForEach(0..<purchaseDates.count, id: \.self) { index in
                     Text(purchaseDates[index])
-                        .pretendard(style: .body0)
-                        .foregroundStyle(Color.white)
+                        .pretendard(style: .body4)
+                        .foregroundStyle(Color.grey1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .renderedIf(!purchaseDates.isEmpty)
-        }
-    }
-    
-    var urlInfoView: some View {
-        HStack(spacing: 12) {
-            Text("공식계정")
-                .pretendard(style: .body2)
-                .foregroundStyle(Color.point1)
-                .frame(width: 50, alignment: .leading)
             
-            HStack(spacing: 9) {
-                ForEach(0..<urlInfos.count, id: \.self) { index in
-                    let image: Image = switch urlInfos[index].platform {
-                    case .instagram: .iconInstagram
-                    case .homepage: .iconWebsite
-                    }
-                    
-                    Button {
-                        guard let url = URL(string: urlInfos[index].urlString) else { return }
-                        UIApplication.shared.open(url)
-                    } label: {
-                        image
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                            .foregroundStyle(Color.white)
-                    }
-                }
-                Spacer()
-            }
+            Text("미정")
+                .pretendard(style: .body4)
+                .foregroundStyle(Color.grey4)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .renderedIf(purchaseDates.isEmpty)
         }
     }
 }

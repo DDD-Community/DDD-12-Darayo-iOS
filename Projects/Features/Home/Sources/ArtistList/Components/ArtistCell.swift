@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI
 import Domain
 import DesignSystem
+import Kingfisher
 
 final class ArtistCell: UICollectionViewCell {
     static let identifier = String(describing: ArtistCell.self)
@@ -18,6 +19,9 @@ final class ArtistCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage.iconArtistPlaceholder
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        imageView.layer.masksToBounds = true
         return imageView
     }()
     
@@ -40,9 +44,27 @@ final class ArtistCell: UICollectionViewCell {
         configureLayouts()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        imageView.layoutIfNeeded()
+        imageView.layer.cornerRadius = imageView.frame.width / 2
+    }
+    
+    override func prepareForReuse() {
+        imageView.image = UIImage.iconArtistPlaceholder
+    }
+    
     func configure(artist: Artist) {
         nameLabel.text = artist.name
         nameLabel.lineHeight(14 * 1.3)
+        
+        let placeholder = UIImage.iconArtistPlaceholder
+        switch artist.imageURL(200) {
+        case .some(let url):
+            imageView.kf.setImage(with: url, placeholder: placeholder)
+        case .none:
+            imageView.image = placeholder
+        }
     }
 }
 

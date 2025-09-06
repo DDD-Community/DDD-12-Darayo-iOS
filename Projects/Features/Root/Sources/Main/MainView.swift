@@ -34,14 +34,16 @@ public struct MainView: View {
             switch store.case {
             case .festival(let store): FestivalView(store: store)
             case .artistList(let store): ArtistListView(store: store)
-            case .notificationSetting(let store): NotificationSettingView(store: store)
+            case .myPage(let store): MyPageView(store: store)
+            case .likedFestivals(let store): LikedFestivalsView(store: store)
+            case .subscribedFestivals(let store): SubscribedFestivalsView(store: store)
             case .termsOfService(let store): TermsOfServiceView(store: store)
             case .privacyPolicy(let store): PrivacyPolicyView(store: store)
-            case .myPage(let store): MyPageView(store: store)
             }
         }
         .safari(url: $store.url)
-        .customAlert($store.scope(state: \.alert, action: \.alert), icon: Image.iconBellGray)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
+        .onAppear { store.send(.onAppear) }
         .onChange(of: store.shouldOpenURL) { oldValue, newValue in
             guard !oldValue, newValue else { return }
             store.send(.binding(.set(\.shouldOpenURL, false)))
@@ -59,7 +61,6 @@ private extension MainView {
     func icon(tab: MainFeature.Tab) -> Image {
         switch tab {
         case .home: Image.iconHome
-        // case .timetable: Image.iconTimetable
         case .calendar: Image.iconCalendar
         }
     }
@@ -80,24 +81,14 @@ private extension MainView {
     }
     
     func tabView(bottomPadding: CGFloat) -> some View {
-        let selection = Binding<MainFeature.Tab>(
-                get: { store.currentTab },
-                set: { store.send(.binding(.set(\.currentTab, $0))) }
-            )
-        
         return TabView(selection: $store.currentTab) {
             HomeView(store: store.scope(state: \.home, action: \.home))
                 .tag(MainFeature.Tab.home)
-            
-//            TimetableView(store: store.scope(state: \.timetable, action: \.timetable))
-//                .tag(MainFeature.Tab.timetable)
-            
             CalendarTabView(store: store.scope(state: \.calendar, action: \.calendar))
                 .tag(MainFeature.Tab.calendar)
         }
         .padding(.bottom, bottomPadding)
         .ignoresSafeArea(edges: .bottom)
-        
     }
     
     func tabBar(height: CGFloat) -> some View {
@@ -135,6 +126,19 @@ private extension MainView {
             .frame(maxWidth: .infinity)
             .padding(.top, 14)
             .contentShape(Rectangle())
+        }
+    }
+}
+
+extension MainFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .home(let alertCase): return alertCase.alertInfo
+        case .error(let error):
+            switch error.type {
+            case .noInternet: return .noInternet
+            default: return .error(error, buttonTitle: "확인")
+            }
         }
     }
 }

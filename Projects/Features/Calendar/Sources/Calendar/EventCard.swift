@@ -28,6 +28,7 @@ public struct EventCard: View {
                     event.posterURL,
                     placeholder: .placeholder3
                 )
+                .scaledToFill()
                 
                 LinearGradient(
                     gradient: .init(

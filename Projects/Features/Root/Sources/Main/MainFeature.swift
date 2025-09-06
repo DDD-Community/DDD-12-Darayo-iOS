@@ -15,32 +15,36 @@ import MyPage
 import Util
 import Base
 import UserNotifications
+import Domain
 
 @Reducer
 public struct MainFeature {
+    @Dependency(\.festivalUseCase) private var festivalUseCase
+    
     @ObservableState
     public struct State {
         var currentTab: Tab = .home
         var home: HomeFeature.State = .init()
         var calendar: CalendarFeature.State = .init()
-        // var timetable: TimetableFeature.State = .init()
-        var myPage: MyPageFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
-        
-        @Presents var alert: CustomAlert.State?
         var shouldOpenURL: Bool = false
+        @Presents var alert: CustomAlert<AlertCase>.State?
     }
     
     public enum Action: BindableAction {
+        case onAppear
+        case checkNotification
+        case subscribeNotification
         case enteredForeground
         case home(HomeFeature.Action)
         case calendar(CalendarFeature.Action)
-        // case timetable(TimetableFeature.Action)
-        case myPage(MyPageFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
-        case alert(PresentationAction<CustomAlert.Action>)
+        case navigateToFestival(Festival, Bool)
+        case showError(NetworkError?)
+        case showAlert(AlertCase)
+        case alert(PresentationAction<CustomAlert<AlertCase>.Action>)
     }
     
     public init() {}
@@ -55,22 +59,35 @@ public struct MainFeature {
                     CalendarFeature()
         }
         
-//        Scope(state: \.timetable, action: \.timetable) {
-//            TimetableFeature()
-//        }
-        
-        Scope(state: \.myPage, action: \.myPage) {
-            MyPageFeature()
-        }
-        
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                return .merge([
+                    .send(.checkNotification),
+                    .send(.subscribeNotification)
+                ])
+            case .checkNotification:
+                let id = UserDefaults.festivalID
+                guard let id else { return .none }
+                UserDefaults.festivalID = nil
+                return .run { send in
+                    await send(fetchFestival(id: id))
+                }
+            case .subscribeNotification:
+                return .run { send in
+                    let stream = NotificationCenter.default.publisher(for: .festivalID).values
+                    for await notification in stream {
+                        let id = notification.object as? Int
+                        guard let id else { return }
+                        await send(fetchFestival(id: id))
+                    }
+                }
             case .enteredForeground:
                 return .run { _ in await checkNotification() }
             case let .home(.navigateToFestival(festival, isFavorite)):
                 state.path.append(.festival(.init(festival: festival, isFavorite: isFavorite)))
                 return .none
-            case .home(.navigateToMyPage):
+            case .home(.myPageButtonTapped):
                 state.path.append(.myPage(.init()))
                 return .none
             case .calendar(.delegate(.openMyPage)):
@@ -79,16 +96,18 @@ public struct MainFeature {
             case .calendar(.delegate(.openFestival(let festival))):
                 state.path.append(.festival(.init(festival: festival, isFavorite: false)))
                 return .none
-            case .myPage(.showAlert):
-                state.alert = .authorization
+            case .home(.showAlert(let alertCase)):
+                return .send(.showAlert(.home(alertCase)))
+            case .path(.element(_, .myPage(.likedFestivalsButtonTapped))):
+                state.path.append(.likedFestivals(.init()))
                 return .none
-            case .alert(.presented(.buttonTapped)):
-                state.shouldOpenURL = true
+            case .path(.element(_, .myPage(.subscribedFestivalsButtonTapped))):
+                state.path.append(.subscribedFestivals(.init()))
                 return .none
-            case .myPage(.menuTapped(.inquiry)):
+            case .path(.element(_, .myPage(.menuTapped(.inquiry)))):
                 state.url = URL(string: Constant.URL.inquiry)
                 return .none
-            case .myPage(.menuTapped(let menu)):
+            case .path(.element(_, .myPage(.menuTapped(let menu)))):
                 let pathState = getPathState(menu: menu)
                 guard let pathState else { return .none }
                 state.path.append(pathState)
@@ -96,7 +115,10 @@ public struct MainFeature {
             case .path(.element(_, .festival(.navigateToArtistList(let artists)))):
                 state.path.append(.artistList(.init(artists: artists)))
                 return .none
-            case .path(.element(_, .notificationSetting(let action))):
+            case .path(.element(_, .festival(.navigateToMyPage))):
+                state.path.append(.myPage(.init()))
+                return .none
+            case .path(.element(_, .likedFestivals(let action))):
                 switch action {
                 case .navigateToFestival(let festival, let isFavorite):
                     state.path.append(.festival(.init(
@@ -105,13 +127,34 @@ public struct MainFeature {
                     return .none
                 default: return .none
                 }
+            case .path(.element(_, .subscribedFestivals(let action))):
+                switch action {
+                case .navigateToFestival(let festival, let isFavorite):
+                    state.path.append(.festival(.init(
+                        festival: festival, isFavorite: isFavorite
+                    )))
+                    return .none
+                default: return .none
+                }
+            case .showError(let networkError):
+                guard let networkError else { return .none }
+                return .send(.showAlert(.error(networkError)))
+            case .showAlert(let alertCase):
+                state.alert = .init(alertCase, alertCase.canDismiss)
+                return .none
+            case .alert(.presented(.buttonTapped(.home))):
+                return .send(.home(.onRefresh))
+            case .navigateToFestival(let festival, let isFavorite):
+                UserDefaults.festivalID = nil
+                state.path.append(.festival(.init(
+                    festival: festival, isFavorite: isFavorite
+                )))
+                return .none
             case .home: return .none
             case .calendar: return .none
-            // case .timetable: return .none
-            case .myPage: return .none
             case .binding: return .none
-            case .path: return .none
             case .alert: return .none
+            case .path: return .none
             }
         }
         .forEach(\.path, action: \.path)
@@ -134,11 +177,21 @@ private extension MainFeature {
     
     func getPathState(menu: MyPageFeature.Menu) -> MainFeature.Path.State? {
         return switch menu {
-        case .individualNotificationSettings: .notificationSetting(.init())
         case .termsOfService: .termsOfService(.init())
         case .privacyPolicy: .privacyPolicy(.init())
-        case .notificationSettings: nil
         case .inquiry: nil
+        }
+    }
+    
+    func fetchFestival(id: Int) async -> Action {
+        do {
+            let ids = try Set(festivalUseCase.fetchLikedFestivals().map { $0.id })
+            let isFavorite = ids.contains(id)
+            let festival = try await festivalUseCase.fetchFestival(id: id)
+            return .navigateToFestival(festival, isFavorite)
+        } catch {
+            let networkError = error as? NetworkError
+            return .showError(networkError)
         }
     }
 }
@@ -146,13 +199,11 @@ private extension MainFeature {
 extension MainFeature {
     public enum Tab: CaseIterable {
         case home
-        // case timetable
         case calendar
         
         var name: String {
             switch self {
             case .home: "홈"
-            // case .timetable: "타임테이블"
             case .calendar: "캘린더"
             }
         }
@@ -162,17 +213,22 @@ extension MainFeature {
     public enum Path {
         case festival(FestivalFeature)
         case artistList(ArtistListFeature)
-        case notificationSetting(NotificationSettingFeature)
+        case myPage(MyPageFeature)
+        case likedFestivals(LikedFestivalsFeature)
+        case subscribedFestivals(SubscribedFestivalsFeature)
         case termsOfService(TermsOfServiceFeature)
         case privacyPolicy(PrivacyPolicyFeature)
-        case myPage(MyPageFeature)
     }
-}
-
-private extension CustomAlert.State {
-    static let authorization: Self = .init(
-        title: "알림 권한이 없어요!",
-        message: "페스티벌 정보를 받으려면\n알림 권한을 허용해주세요",
-        buttonTitle: "권한 설정하기"
-    )
+    
+    public enum AlertCase: Equatable {
+        case error(NetworkError)
+        case home(HomeFeature.AlertCase)
+        
+        var canDismiss: Bool {
+            switch self {
+            case .error: return true
+            case .home: return false
+            }
+        }
+    }
 }

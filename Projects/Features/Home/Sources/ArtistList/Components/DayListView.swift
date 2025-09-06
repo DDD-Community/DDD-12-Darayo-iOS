@@ -12,6 +12,7 @@ import DesignSystem
 struct DayListView: View {
     private let totalDays: Int
     private let selectedIndex: Int
+    private let containsNil: Bool
     private let action: (Int) -> Void
     
     @State private var width: CGFloat = .infinity
@@ -20,10 +21,12 @@ struct DayListView: View {
     init(
         totalDays: Int,
         selectedIndex: Int,
+        containsNil: Bool,
         action: @escaping (Int) -> Void
     ) {
         self.totalDays = totalDays
         self.selectedIndex = selectedIndex
+        self.containsNil = containsNil
         self.action = action
     }
     
@@ -83,8 +86,12 @@ private extension DayListView {
     
     func textView(_ index: Int) -> some View {
         let isSelected = index == selectedIndex
+        let text = switch index == totalDays - 1 && containsNil {
+        case true: "일정 미정"
+        case false: "DAY\(index + 1)"
+        }
         
-        return Text("DAY\(index + 1)")
+        return Text(text)
             .pretendard(style: .title3)
             .foregroundStyle(isSelected ? Color.point1 : Color.grey4)
             .padding(.horizontal, 16)

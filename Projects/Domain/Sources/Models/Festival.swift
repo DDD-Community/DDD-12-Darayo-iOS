@@ -22,6 +22,7 @@ public struct Festival: Equatable, Hashable {
     public let remark: String
     public let reservations: [Reservation]
     public let urlInfos: [URLInfo]
+    public let updateDate: Date?
     
     // TODO: need to refactor
     public var isNotificationEnabled: Bool
@@ -39,6 +40,7 @@ public struct Festival: Equatable, Hashable {
         remark: String,
         reservations: [Reservation],
         urlInfos: [URLInfo],
+        updateDate: Date?,
         isNotificationEnabled: Bool = true
     ) {
         self.id = id
@@ -53,6 +55,7 @@ public struct Festival: Equatable, Hashable {
         self.remark = remark
         self.reservations = reservations
         self.urlInfos = urlInfos
+        self.updateDate = updateDate
         self.isNotificationEnabled = isNotificationEnabled
     }
 }

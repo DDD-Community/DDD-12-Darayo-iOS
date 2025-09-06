@@ -26,7 +26,8 @@ extension Module {
     private static let externalDependencyInfo: [Module: [ExternalModule]] = [
         .app: [.firebaseCore, .firebaseMessaging],
         .feature(.base): [.composableArchitecture],
-        .util: [.dependencies]
+        .util: [.dependencies],
+        .designSystem: [.kingfisher]
     ]
     
     private var path: Path {

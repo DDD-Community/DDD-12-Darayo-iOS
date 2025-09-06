@@ -9,33 +9,44 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Base
 
 public struct MyPageView: View {
     @Bindable private var store: StoreOf<MyPageFeature>
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.openURL) private var openURL
     
     public init(store: StoreOf<MyPageFeature>) {
         self.store = store
     }
     
     public var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             navigationBar
             ScrollView {
                 VStack(spacing: 0) {
-                    versionInfoView
-                    notificationSection
-                    appInfoSection
+                    buttonSection
+                    VStack(spacing: 16) {
+                        notificationSection
+                        appInfoSection
+                    }
+                    updateInfoSection
                 }
-                .padding(.bottom, 24)
             }
         }
-        .animation(.easeInOut, value: store.isNotificationOn)
+        .navigationBarBackButtonHidden()
         .background(Color.background1)
+        .customAlert($store.scope(state: \.alert, action: \.alert))
         .onAppear { store.send(.onAppear) }
         .onChange(of: scenePhase) { oldValue, _ in
             guard oldValue == .background else { return }
             store.send(.enteredForeground)
+        }
+        .onChange(of: store.shouldOpenURL) { oldValue, newValue in
+            guard !oldValue, newValue else { return }
+            store.send(.binding(.set(\.shouldOpenURL, false)))
+            guard let url = URL(string: UIApplication.openSettingsURLString) else { return }
+            openURL(url)
         }
     }
 }
@@ -43,8 +54,6 @@ public struct MyPageView: View {
 private extension MyPageView {
     func title(of menu: MyPageFeature.Menu) -> String {
         switch menu {
-        case .notificationSettings: "페스티벌 알림 설정"
-        case .individualNotificationSettings: "개별 페스티벌 알림 관리"
         case .inquiry: "1:1 문의하기"
         case .termsOfService: "이용약관"
         case .privacyPolicy: "개인정보 처리방침"
@@ -54,146 +63,211 @@ private extension MyPageView {
 
 private extension MyPageView {
     var navigationBar: some View {
-        Text("MY")
-            .pretendard(style: .title2)
-            .foregroundStyle(Color.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: 55)
-    }
-    
-    var versionInfoView: some View {
-        HStack(spacing: 0) {
-            profileImageView
-            versionText
-            Spacer()
-            updateInfoView
-        }
-        .padding(16)
-    }
-    
-    var profileImageView: some View {
-        Color.grey3
-            .clipShape(Circle())
-            .frame(width: 65, height: 65)
-    }
-    
-    var versionText: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            versionTextView(title: "현재 버전", version: store.currentVersion)
-            versionTextView(title: "최신 버전", version: store.latestVersion)
-        }
-        .padding(.leading, 20)
-    }
-    
-    func versionTextView(title: String, version: String) -> some View {
-        HStack(spacing: 10) {
-            Text(title)
-                .pretendard(style: .body2)
-                .foregroundStyle(Color.point1)
-            
-            Text(version)
-                .pretendard(style: .body4)
+        ZStack(alignment: .leading) {
+            Text("MY")
+                .pretendard(style: .title2)
                 .foregroundStyle(Color.white)
-        }
-    }
-    
-    var updateInfoView: some View {
-        Group {
-            if store.isLatestVersion {
-                Text("최신버전 사용중")
-                    .pretendard(style: .caption2)
-                    .foregroundStyle(Color.grey3)
-            } else {
-                Button {
-                    
-                } label: {
-                    Text("업데이트 하러가기 >")
-                        .pretendard(style: .caption2)
-                        .foregroundStyle(Color.grey3)
-                }
+                .frame(maxWidth: .infinity)
+            
+            Button {
+                store.send(.backButtonTapped)
+            } label: {
+                Image.iconArrowLeft
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(Color.white)
+                    .padding(16)
             }
         }
+    }
+    
+    var buttonSection: some View {
+        HStack(spacing: 9) {
+            festivalListButton(
+                image: Image.iconHeart,
+                count: store.likedFestivals.count,
+                title: "좋아요한 페스티벌"
+            ) {
+                store.send(.likedFestivalsButtonTapped)
+            }
+            
+            festivalListButton(
+                image: Image.iconNotification,
+                count: store.subscribedFestivals.count,
+                title: "알림 설정한 페스티벌"
+            ) {
+                store.send(.subscribedFestivalsButtonTapped)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 20)
+        .padding(.bottom, 24)
     }
     
     var notificationSection: some View {
         VStack(spacing: 0) {
-            menuHeaderView(title: "알림")
-            menuView(
-                menu: .notificationSettings,
-                isOn: Binding {
-                    store.isNotificationOn
-                } set: { isOn in
-                    store.send(.toggleChanged(isOn))
-                }
-            )
-            
-            VStack(spacing: 0) {
-                divider
-                menuButton(menu: .individualNotificationSettings)
-            }
-            .renderedIf(store.isNotificationOn)
+            menuTitleView("알림")
+            notificationToggleView
+            divider
         }
     }
     
     var appInfoSection: some View {
         VStack(spacing: 0) {
-            menuHeaderView(title: "앱 정보")
-            menuButton(menu: .inquiry)
-            divider
-            menuButton(menu: .termsOfService)
-            divider
-            menuButton(menu: .privacyPolicy)
-            divider
+            let allMenuList = MyPageFeature.Menu.allCases
+            menuTitleView("앱 정보")
+            ForEach(allMenuList, id: \.self) { menu in
+                VStack(spacing: 0) {
+                    menuButton(menu) { store.send(.menuTapped(menu)) }
+                    divider
+                }
+            }
         }
     }
     
-    var divider: some View {
-        Color.grey4
+    func festivalListButton(
+        image: Image,
+        count: Int,
+        title: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    image
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 28, height: 28)
+                        .foregroundStyle(Color.point1)
+                    
+                    Text(String(count))
+                        .pretendard(style: .title2)
+                        .foregroundStyle(Color.point1)
+                }
+                
+                Text(title)
+                    .pretendard(style: .caption1)
+                    .foregroundStyle(Color.white)
+            }
             .frame(maxWidth: .infinity)
-            .frame(height: 1)
+            .frame(height: 100)
+            .background(Color.grey6)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
     }
     
-    func menuHeaderView(title: String) -> some View {
+    func menuTitleView(_ title: String) -> some View {
         Text(title)
             .pretendard(style: .title2)
             .foregroundStyle(Color.point1)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)
             .frame(height: 40)
-            .background(Color.grey6)
     }
     
-    func menuView(menu: MyPageFeature.Menu, isOn: Binding<Bool>) -> some View {
+    var notificationToggleView: some View {
         HStack {
-            Text(title(of: menu))
-                .pretendard(style: .body1)
-                .foregroundStyle(Color.white)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .layoutPriority(1)
+            VStack(spacing: 4) {
+                Text("알림 수신 동의")
+                    .pretendard(style: .body1)
+                    .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                
+                Text("좋아요한 페스티벌 예매일, 행사일, 반입규정, 교통알림")
+                    .pretendard(size: 10, weight: .regular)
+                    .foregroundStyle(Color.grey4)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+            .layoutPriority(1)
             
-            Toggle("", isOn: isOn)
-                .tint(Color.point1)
+            Toggle(
+                "",
+                isOn: Binding {
+                    store.isNotificationOn
+                } set: { isOn in
+                    store.send(.toggleChanged(isOn))
+                }
+            )
+            .tint(Color.point1)
+            .disabled(store.isLoading)
         }
-        .padding(16)
+        .frame(height: 64)
+        .padding(.horizontal, 16)
     }
     
-    func menuButton(menu: MyPageFeature.Menu) -> some View {
-        Button {
-            store.send(.menuTapped(menu))
-        } label: {
-            HStack {
+    func menuButton(
+        _ menu: MyPageFeature.Menu,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 0) {
                 Text(title(of: menu))
                     .pretendard(style: .body1)
                     .foregroundStyle(Color.white)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 
-                Spacer()
                 Image.iconChevronRight
                     .renderingMode(.template)
                     .resizable()
                     .frame(width: 24, height: 24)
                     .foregroundStyle(Color.white)
+                    .padding(.vertical, 16)
             }
-            .padding(16)
+            .padding(.horizontal, 16)
+        }
+    }
+    
+    var divider: some View {
+        Color.grey6
+            .frame(maxWidth: .infinity)
+            .frame(height: 1)
+            .padding(.horizontal, 16)
+    }
+    
+    var updateInfoSection: some View {
+        HStack(spacing: 5) {
+            Text("현재 버전")
+                .pretendard(style: .body4)
+                .foregroundStyle(Color.grey4)
+            
+            Text(store.currentVersion)
+                .pretendard(style: .body4)
+                .foregroundStyle(Color.grey3)
+            
+            Spacer()
+            updateButton(store.isLatestVersion)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 40)
+    }
+    
+    func updateButton(_ isLatestVersion: Bool) -> some View {
+        Button {
+            
+        } label: {
+            let text = switch isLatestVersion {
+            case true: "최신버전 사용중"
+            case false: "업데이트 하러가기 >"
+            }
+            
+            Text(text)
+                .pretendard(style: .body4)
+                .foregroundStyle(Color.grey3)
+        }
+        .disabled(isLatestVersion)
+    }
+}
+
+extension MyPageFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .authorization: return .authorization
+        case .error(let error):
+            switch error.type {
+            case .noInternet: return .noInternet
+            default: return .error(error, buttonTitle: "확인")
+            }
         }
     }
 }

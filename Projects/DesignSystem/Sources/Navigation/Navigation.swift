@@ -14,6 +14,7 @@ public extension View {
             ZStack(alignment: .leading) {
                 Text(title)
                     .pretendard(style: .title2)
+                    .foregroundStyle(Color.white)
                     .frame(maxWidth: .infinity)
                 
                 Button(action: action) {

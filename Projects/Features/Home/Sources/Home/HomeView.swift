@@ -9,9 +9,10 @@
 import SwiftUI
 import ComposableArchitecture
 import DesignSystem
+import Base
 
 public struct HomeView: View {
-    @Bindable private var store: StoreOf<HomeFeature>
+    private let store: StoreOf<HomeFeature>
     
     public init(store: StoreOf<HomeFeature>) {
         self.store = store
@@ -20,34 +21,25 @@ public struct HomeView: View {
     public var body: some View {
         VStack(spacing: 0) {
             navigationBar
-            ZStack {
-                HomeGridView(store: store)
-                    .opacity(opacity(.grid))
-            }
+            HomeGridView(store: store)
         }
         .background(Color.background1)
-        .onAppear {
-            if store.selectedDate == nil {
-                store.send(.dateSelected(Date()))
-            }
-            store.send(.onAppear)
-        }
+        .onAppear { store.send(.onAppear) }
     }
 }
 
 private extension HomeView {
-    func opacity(_ mode: HomeFeature.DisplayMode) -> CGFloat {
-        mode == store.displayMode ? 1 : 0
-    }
-    
     var navigationBar: some View {
         HStack {
             Image.logo
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 106)
+                .padding(.leading, 16)
+            
             Spacer()
             myPageButton
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 16)
     }
     
     var myPageButton: some View {
@@ -59,6 +51,19 @@ private extension HomeView {
                 .resizable()
                 .frame(width: 24, height: 24)
                 .foregroundStyle(Color.grey4)
+                .padding(16)
+        }
+    }
+}
+
+extension HomeFeature.AlertCase: AlertPresentable {
+    public var alertInfo: AlertInfo {
+        switch self {
+        case .error(let error):
+            switch error.type {
+            case .noInternet: return .noInternet
+            default: return .error(error, buttonTitle: "확인")
+            }
         }
     }
 }

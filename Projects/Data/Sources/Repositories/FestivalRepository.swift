@@ -22,6 +22,15 @@ public struct FestivalRepository: FestivalRepositoryProtocol {
         return result?.compactMap { $0.toDomain } ?? []
     }
     
+    public func fetchFestival(id: Int) async throws -> Festival {
+        let endpoint = FestivalEndpoint.fetchFestival(id)
+        let result = try await networkService.request(endpoint: endpoint)
+        guard let festival = result?.toDomain else {
+            throw NetworkError.init(type: .noResponse)
+        }
+        return festival
+    }
+    
     public func fetchLikedFestivals() throws -> [Domain.LikedFestival] {
         let likedFestivals: [LikedFestival] = try persistentDataService.fetchAll()
         return likedFestivals.map { $0.toDomain }

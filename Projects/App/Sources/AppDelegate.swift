@@ -12,6 +12,7 @@ import FirebaseMessaging
 import UserNotifications
 import Dependencies
 import Data
+import Util
 
 final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
     func application(
@@ -19,9 +20,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCent
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         FirebaseApp.configure()
-        UNUserNotificationCenter.current().delegate = self
-        Messaging.messaging().delegate = self
-        UNUserNotificationCenter.current().setBadgeCount(0)
+        configureNotification()
         return true
     }
     
@@ -52,6 +51,29 @@ extension AppDelegate: MessagingDelegate {
         didReceive response: UNNotificationResponse,
         withCompletionHandler completionHandler: @escaping () -> Void
     ) {
+        handleNotification(response)
+        completionHandler()
+    }
+}
+
+private extension AppDelegate {
+    func configureNotification() {
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+    }
+    
+    func handleNotification(_ response: UNNotificationResponse) {
+        let userInfo = response.notification.request.content.userInfo as? [String: Any]
+        let festivalID = getFestivalID(userInfo)
         UNUserNotificationCenter.current().setBadgeCount(0)
+        UserDefaults.festivalID = festivalID
+        NotificationCenter.default.post(name: .festivalID, object: festivalID)
+    }
+    
+    func getFestivalID(_ userInfo: [String: Any]?) -> Int? {
+        guard let userInfo else { return nil }
+        let festivalID = userInfo["festivalId"] as? String
+        guard let festivalID else { return nil }
+        return Int(festivalID)
     }
 }
