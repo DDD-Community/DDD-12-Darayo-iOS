@@ -11,7 +11,7 @@ import ComposableArchitecture
 import DesignSystem
 import Domain
 
-public struct CalendarScreen: View {
+public struct CalendarTabView: View {
     @Bindable private var store: StoreOf<CalendarFeature>
 
     public init(store: StoreOf<CalendarFeature>) {
@@ -25,7 +25,7 @@ public struct CalendarScreen: View {
                 navigationBar
                 
                 CalendarSegmentedControl(
-                    selectedMode: Binding(
+                    selectedMode: Binding<CalendarMode>(
                         get: { store.selectedMode },
                         set: { store.send(.modeChanged($0)) }
                     )
@@ -49,7 +49,7 @@ public struct CalendarScreen: View {
     }
 }
 
-private extension CalendarScreen {
+private extension CalendarTabView {
     var navigationBar: some View {
         HStack {
             Image.logo

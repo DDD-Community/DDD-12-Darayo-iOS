@@ -58,6 +58,7 @@ public struct HomeFeature {
         case showAlert(AlertCase)
         case alert(AlertCase)
         case navigateToFestival(Festival, Bool)
+        case navigateToMyPage
     }
     
     public init() {}
@@ -91,6 +92,7 @@ public struct HomeFeature {
                 return .none
             case .alert: return .none
             case .navigateToFestival: return .none
+            case .navigateToMyPage: return .none
             }
         }
     }

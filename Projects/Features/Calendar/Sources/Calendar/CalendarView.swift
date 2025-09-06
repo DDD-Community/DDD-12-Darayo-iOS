@@ -33,7 +33,7 @@ public struct CalendarView: View {
     }
     
     public var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 10) {
             // 월 네비게이션
             MonthNavigationView(
                 currentMonth: currentMonth,
@@ -55,8 +55,14 @@ public struct CalendarView: View {
                 }
             )
         }
-        .padding(.horizontal, 16)
         .frame(maxWidth: .infinity, alignment: .topLeading)
+        .onChange(of: selectedDate) { oldValue, newValue in
+            if let newDate = newValue,
+               !Calendar.current.isDate(newDate, equalTo: currentMonth, toGranularity: .month) {
+                currentMonth = newDate
+                onMonthChanged(currentMonth)
+            }
+        }
     }
     
     private var calendarDates: [Date] {

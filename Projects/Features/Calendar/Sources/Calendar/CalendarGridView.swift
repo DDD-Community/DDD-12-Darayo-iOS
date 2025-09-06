@@ -17,21 +17,21 @@ struct CalendarGridView: View {
     let onDateSelected: (Date) -> Void
     
     var body: some View {
-        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 8) {
+        LazyVGrid(columns: CalendarLayout.columns, spacing: 4) {
             ForEach(dates, id: \.self) { date in
                 CalendarDayCell(
                     date: date,
                     currentMonth: currentMonth,
                     selectedDate: selectedDate,
-                    hasEvent: hasEvent(for: date),
+                    events: eventsForDate(date),
                     onDateSelected: onDateSelected
                 )
             }
         }
     }
     
-    private func hasEvent(for date: Date) -> Bool {
-        return calendarEvents.contains { event in
+    private func eventsForDate(_ date: Date) -> [CalendarEvent] {
+        return calendarEvents.filter { event in
             Foundation.Calendar.current.isDate(event.date, inSameDayAs: date)
         }
     }

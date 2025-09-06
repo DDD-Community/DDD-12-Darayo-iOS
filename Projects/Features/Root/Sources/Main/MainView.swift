@@ -10,6 +10,7 @@ import SwiftUI
 import ComposableArchitecture
 import DesignSystem
 import Home
+import Calendar
 import Timetable
 import MyPage
 import Base
@@ -60,6 +61,7 @@ private extension MainView {
     func icon(tab: MainFeature.Tab) -> Image {
         switch tab {
         case .home: Image.iconHome
+        case .calendar: Image.iconCalendar
         }
     }
 }
@@ -79,13 +81,14 @@ private extension MainView {
     }
     
     func tabView(bottomPadding: CGFloat) -> some View {
-        TabView(selection: $store.currentTab) {
+        return TabView(selection: $store.currentTab) {
             HomeView(store: store.scope(state: \.home, action: \.home))
                 .tag(MainFeature.Tab.home)
+            CalendarTabView(store: store.scope(state: \.calendar, action: \.calendar))
+                .tag(MainFeature.Tab.calendar)
         }
         .padding(.bottom, bottomPadding)
         .ignoresSafeArea(edges: .bottom)
-        
     }
     
     func tabBar(height: CGFloat) -> some View {

@@ -143,12 +143,18 @@ public enum EventCategory {
 public extension Festival {
     func toCalendarEvents() -> [CalendarEvent] {
         var events: [CalendarEvent] = []
+        let vendorNamesArray = reservations.compactMap { $0.vendor.name }
+        let vendorNames: String
         
         // category: 예매일
         if let openDate = reservations.first?.openDateTime {
-            let vendorNames = reservations
-                .compactMap { $0.vendor.name }
-                .joined(separator: " · ")
+            if vendorNamesArray.count > 3 {
+                    let firstThree = vendorNamesArray.prefix(3).joined(separator: ", ")
+                    let remainingCount = vendorNamesArray.count - 3
+                    vendorNames = "\(firstThree) +\(remainingCount)"
+            } else {
+                vendorNames = vendorNamesArray.joined(separator: ", ")
+            }
             
             events.append(CalendarEvent(
                 id: UUID().uuidString,

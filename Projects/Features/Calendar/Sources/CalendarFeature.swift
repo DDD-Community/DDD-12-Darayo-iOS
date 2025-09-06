@@ -12,94 +12,122 @@ import Domain
 
 @Reducer
 public struct CalendarFeature {
-    @ObservableState
-    public struct State: Equatable {
-        // 부모(Home)에서 내려주는 데이터
-        public var festivals: [Festival] = []
-        public var likedFestivalIDs: Set<Int> = []
+  @Dependency(\.festivalUseCase) private var festivalUseCase
 
-        // 화면 고유 상태
-        public var selectedDate: Date?
-        public var isFiltered: Bool = false
+  @ObservableState
+  public struct State: Equatable {
+    var festivals: [Festival] = []
+    var selectedDate: Date?
+    var isLoading = false
+    var selectedMode: CalendarMode = .eventDay
+      
+      public init() {}
+  }
 
-        public init() {}
+  public enum Action: BindableAction, Equatable {
+    case binding(BindingAction<State>)
+    case onAppear
+    case festivalsLoaded([Festival])
+    case fetchFailed
+    case dateSelected(Date)
+    case eventTapped(festivalId: Int)
+    case modeChanged(CalendarMode)
+
+    case delegate(Delegate)
+    public enum Delegate: Equatable {
+      case openFestival(Festival)
+      case openMyPage
     }
+  }
 
-    public enum Action: BindableAction, Equatable {
-        case binding(BindingAction<State>)
+  public init() {}
 
-        // 부모에서 최신 데이터 하달
-        case setData(festivals: [Festival], likedIDs: Set<Int>)
+  public var body: some ReducerOf<Self> {
+    BindingReducer()
 
-        // 사용자 액션
-        case dateSelected(Date)
-        case toggleFilter
-        case eventTapped(festivalId: Int)
-
-        // 부모로 올리는 델리게이트
-        case delegate(Delegate)
-        public enum Delegate: Equatable {
-            case openFestival(Festival, isFavorite: Bool)
+    Reduce { state, action in
+      switch action {
+      case .onAppear:
+        guard state.festivals.isEmpty else { return .none }
+        state.isLoading = true
+        return .run { send in
+          do {
+            let festivals = try await festivalUseCase.fetchFestivals()
+            await send(.festivalsLoaded(festivals))
+          } catch {
+            await send(.fetchFailed)
+          }
         }
-    }
 
-    public init() {}
-
-    public var body: some ReducerOf<Self> {
-        BindingReducer()
-        Reduce { state, action in
-            switch action {
-            case let .setData(fests, liked):
-                state.festivals = fests
-                state.likedFestivalIDs = liked
-                return .none
-
-            case let .dateSelected(date):
-                state.selectedDate = date
-                return .none
-
-            case .toggleFilter:
-                state.isFiltered.toggle()
-                return .none
-
-            case let .eventTapped(festivalId):
-                // Domain.CalendarEvent는 festivalId를 가짐
-                if let original = state.festivals.first(where: { $0.id == festivalId }) {
-                    let isFav = state.likedFestivalIDs.contains(original.id)
-                    return .send(.delegate(.openFestival(original, isFavorite: isFav)))
-                }
-                return .none
-
-            case .binding:
-                return .none
-            case .delegate(_):
-                return .none
-            }
+      case let .festivalsLoaded(festivals):
+        state.isLoading = false
+        state.festivals = festivals
+        // 선택된 날짜 없으면 오늘 또는 가장 가까운 이벤트 날짜로 설정
+        if state.selectedDate == nil {
+            state.selectedDate = nearestEventDate(from: festivals, mode: state.selectedMode) ?? Date()
         }
+        return .none
+
+      case .fetchFailed:
+        state.isLoading = false
+        return .none
+
+      case let .dateSelected(d):
+        state.selectedDate = d
+        return .none
+
+      case let .eventTapped(id):
+        if let festival = state.festivals.first(where: { $0.id == id }) {
+          return .send(.delegate(.openFestival(festival)))
+        }
+        return .none
+
+      case let .modeChanged(mode):
+        state.selectedMode = mode
+        // 모드가 변경되면 가장 가까운 해당 모드의 이벤트 날짜로 이동
+        state.selectedDate = nearestEventDate(from: state.festivals, mode: mode) ?? Date()
+        return .none
+
+      case .binding, .delegate:
+        return .none
+      }
     }
+  }
 }
 
-// MARK: - Selectors (도메인 헬퍼 그대로 활용)
+// MARK: - Selectors
 public extension CalendarFeature.State {
-    /// 모든 캘린더 이벤트 (행사일/예매일 모두 포함)
-    var allCalendarEvents: [CalendarEvent] {
-        makeCalendarEvents(from: festivals)
+  var allCalendarEvents: [CalendarEvent] {
+    let allEvents = makeCalendarEvents(from: festivals)
+    
+    // 선택된 모드에 따라 필터링
+    return allEvents.filter { event in
+        switch selectedMode {
+        case .eventDay:
+            return event.category == .festivalDay
+        case .reservationDay:
+            return event.category == .reservationDay
+        }
     }
+  }
+  
+  var eventsForSelectedDate: [CalendarEvent] {
+    guard let date = selectedDate else { return [] }
+    return allCalendarEvents.filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
+  }
+}
 
-    /// 전체 기간 기준 좋아요한 페스티벌의 모든 이벤트
-    var totalLikedEvents: [CalendarEvent] {
-        makeCalendarEvents(from: festivals.filter { likedFestivalIDs.contains($0.id) })
-    }
-
-    /// 선택일의 전체 이벤트
-    var eventsForSelectedDate: [CalendarEvent] {
-        guard let d = selectedDate else { return [] }
-        return allCalendarEvents.filter { Calendar.current.isDate($0.date, inSameDayAs: d) }
-    }
-
-    /// 선택일의 좋아요 이벤트
-    var likedEventsForSelectedDate: [CalendarEvent] {
-        guard let d = selectedDate else { return [] }
-        return totalLikedEvents.filter { Calendar.current.isDate($0.date, inSameDayAs: d) }
-    }
+// MARK: - Helpers
+private func nearestEventDate(from festivals: [Festival], mode: CalendarMode) -> Date? {
+  let allEvents = makeCalendarEvents(from: festivals)
+  let filteredEvents = allEvents.filter { event in
+      switch mode {
+      case .eventDay:
+          return event.category == .festivalDay
+      case .reservationDay:
+          return event.category == .reservationDay
+      }
+  }
+  
+  return filteredEvents.min(by: { abs($0.date.timeIntervalSinceNow) < abs($1.date.timeIntervalSinceNow) })?.date
 }

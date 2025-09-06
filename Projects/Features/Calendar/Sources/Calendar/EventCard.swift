@@ -41,20 +41,13 @@ public struct EventCard: View {
                     endPoint: .bottom
                 )
             }
-            .frame(width: 108, height: 108)
+            .frame(width: 108, height: 95)
             .clipped()
             
             VStack(alignment: .leading, spacing: 8) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(event.category.label)
-                        .pretendard(style: .caption2)
-                        .foregroundColor(textColor(for: event.category))
-                        .frame(width: 47, height: 16)
-                        .background(backgroundColor(for: event.category))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                    
                     Text(event.title)
-                        .pretendard(style: .title3)
+                        .pretendard(style: .title4)
                         .foregroundColor(.white)
                         .lineLimit(1)
                 }
@@ -88,20 +81,27 @@ public struct EventCard: View {
 
 @ViewBuilder
 private func infoSection(for event: CalendarEvent) -> some View {
-    VStack(alignment: .leading, spacing: 0) {
-        infoRow(label: event.category == .reservationDay ? "예매처" : "장소",
-                value: event.location)
-
-        infoRow(label: event.category == .reservationDay ? "예매일시" : "행사일",
-                value: event.time)
+    VStack(alignment: .leading, spacing: 2) {
+        switch event.category {
+        case .festivalDay:
+            iconRow(icon: Image.iconLocation, tint: .point1, value: event.location) // 행사 장소
+            iconRow(icon: Image.iconEventDay, tint: .point1, value: event.time) // 행사 일시
+            
+        case .reservationDay:
+            iconRow(icon: Image.iconPointer, tint: .point2, value: event.location) // 예매처
+            iconRow(icon: Image.iconTime,   tint: .point2, value: event.time) // 예매 일시
+        }
     }
 }
 
-private func infoRow(label: String, value: String) -> some View {
+private func iconRow(icon: Image, tint: Color, value: String) -> some View {
     HStack(spacing: 6) {
-        Text(label)
-            .pretendard(style: .body4)
-            .foregroundColor(.grey4)
+        icon
+            .renderingMode(.template)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 14, height: 14)
+            .foregroundColor(tint)
 
         Text(value)
             .pretendard(style: .body4)

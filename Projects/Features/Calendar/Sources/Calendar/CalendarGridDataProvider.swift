@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct CalendarGridDataProvider {
     static func makeCalendarDates(for month: Date) -> [Date] {
@@ -27,4 +28,9 @@ struct CalendarGridDataProvider {
 
         return dates
     }
+}
+
+enum CalendarLayout {
+    static let columns: [GridItem] =
+        Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
 }

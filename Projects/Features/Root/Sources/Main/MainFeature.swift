@@ -9,6 +9,7 @@
 import UIKit
 import ComposableArchitecture
 import Home
+import Calendar
 import Timetable
 import MyPage
 import Util
@@ -24,6 +25,7 @@ public struct MainFeature {
     public struct State {
         var currentTab: Tab = .home
         var home: HomeFeature.State = .init()
+        var calendar: CalendarFeature.State = .init()
         var path: StackState<Path.State> = .init()
         var url: URL?
         var shouldOpenURL: Bool = false
@@ -36,6 +38,7 @@ public struct MainFeature {
         case subscribeNotification
         case enteredForeground
         case home(HomeFeature.Action)
+        case calendar(CalendarFeature.Action)
         case binding(BindingAction<State>)
         case path(StackActionOf<Path>)
         case navigateToFestival(Festival, Bool)
@@ -50,6 +53,10 @@ public struct MainFeature {
         
         Scope(state: \.home, action: \.home) {
             HomeFeature()
+        }
+        
+        Scope(state: \.calendar, action: \.calendar) {
+                    CalendarFeature()
         }
         
         Reduce { state, action in
@@ -82,6 +89,12 @@ public struct MainFeature {
                 return .none
             case .home(.myPageButtonTapped):
                 state.path.append(.myPage(.init()))
+                return .none
+            case .calendar(.delegate(.openMyPage)):
+                state.path.append(.myPage(.init()))
+                return .none
+            case .calendar(.delegate(.openFestival(let festival))):
+                state.path.append(.festival(.init(festival: festival, isFavorite: false)))
                 return .none
             case .home(.showAlert(let alertCase)):
                 return .send(.showAlert(.home(alertCase)))
@@ -138,6 +151,7 @@ public struct MainFeature {
                 )))
                 return .none
             case .home: return .none
+            case .calendar: return .none
             case .binding: return .none
             case .alert: return .none
             case .path: return .none
@@ -185,10 +199,12 @@ private extension MainFeature {
 extension MainFeature {
     public enum Tab: CaseIterable {
         case home
+        case calendar
         
         var name: String {
             switch self {
             case .home: "홈"
+            case .calendar: "캘린더"
             }
         }
     }

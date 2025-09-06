@@ -8,13 +8,17 @@
 
 import SwiftUI
 import DesignSystem
+import Domain
 
 struct CalendarDayCell: View {
     let date: Date
     let currentMonth: Date
     let selectedDate: Date?
-    let hasEvent: Bool
+    let events: [CalendarEvent]
     let onDateSelected: (Date) -> Void
+    
+    private let underlineWidth: CGFloat = 10
+    private let underlineHeight: CGFloat = 1.5
     
     private var dayNumber: Int {
         Calendar.current.component(.day, from: date)
@@ -33,11 +37,47 @@ struct CalendarDayCell: View {
         Calendar.current.isDate(date, equalTo: currentMonth, toGranularity: .month)
     }
     
+    private var hasEvent: Bool {
+        return !events.isEmpty && isCurrentMonth
+    }
+    
+    private var isEnabled: Bool {
+        return hasEvent
+    }
+    
+    private var selectedBackgroundImage: Image? {
+        guard isSelected, hasEvent else { return nil }
+        switch events.first?.category {
+        case .festivalDay:
+            return Image.iconSelectedDay
+        case .reservationDay:
+            return Image.iconReservationDay
+        case .none:
+            return nil
+        }
+    }
+    
+    private var underlineColor: Color {
+        if isSelected {
+            return .black
+        }
+        
+        if let firstEvent = events.first {
+            switch firstEvent.category {
+            case .festivalDay:
+                return .point1
+            case .reservationDay:
+                return .point2
+            }
+        }
+        return .point1
+    }
+    
     var body: some View {
         ZStack {
             // 선택된 날짜 배경
-            if isSelected {
-                Image.iconSelectedDay
+            if let selectedBackgroundImage {
+                selectedBackgroundImage
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 36, height: 36)
@@ -45,30 +85,29 @@ struct CalendarDayCell: View {
             }
             
             VStack(spacing: 0) {
-                // 날짜 숫자(고정)
                 Text("\(dayNumber)")
                     .pretendard(style: .body3)
                     .foregroundColor(textColor)
-                    .padding(.top, 11)
+                    .padding(.top, 8)
                 
-                // 이벤트 dot(고정)
-                if hasEvent && isCurrentMonth {
-                    Circle()
-                        .fill(dotColor)
-                        .frame(width: 4, height: 4)
-                        .offset(y: -2)
-                    
+                Spacer(minLength: 0)
+                
+                // 언더라인
+                if hasEvent {
+                    Rectangle()
+                        .fill(underlineColor)
+                        .frame(width: underlineWidth, height: underlineHeight)
+                        .padding(.bottom, 10)
                 } else {
                     Spacer()
-                        .frame(width: 4, height: 4)
+                        .frame(height: 10)
                 }
-                Spacer()
             }
         }
         .frame(width: 36, height: 36 , alignment: .top)
         .contentShape(Rectangle())
         .onTapGesture {
-            if isCurrentMonth {
+            if isEnabled {
                 onDateSelected(date)
             }
         }
@@ -76,19 +115,13 @@ struct CalendarDayCell: View {
     
     private var textColor: Color {
         if !isCurrentMonth {
-            return .grey5
+            return .grey4
+        } else if !hasEvent {
+            return .grey4
         } else if isSelected {
             return .black
         } else {
             return .white
-        }
-    }
-    
-    private var dotColor: Color {
-        if isSelected {
-            return .black
-        } else {
-            return .point1
         }
     }
 }
